@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/Users/jackchung/projects/kd-christmas-promo-game/kd-christmas-promo-game-planner/**)",
+      "Write(/Users/jackchung/projects/kd-christmas-promo-game/kd-christmas-promo-game-planner/.keeper/**)"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  // Set by APK; do not edit.
+  "role": "coder",
+  // Set by APK; do not edit.
+  "workflowVersion": "0.5.32",
+
+  // Set by APK during setup.
+  "plannerRepoPath": "/Users/jackchung/projects/kd-christmas-promo-game/kd-christmas-promo-game-planner",
+  // Planner-owned code repos. Each entry is flat and unordered.
+  "codeRepos": [],
+
+  // Short display name shown in chat titles and window title, e.g. "APK" or "Momobot". Leave empty to fall back to folder name.
+  "projectShortName": "KD Promo Planner",
+  // Optional label for this repo within a multi-repo project, e.g. "API" or "Mobile". Omit for single-repo projects.
+  "repoShortName": "KD Promo Coder",
+
+  // Hex color for the status bar. Set by APK; override if desired.
+  "projectColor": "#be185d",
+  // Optional emoji shown in the window title, e.g. "🤖".
+  "projectIcon": "",
+
+  // Additional APK/user settings.
+  "mode": "standard"
+}

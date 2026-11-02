@@ -1,0 +1,15 @@
+{
+  "window.title": "⚙️ Coder · kd-christmas-promo-game",
+  "window.titleBarStyle": "custom",
+  "workbench.colorCustomizations": {
+    "tab.activeBorderTop": "#1e7d7d",
+    "editorGroupHeader.tabsBorder": "#1e7d7d",
+    "statusBar.background": "#be185d",
+    "statusBar.foreground": "#ffffff",
+    "statusBarItem.hoverBackground": "#9d174d",
+    "statusBarItem.activeBackground": "#831843"
+  },
+  "files.associations": {
+    "**/.keeper/config.json": "jsonc"
+  }
+}
