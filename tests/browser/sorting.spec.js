@@ -14,7 +14,7 @@ test('top-stage cards, overrides, medals and shared collection work on a portrai
  for(let i=0;i<5;i++){const g=await correct(page);const expected=g.glass?'fragile':g.pattern==='striped'&&g.bow?'royal':C.sorting.streets.find(s=>s.symbol===g.symbol).id;await page.locator('[data-sack]').evaluateAll((els,id)=>els.find(e=>e.dataset.sack!==id).dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})),expected);}
  await expect(page.locator('main')).toHaveClass('screen screen-sortingResults');await page.goto('/?review=1#collection');await expect(page.locator('.paper-card')).toHaveCount(3);await page.locator('[data-action="paper:postmark-bronze"]').click();await page.reload();expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).paper)).toBe('postmark-bronze');
 });
-test('decree time freezes on cards and hiding pauses the shift',async({page})=>{await page.clock.install();await enter(page,7);await page.clock.fastForward(30100);await expect(page.locator('#sort-continue')).toBeVisible();await expect(page.locator('.sort-rule-icons')).toContainText('Dotted');const before=await page.locator('#sort-oops').textContent();await page.clock.fastForward(60000);await expect(page.locator('#sort-oops')).toHaveText(before);await page.locator('#sort-continue').click();await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'));});await expect(page.locator('#sort-resume')).toBeVisible();await page.clock.fastForward(60000);await expect(page.locator('#sort-oops')).toHaveText(before);});
+test('decree time freezes on cards and hiding pauses the shift',async({page})=>{await page.clock.install();await enter(page,7);await page.clock.fastForward(30100);await expect(page.locator('#sort-continue')).toBeVisible();await expect(page.locator('.pause-card')).toContainText('Dotted paper WITHOUT a crown');const clock=await page.locator('#sort-time').textContent(),quick=await page.locator('#sort-quick span').textContent();const before=await page.locator('#sort-oops').textContent();await page.clock.fastForward(60000);await expect(page.locator('#sort-time')).toHaveText(clock);await expect(page.locator('#sort-quick span')).toHaveText(quick);await expect(page.locator('#sort-oops')).toHaveText(before);await page.locator('#sort-continue').click();await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'));});await expect(page.locator('#sort-resume')).toBeVisible();await page.clock.fastForward(60000);await expect(page.locator('#sort-oops')).toHaveText(before);});
 test('crowns start with the Royal sack and match its card, parcels and switched decree',async({page})=>{
  await page.clock.install();await page.addInitScript(()=>{Math.random=()=>.3;});
  await page.goto('/?review=1');await page.locator('[data-action="profile"]').click();
@@ -23,13 +23,14 @@ test('crowns start with the Royal sack and match its card, parcels and switched 
   await startAt(stage);await page.locator('#sort-continue').click();await page.clock.runFor(5500);
   await expect(page.locator('[data-sack="royal"]')).toHaveCount(0);
   expect(await page.locator('#sort-spot .parcel-bow, #sort-queue .parcel-bow').allTextContents()).toEqual(['','']);
+  await expect(page.locator('#sort-spot .parcel-bow')).toBeHidden();
   await expect(page.locator('#sort-spot .sort-parcel')).not.toHaveAttribute('aria-label',/crown/i);
   await tapCorrect(page,stage);await expect(page.locator('#sort-flight .parcel-bow')).toBeEmpty();
  }
  await startAt(5);
  const icon=await page.locator('[data-sack="royal"] .sack-icon').textContent();
  await expect(page.locator('.sort-rule-icons')).toContainText(`▨ ${icon}`);
- await expect(page.locator('.sort-rule-icons')).toContainText('Striped · Crown');
+ await expect(page.locator('.pause-card')).toContainText('Striped paper WITH a crown → Royal sack.');
  await page.locator('#sort-continue').click();
  await expect(page.locator('#sort-spot .parcel-bow')).toHaveText(icon);
  await expect(page.locator('#sort-spot .sort-parcel')).toHaveAttribute('aria-label','Striped · Crown');
@@ -39,7 +40,7 @@ test('crowns start with the Royal sack and match its card, parcels and switched 
  await expect(page.locator('#sort-flight .parcel-bow')).toHaveText(icon);
  await startAt(6);await page.locator('#sort-continue').click();await page.clock.runFor(30100);
  await expect(page.locator('.sort-rule-icons')).toContainText(`⠿ ∅${icon}`);
- await expect(page.locator('.sort-rule-icons')).toContainText('Dotted · No crown');
+ await expect(page.locator('.pause-card')).toContainText('Dotted paper WITHOUT a crown → Royal sack.');
  await expect(page.locator('#sort-decree')).toHaveText(`⠿ ∅${icon} → ${icon}`);
 });
 test('all stages progress through paused cards in the browser engine, with mash resistance',async({page})=>{await page.goto('/?review=1');const result=await page.evaluate(async()=>{const {createSorting,acknowledge,sortGift,destination,targets,tickSorting}=await import('/game/sorting.js');const results=[];for(const difficulty of ['easy','tunie','rapper']){const r=createSorting(difficulty);const stages=[];while(r.stage<9){if(r.card){stages.push(r.stage);acknowledge(r);}sortGift(r,destination(r,r.queue[0]));if(targets(r).length>5)throw Error('too many targets');}let worst=0;for(let seed=1;seed<=30;seed++){let value=seed;const random=()=>((value=(1664525*value+1013904223)>>>0)/2**32),m=createSorting(difficulty,undefined,false,random);for(let time=0;time<15000&&!m.complete;time+=100){if(m.card)acknowledge(m);tickSorting(m,100);sortGift(m,targets(m)[Math.floor(random()*targets(m).length)]);}if(!m.complete)throw Error('mash survived');worst=Math.max(worst,m.elapsed);}results.push({difficulty,stages,worst});}return results;});for(const r of result){expect(r.stages).toContain(8);expect(r.worst).toBeLessThan(15000);}});
@@ -54,14 +55,18 @@ test('original audio resumes on rule cards and after pause; mute stays silent',a
 });
 
 for(const viewport of [{width:390,height:844},{width:320,height:568}])test(`readable conveyor and parcel fit ${viewport.width}×${viewport.height}`,async({page},testInfo)=>{
- await page.setViewportSize(viewport);await page.clock.install();await enter(page,5);await page.clock.runFor(15700);
+ await page.setViewportSize(viewport);await page.clock.install();await page.addInitScript(()=>{Math.random=()=>.1;});await enter(page,5);await page.clock.runFor(15700);
  await expect(page.locator('#sort-queue .sort-parcel')).toHaveCount(3);
  const geometry=await page.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom};};return {scroll:document.documentElement.scrollHeight,scrollWidth:document.documentElement.scrollWidth,belt:rect('.sorting-belt'),gift:rect('#sort-spot .sort-parcel'),tag:rect('#sort-spot .street-tag'),queue:[...document.querySelectorAll('#sort-queue .sort-parcel')].map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom};}),targets:[...document.querySelectorAll('[data-sack]')].map(e=>{const r=e.getBoundingClientRect();return {width:r.width,height:r.height,bottom:r.bottom};})};});
  expect(geometry.scroll).toBeLessThanOrEqual(viewport.height);expect(geometry.scrollWidth).toBeLessThanOrEqual(viewport.width);expect(geometry.gift.width).toBeGreaterThanOrEqual(geometry.belt.width*.30);expect(geometry.tag.width).toBeGreaterThanOrEqual(40);
  for(const q of geometry.queue){expect(q.x).toBeGreaterThan(geometry.belt.x);expect(q.right).toBeLessThan(geometry.belt.right);expect(q.bottom).toBeLessThan(geometry.gift.y);}
  for(const target of geometry.targets){expect(target.width).toBeGreaterThan(80);expect(target.height).toBeGreaterThan(60);expect(target.bottom).toBeLessThanOrEqual(viewport.height);}
  await expect(page.locator('.sorting-belt')).toHaveClass(/belt-full/);await page.screenshot({path:testInfo.outputPath('mid-stage-belt.png')});
- await tapCorrect(page,5);const flight=await page.locator('#sort-flight').evaluate(el=>({x:parseFloat(el.style.getPropertyValue('--flight-x')),y:parseFloat(el.style.getPropertyValue('--flight-y'))}));expect(Number.isFinite(flight.x)).toBe(true);expect(flight.y).toBeGreaterThan(0);await expect(page.locator('.sack-thump')).toHaveCount(1);
+ await tapCorrect(page,5);
+ const features=await page.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom};};return {crown:rect('#sort-spot .parcel-bow'),gift:rect('#sort-spot .sort-parcel'),other:['#sort-points','#sort-spot .parcel-feature','#sort-spot small','#sort-spot .street-tag'].map(rect)};});
+ expect(features.crown.left).toBeGreaterThanOrEqual(features.gift.left);expect(features.crown.right).toBeLessThanOrEqual(features.gift.right);expect(features.crown.top).toBeGreaterThanOrEqual(features.gift.top);expect(features.crown.bottom).toBeLessThanOrEqual(features.gift.bottom);
+ for(const other of features.other)expect(features.crown.left<other.right&&features.crown.right>other.left&&features.crown.top<other.bottom&&features.crown.bottom>other.top).toBe(false);
+ const flight=await page.locator('#sort-flight').evaluate(el=>({x:parseFloat(el.style.getPropertyValue('--flight-x')),y:parseFloat(el.style.getPropertyValue('--flight-y'))}));expect(Number.isFinite(flight.x)).toBe(true);expect(flight.y).toBeGreaterThan(0);await expect(page.locator('.sack-thump')).toHaveCount(1);
  const g=await correct(page),id=g.glass?'fragile':g.pattern==='striped'&&g.bow?'royal':C.sorting.streets.find(s=>s.symbol===g.symbol).id;await page.locator('[data-sack]').evaluateAll((els,id)=>els.find(e=>e.dataset.sack!==id).dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})),id);await expect(page.locator('#sort-flight')).toHaveClass('sort-bounce');
  await page.emulateMedia({reducedMotion:'reduce'});expect(await page.locator('.belt-track').evaluate(el=>getComputedStyle(el).animationName)).toBe('none');await expect(page.locator('#sort-flight')).toBeHidden();
 });
