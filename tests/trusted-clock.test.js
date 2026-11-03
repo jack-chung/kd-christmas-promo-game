@@ -28,3 +28,9 @@ test('cached and invalid responses cannot unlock anything',async()=>{
     const clock=new TrustedClock({fetcher:async()=>({ok:true,headers:new Headers(headers)})});await clock.sync();assert.equal(clock.now(),0);assert.equal(clock.online,false);
   }
 });
+
+test('fresh missing-path HEAD supplies host time; each probe has a unique CDN key',async()=>{
+  const paths=[];
+  const clock=new TrustedClock({monotonic:()=>0,fetcher:async url=>{paths.push(url.pathname);return {ok:false,status:404,headers:new Headers({date:'Fri, 13 Nov 2026 05:00:00 GMT',age:'0'})};}});
+  await clock.sync();await clock.sync();assert.equal(clock.online,true);assert.notEqual(paths[0],paths[1]);assert.ok(paths.every(path=>path.includes('/.host-time/')));assert.equal(clock.now(),Date.parse(C.episodes[0].date));
+});

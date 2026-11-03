@@ -15,12 +15,14 @@ export class TrustedClock {
   async sync(){
     this.freeze();
     try {
-      const url=new URL('./',globalThis.location?.href||'https://localhost/');
+      // A unique path also defeats CDNs that ignore query strings in cache keys.
+      // Static hosts return a fresh 404; its Date header is still the host clock.
+      const url=new URL('./.host-time/'+globalThis.crypto.randomUUID(),globalThis.location?.href||'https://localhost/');
       url.searchParams.set('host-time',globalThis.crypto.randomUUID());
       const response=await this.fetcher(url,{method:'HEAD',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(8000)});
       const time=Date.parse(response.headers.get('date'));
       const age=Number(response.headers.get('age')||0);
-      if(!response.ok||!Number.isFinite(time)||age>0)throw Error('Unverified host time');
+      if((!response.ok&&response.status!==404)||!Number.isFinite(time)||age>0)throw Error('Unverified host time');
       this.verified=Math.max(this.verified,time);this.anchor=this.monotonic();this.online=true;this.now();
     }catch {this.online=false;}
     return this.now();
