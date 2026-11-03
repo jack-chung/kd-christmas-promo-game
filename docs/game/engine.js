@@ -1,6 +1,6 @@
 import { C } from './content.js';
 export const SAVE_KEY = 'tuneville-gift-v1';
-export const freshSave = () => ({version:2,profile:null,layers:[],paper:'cranberry',sound:false,wrapBest:0,towerBest:0,sortingBest:0,sortingPractice:false,papers:[],finale:false});
+export const freshSave = () => ({version:2,profile:null,layers:[],paper:'cranberry',sound:false,wrapBest:0,towerBest:0,sortingBest:0,sortingBests:{easy:0,tunie:0,rapper:0},sortingPractice:false,papers:[],finale:false});
 export function validProfile(p) {
   return p && Number.isInteger(p.adjective) && p.adjective >= 0 && p.adjective < C.profile.adjectives.length && Number.isInteger(p.noun) && p.noun >= 0 && p.noun < C.profile.nouns.length && Number.isInteger(p.number) && p.number >= 10 && p.number <= 99 && C.profile.avatars.some(a => a.id === p.avatar);
 }
@@ -16,6 +16,8 @@ export function normalizeSave(raw) {
   s.paper=s.papers.includes(raw.paper)?raw.paper:raw.paper==='stars'&&s.layers.length?'stars':'cranberry';
   s.sound=raw.sound===true;
   for(const k of ['wrapBest','towerBest','sortingBest'])if(Number.isFinite(raw[k])&&raw[k]>=0)s[k]=Math.floor(raw[k]);
+  // Older single records have no difficulty attribution. Start the new records fresh.
+  for(const {id} of C.sorting.difficulties){const value=raw.sortingBests?.[id];if(Number.isFinite(value)&&value>=0)s.sortingBests[id]=Math.floor(value);}
   s.finale=raw.finale===true;
   return s;
 }

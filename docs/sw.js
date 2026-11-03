@@ -1,5 +1,5 @@
-const CACHE='tuneville-sorting-music-v1';
-const FILES=["./", "./index.html", "./game/trusted-clock.js", "./game/rhythm.js", "./game/sorting.js", "./game/sorting-ui.js", "./game/style.css", "./game/engine.js", "./game/content.js", "./game/music.js", "./game/art.js", "./game/app.js"];
+const CACHE='tuneville-sorting-feedback-v1';
+const FILES=["./", "./index.html", "./game/trusted-clock.js", "./game/rhythm.js", "./game/sorting.js", "./game/sorting-ui.js", "./game/sorting-feedback.js", "./game/style.css", "./game/engine.js", "./game/content.js", "./game/music.js", "./game/art.js", "./game/app.js"];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{

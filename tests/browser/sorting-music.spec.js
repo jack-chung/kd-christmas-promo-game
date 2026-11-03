@@ -34,13 +34,13 @@ test('delayed or failed sorting bank never blocks visual sorting',async({page})=
  await page.route('**/audio/sources.json',async route=>{await gate;await route.fulfill({status:503,body:'unavailable'});});
  await setup(page);await expect(page.locator('#music-loading')).toHaveText(C.sorting.music.loading);release();await expect(page.locator('#music-loading')).toHaveText(C.sorting.music.failed);
  await page.locator('#sort-stage-select').selectOption('1');await page.locator('[data-action="sorting-start"]').click();await page.locator('#sort-continue').click();
- const symbol=await page.locator('#sort-spot .street-tag').textContent(),street=C.sorting.streets.find(s=>s.symbol===symbol).id;await page.locator(`[data-sack="${street}"]`).dispatchEvent('pointerdown');await expect(page.locator('#sort-score')).toContainText('1× combo');
+ const symbol=await page.locator('#sort-spot .street-tag').textContent(),street=C.sorting.streets.find(s=>s.symbol===symbol).id;await page.locator(`[data-sack="${street}"]`).dispatchEvent('pointerdown');await expect(page.locator('#sort-multiplier')).toHaveAttribute('data-combo','1');
 });
 
 test('rendered sorting arrangement has audible melody and accompaniment with headroom for cues and a continuous loop',async({page},testInfo)=>{
  await page.goto('/?review=1');
  const result=await page.evaluate(async()=>{
-  const {Music}=await import('/game/music.js'),{SortingMusic}=await import('/game/sorting-music.js'),Original=window.AudioContext;
+  const {Music}=await import('/game/music.js'),{SortingMusic}=await import('/game/sorting-music.js'),{SortingFeedback}=await import('/game/sorting-feedback.js'),Original=window.AudioContext;
   async function render(mode){
    const rate=22050,seconds=40,ctx=new OfflineAudioContext(1,rate*seconds,rate);window.AudioContext=function(){return ctx;};
    const music=new Music(()=>true);await music.load();if(music.state!=='ready')throw Error('decode failed');
@@ -50,7 +50,13 @@ test('rendered sorting arrangement has audible melody and accompaniment with hea
    track.band.sample=(pitch,instrument,delay,volume,duration)=>{if(mode==='melody'?volume===.75:mode==='backing'?volume!==.75:true)sample(pitch,instrument,delay,volume,duration);};
    if(mode==='melody'){track.band.drum=()=>{};track.band.play=(...args)=>{if(args[0]!==track.band.kit.pad)play(...args);};}
    for(let step=0;step<148;step++)track.schedule(step,.08+step*track.secondsPerBeat/2,7);
-   if(mode==='mix')for(let i=0;i<8;i++){music.tone(43+i%6*4,['fold','tape','ribbon'][i%3],i*.47,.8);if(i===3)[48,55,60].forEach((n,j)=>music.tone(n,'tape',i*.47+j*.13,.6));}
+   if(mode==='mix'){
+    const feedback=new SortingFeedback(music),play=music.play.bind(music);let offset=0;
+    music.play=(buffer,midi,root,delay,...args)=>play(buffer,midi,root,delay+offset,...args);
+    // Exercise the real landing, echo, error and promotion voices over the band.
+    for(let i=0;i<8;i++){offset=i*.47;feedback.correct(['candy','holly','ginger','tinsel','fragile','royal'][i%6]);if(i===3)feedback.combo();}
+    offset=4;feedback.wrong();offset=4.5;feedback.oops();offset=5;feedback.stage();
+   }
    const buffer=await ctx.startRendering(),data=buffer.getChannelData(0);let squares=0,peak=0;
    for(const v of data){squares+=v*v;peak=Math.max(peak,Math.abs(v));}
    // No silent block around the 17-bar wrap, including the held final note.
