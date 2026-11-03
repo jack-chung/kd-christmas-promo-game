@@ -1,2 +1,5 @@
 .keeper/coder-report.md
 .keeper/session-resume.md
+node_modules/
+test-results/
+playwright-report/

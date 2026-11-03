@@ -1,13 +1,13 @@
-# The Tuneville Gift — art direction review
+# The Tuneville Gift
 
-Nine original static mock-ups for the Kids Discover Christmas musical promo game.
+A phone-browser review prototype for Kids Discover’s **Wrapping All the Way**: Tuneville hub, mystery gift, Tansy’s Wrap Station, Mystery Trail Episode 1, and Present Tower.
 
-Review: https://jack-chung.github.io/kd-christmas-promo-game/
+- [Play the review build](https://jack-chung.github.io/kd-christmas-promo-game/?review=1)
+- [Art gallery](https://jack-chung.github.io/kd-christmas-promo-game/art-direction/)
+- [Selected cozy pixel style sheet](https://jack-chung.github.io/kd-christmas-promo-game/art-direction/style-sheet.html)
 
-Serve `docs/` with any static HTTP server. No dependencies or build step. GitHub Pages publishes `main:/docs`.
+Choose a preset nickname/helper. Review mode bypasses dates; **Review controls** in the footer jumps to every screen and resets device progress. Finale placeholder code: **TUNIE12**. Normal Episode 1 opens November 20, 2026, Toronto time. Episodes 2–4 are coming-soon placeholders.
 
-- `docs/index.html`: responsive comparison gallery.
-- `docs/art-direction/assets/`: three styles × title, Wrap Station, and map.
-- `docs/art-direction/prompts.md`: built-in image generation source briefs.
+Serve `docs/` with `npm run dev` or any static HTTP server. No runtime dependencies or build step. Install test tools with `npm install`; run `npm test` and `npm run test:browser` (installed Chrome required). See [TECHNICAL_PLAN.md](TECHNICAL_PLAN.md) for state, dates, episode extension, and WebKit checks.
 
-These are visual concepts, not gameplay or production sprites. All episode timers and scores are illustrative. The review URL is unannounced; `noindex` is requested but access is public.
+Progress stays on the device. No accounts, typed names, analytics, or trackers. All game art and percussion are original. Finale copy/code remain placeholders. This is an unannounced public review preview; `noindex` is requested. GitHub Pages publishes `main:/docs`.
