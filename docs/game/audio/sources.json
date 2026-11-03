@@ -74,5 +74,21 @@
       "seconds": 1.3,
       "source": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr1.wav"
     }
-  ]
+  ],
+  "sortingArrangement": {
+    "title": "Good King Wenceslas",
+    "melody": "Anonymous, Tempus adest floridum; Piae Cantiones (1582).",
+    "edition": "Hutchins, Carols Old and Carols New (1916), no. 415; Mutopia-2007/01/10-905. Edition and typesetting public domain.",
+    "source": "https://www.mutopiaproject.org/ftp/Anonymous/GoodKingWenceslas/GoodKingWenceslas.ly",
+    "sourceSha256": "d5967412ef47cc91add5eb361c25392273aaa7557028bfd76b1becb3af0e35e7",
+    "use": "Complete 17-bar melody transposed A major to G major; original bass, chords, kit and three verse textures by The Tuneville Gift. No lyrics or existing recordings/arrangements used.",
+    "instruments": [
+      "fold (marimba)",
+      "ribbon (harp)",
+      "tape (pizzicato strings)",
+      "bass (pizzicato contrabass)",
+      "original generated kick, snare, shaker, pad"
+    ],
+    "newAudioBytes": 0
+  }
 }

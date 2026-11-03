@@ -125,6 +125,8 @@ C.sorting={
  {stage:6,streets:3,arrival:2000,gifts:26,rule:'switch',rush:true,fragile:true,royal:true,switch:30000},
  {stage:7,streets:3,arrival:1650,gifts:28,rule:'shuffle',rush:true,fragile:true,royal:true,switch:30000,shuffle:true},
  {stage:8,streets:3,arrival:1300,gifts:30,rule:'speed',rush:true,fragile:true,royal:true,switch:30000,shuffle:true}],
+ music:{title:'Good King Wenceslas',bpm:112,maxBpm:132,stageBpm:2,
+ loading:'Getting the sorting band ready…',failed:'The band couldn’t load. You can still sort with sound off.'},
  tuning:{capacity:4,slowGifts:3,slowArrival:5200,minArrival:450,speedStep:120,mistakeEase:.16,maxEase:.5,rushWindow:2000,basePoints:100,speedPoints:20,rushPoints:40,comboEvery:5,maxMultiplier:5,featureChance:.28},
  decrees:[{pattern:'striped',bow:true},{pattern:'dotted',bow:false},{pattern:'plain',bow:true},{pattern:'striped',bow:false}],
  medals:{easy:[800,3000,7500],tunie:[1200,4500,10000],rapper:[1600,6000,14000]},
