@@ -96,9 +96,8 @@ export function scene(kind='town') {
   for(let x=0;x<240;x+=14)s+=r(x,331,5,48,'#b78960')+r(x,330,5,4,'snow');
   s+=r(0,342,240,5,'#946647')+r(0,365,240,5,'#946647');
   if(kind!=='town'){
-    const indoor=kind==='house';
-    s+=r(0,0,240,400,indoor?'#d6ac80':'#b14c58');
-    for(let x=0;x<240;x+=20)s+=r(x,0,2,400,indoor?'#be946f':'#983e50');
+    s+=r(0,0,240,400,'#b14c58');
+    for(let x=0;x<240;x+=20)s+=r(x,0,2,400,'#983e50');
     s+=r(0,233,240,167,'#b78356');
     for(let y=241;y<400;y+=23)s+=r(0,y,240,2,'#95643f');
     for(const x of [16,154]){
@@ -107,7 +106,7 @@ export function scene(kind='town') {
       s+=r(x-4,151,78,7,'brown')+r(x,150,70,3,'gold');
     }
     s+=r(5,186,230,18,'ink')+r(9,188,222,7,'goldShade')+r(9,204,10,39,'brown')+r(221,204,10,39,'brown');
-    if(!indoor){
+    {
       for(let x=0;x<240;x+=24)s+=r(x,0,24,25,(x/24)%2?'cream':'red')+r(x,25,24,5,'ink');
       s+=r(4,190,232,210,'red');
       for(let x=12;x<240;x+=24)s+=r(x,203,3,197,'#93374d');
@@ -118,12 +117,4 @@ export function scene(kind='town') {
   for(const x of [20,116,212])s+=r(x,8,5,5,'redLight')+r(x+8,8,5,5,'redLight')+r(x+5,11,3,7,'red');
   s+=r(0,393,240,7,'snow');
   return svg(240,400,s,'world-scene').replace('<svg ','<svg preserveAspectRatio="xMidYMid slice" ');
-}
-export function parcel(index,data) {
-  const striped=data.striped.includes(index),bow=data.bows.includes(index);
-  let s=r(3,8,26,22,'ink')+r(5,10,22,18,index%3===0?'green':index%3===1?'red':'blue');
-  if(striped)for(let x=7;x<27;x+=6)s+=r(x,10,2,18,'cream');
-  else if(index%2)for(let x=8;x<26;x+=7)s+=r(x,14,2,2,'gold')+r(x,23,2,2,'gold');
-  if(bow)s+=r(6,3,7,4,'gold')+r(19,3,7,4,'gold')+r(11,6,10,4,'gold')+r(14,8,4,20,'gold');
-  return svg(32,32,s,'parcel-art');
 }

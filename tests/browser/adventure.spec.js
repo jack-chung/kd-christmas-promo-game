@@ -1,9 +1,12 @@
 import {test,expect} from '@playwright/test';
 import {C} from '../../docs/game/content.js';
+test.use({serviceWorkers:'block'});
+async function openWrap(page){const link=page.locator('[data-action="go:wrap"]');if(await link.count())await link.first().click({force:true});else await page.locator('.adventures [data-action="episode:1"]').click({force:true});}
 const action=(page,name)=>page.locator(`[data-action="${name}"]`);
 async function enter(page,url='/?review=1'){
   await page.clock.install({time:new Date('2026-11-03T17:00:00Z')});
   await page.clock.pauseAt(new Date('2026-11-03T17:00:01Z'));
+  await page.route('**/*host-time=*',route=>route.fulfill({status:200,headers:{date:'Tue, 03 Nov 2026 17:00:00 GMT'},body:''}));
   await page.goto(url);
   await page.locator('input[value="kid"]').check({force:true});
   const name=await page.locator('#nickname').textContent();
@@ -20,9 +23,9 @@ test.afterEach(async({page})=>{expect(page.__errors).toEqual([]);});
 test('first run, date guards, review finale code, certificate, invitation, and reset',async({page})=>{
   const name=await enter(page,'/');
   await expect(page.locator('.greeting')).toContainText(name);
-  await action(page,'episode:3').click({force:true});await expect(page.locator('h1')).toContainText('Dec 4');await action(page,'first-episode').click({force:true});
+  await action(page,'episode:3').first().click({force:true});await expect(page.locator('h1')).toContainText('Nov 27');await action(page,'go:hub').first().click({force:true});
   await action(page,'sound').click({force:true});await expect(action(page,'sound')).toHaveAttribute('aria-pressed','true');await action(page,'sound').click({force:true});
-  await action(page,'go:wrap').click({force:true});await expect(page.locator('main')).toHaveClass('screen screen-future');
+  await page.goto('/#wrap');await expect(page.locator('main')).toHaveClass('screen screen-future');
   await page.goto('/#wrapPlay');await expect(page.locator('main')).toHaveClass('screen screen-future');
   await page.goto('/#certificate');await expect(page.locator('main')).toHaveClass('screen screen-finale');
   await expect(page.locator('#finale-form')).toHaveCount(0);
@@ -44,34 +47,9 @@ test('first run, date guards, review finale code, certificate, invitation, and r
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([]);
 });
 
-test('Mystery Trail: hints cost once, reload keeps clues, all puzzles earn exactly one layer',async({page})=>{
-  await enter(page);await action(page,'go:mystery').click({force:true});await action(page,'case-start').click({force:true});
-  await action(page,'go:hidden').click({force:true});await action(page,'parcel:0').click({force:true});await expect(page.locator('#feedback')).toContainText('doesn’t have both');
-  await action(page,'hint:hidden').click({force:true});await expect(page.locator('#case-stars')).toHaveText('★ 2');await expect(action(page,'hint:hidden')).toBeDisabled();
-  await action(page,'parcel:1').click({force:true});await page.clock.runFor(5000);await page.reload();
-  await expect(page.locator('#found-count')).toHaveText('1 / 4 found');await expect(page.locator('#case-stars')).toHaveText('★ 2');
-  for(const id of [5,10,14])await action(page,`parcel:${id}`).click({force:true});
-  await expect(page.locator('#solved-panel')).toBeVisible();await action(page,'go:cipher').click({force:true});
-  await action(page,'cipher:3').click({force:true});await expect(page.locator('#feedback')).toContainText('Move each letter');
-  await action(page,'cipher:6').click({force:true});await action(page,'go:riddle').click({force:true});
-  await action(page,'riddle:kid').click({force:true});await expect(page.locator('#feedback')).toContainText('Try the clues');
-  await action(page,'riddle:note').click({force:true});await action(page,'go:mysteryCode').click({force:true});
-  await expect(page.locator('.digit')).toHaveText(['4','6','2']);
-  await page.locator('#layer-code').fill('111');await page.locator('#layer-form button').click({force:true});await expect(page.locator('#feedback')).toContainText('house order');
-  await page.locator('#layer-code').fill('462');await page.locator('#layer-form button').click({force:true});
-  await expect(page.locator('main')).toHaveClass('screen screen-mysteryResults');
-  await expect(page.locator('.result-detail')).toContainText('2 ★');
-  await action(page,'claim:mystery').click({force:true});await expect(page.locator('main')).toHaveClass('screen screen-unwrap');
-  let saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.layers).toEqual([1]);expect(saved.paper).toBe('stars');expect(saved.mysteryBest).toBeGreaterThanOrEqual(5000);
-  await action(page,'go:collection').click({force:true});await action(page,'paper:cranberry').click({force:true});
-  await page.reload();await expect(action(page,'paper:cranberry')).toBeDisabled();
-  await route(page,'mysteryCode');await page.locator('#layer-code').fill('462');await page.locator('#layer-form button').click({force:true});await action(page,'claim:mystery').click({force:true});
-  saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.layers).toEqual([1]);
-});
-
 for(const difficulty of C.wrap.difficulty)test(`Wrap Station ${difficulty.id}: three songs, matching taps, pause, grades and layer`,async({page})=>{
   test.setTimeout(120000);
-  await enter(page);await action(page,'go:wrap').click({force:true});
+  await enter(page);await openWrap(page);
   await page.locator(`input[value="${difficulty.id}"]`).check({force:true});await action(page,'wrap-start').click({force:true});
   for(let customer=0;customer<3;customer++){
     await action(page,'wrap-ready').click({force:true});
@@ -101,7 +79,7 @@ for(const difficulty of C.wrap.difficulty)test(`Wrap Station ${difficulty.id}: t
 });
 
 test('practice: four free sounds, forgiving guided objects and no failure',async({page})=>{
-  await enter(page);await action(page,'go:wrap').click({force:true});await action(page,'go:wrapPractice').click({force:true});
+  await enter(page);await openWrap(page);await action(page,'go:wrapPractice').click({force:true});
   await expect(action(page,'practice-guide')).toBeDisabled();
   for(let lane=0;lane<4;lane++)await page.locator(`[data-lane="${lane}"]`).click({force:true});
   await expect(action(page,'practice-guide')).toBeEnabled();await action(page,'practice-guide').click({force:true});
@@ -113,7 +91,7 @@ test('practice: four free sounds, forgiving guided objects and no failure',async
 });
 
 test('wrong shapes miss, swipes do not score, empty taps break combos and unattended songs finish',async({page})=>{
-  await enter(page);await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await enter(page);await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(2700);await page.locator('[data-lane="3"]').click({force:true});await expect(page.locator('#wrap-score')).toHaveText('0');await expect(page.locator('#feedback')).toHaveText('Match the shape!');
   await page.clock.runFor(C.wrap.songs[0].variants.tunie.events[1].time);await page.locator('[data-lane="1"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
   // A moving pointer across the playfield is not a tap target.
@@ -135,7 +113,7 @@ test('review can reach every screen and preview rewards do not alter progression
 });
 
 test('Tower drops, pause, high score persistence; gallery and mobile/tablet layouts',async({page})=>{
-  await enter(page);await action(page,'go:tower').click({force:true});await action(page,'tower-start').click({force:true});
+  await enter(page);await page.goto('/?review=1#tower');await action(page,'tower-start').click({force:true});
   await action(page,'pause').click({force:true});await page.clock.runFor(10000);await expect(page.locator('#tower-height')).toHaveText('0 gifts high');await action(page,'resume').click({force:true});
   await action(page,'tower-drop').click({force:true});await page.clock.runFor(1500);
   await expect(page.locator('#tower-height')).toHaveText('1 gifts high');
@@ -145,12 +123,12 @@ test('Tower drops, pause, high score persistence; gallery and mobile/tablet layo
     await page.clock.runFor(350);await action(page,'tower-drop').click({force:true});await page.clock.runFor(1500);
   }
   await expect(page.locator('.screen-towerResults')).toHaveCount(1);
-  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.towerBest).toBeGreaterThanOrEqual(1);
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.towerBest).toBeGreaterThanOrEqual(1);expect(saved.layers).toEqual([3]);
   await route(page,'tower');await page.reload();await expect(page.locator('.personal-best')).toContainText(String(saved.towerBest));
   await route(page,'hub');
   for(const size of [{width:320,height:740},{width:390,height:844},{width:768,height:1024}]){
     await page.setViewportSize(size);
-    for(const id of ['hub','wrap','hidden','cipher','riddle','invitation']){
+    for(const id of ['hub','wrap','tower','invitation']){
       await route(page,id);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${id} at ${size.width}px`).toBeTruthy();
     }
@@ -161,28 +139,12 @@ test('Tower drops, pause, high score persistence; gallery and mobile/tablet layo
 
 test('storage denial and malformed saves still allow first-run play',async({page})=>{
   await page.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw new DOMException('Denied','SecurityError');}});});
-  await enter(page);await expect(page.locator('#storage-notice')).toBeVisible();await action(page,'go:wrap').click({force:true});await expect(page.locator('h1')).toHaveText('Tansy’s Wrap Station');
-});
-
-test('a content-only weekly configuration can launch, solve, save and award a separate layer',async({page})=>{
-  // Simulate a future content delivery without changing runtime code.
-  await page.route('**/game/content.js',async route=>{
-    const response=await route.fetch();
-    await route.fulfill({response,body:(await response.text())+"\nC.episodes[1].ready=true;C.episodes[1].content={mystery:{title:'Another town mystery'},gift:{cardTitle:'Second keepsake',unwrapCopy:'Layer 2 is yours.'}};"});
-  });
-  await enter(page);await action(page,'go:mystery').click({force:true});await action(page,'case-start').click({force:true});await action(page,'go:hidden').click({force:true});await action(page,'parcel:1').click({force:true});await action(page,'go:hub').first().click({force:true});
-  await action(page,'episode:2').click({force:true});await action(page,'go:mystery').click({force:true});await expect(page.locator('h1')).toHaveText('Another town mystery');await action(page,'case-start').click({force:true});await action(page,'go:hidden').click({force:true});
-  await expect(page.locator('#found-count')).toHaveText('0 / 4 found');
-  for(const id of [1,5,10,14])await action(page,`parcel:${id}`).click({force:true});
-  await action(page,'go:cipher').click({force:true});await action(page,'cipher:6').click({force:true});await action(page,'go:riddle').click({force:true});await action(page,'riddle:note').click({force:true});await action(page,'go:mysteryCode').click({force:true});await page.locator('#layer-code').fill('462');await page.locator('#layer-form button').click({force:true});await action(page,'claim:mystery').click({force:true});
-  await expect(page.locator('.keepsake h2')).toHaveText('Second keepsake');await page.reload();await expect(page.locator('.keepsake h2')).toHaveText('Second keepsake');
-  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([2]);
-  await action(page,'go:hub').first().click({force:true});await action(page,'episode:1').click({force:true});await action(page,'go:mystery').click({force:true});await action(page,'go:mysteryMap').click({force:true});await action(page,'go:hidden').click({force:true});await expect(page.locator('#found-count')).toHaveText('1 / 4 found');
+  await enter(page);await expect(page.locator('#storage-notice')).toBeVisible();await openWrap(page);await expect(page.locator('h1')).toHaveText('Tansy’s Wrap Station');
 });
 
 test('desktop keys, touch-only labels, portrait fit and reduced-motion feedback',async({browser})=>{
   const context=await browser.newContext({viewport:{width:1100,height:850},hasTouch:false,isMobile:false,reducedMotion:'reduce'}),page=await context.newPage();
-  await enter(page);await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await enter(page);await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await expect(page.locator('kbd').first()).toBeVisible();await page.clock.runFor(2700);await page.keyboard.press('d');await expect(page.locator('#combo')).toHaveText('1× combo');
   const firstNotes=C.wrap.songs[0].variants.tunie.events.slice(0,4);
   for(let i=1;i<4;i++){await page.clock.runFor(firstNotes[i].time-firstNotes[i-1].time);await page.keyboard.press(['d','ArrowDown','j','k'][i]);}
@@ -202,13 +164,13 @@ test('sound: sampled instruments, matching melody, count-in, mute and resume',as
     Audio.prototype.createBufferSource=function(){const source=create.call(this),start=source.start;
       source.start=function(...args){window.played.push({length:source.buffer.length,rate:source.playbackRate.value});return start.apply(this,args);};return source;};
   });
-  await enter(page);await action(page,'sound').click({force:true});await action(page,'go:wrap').click({force:true});
+  await enter(page);await action(page,'sound').click({force:true});await openWrap(page);
   await expect(page.locator('#music-loading')).toBeHidden();
   await action(page,'go:wrapPractice').click({force:true});await page.evaluate(()=>window.played=[]);
   for(let lane=0;lane<4;lane++)await page.locator(`[data-lane="${lane}"]`).click({force:true});
   const sounds=await page.evaluate(()=>window.played);expect(sounds).toHaveLength(4);
   expect(new Set(sounds.map(s=>s.length)).size).toBe(4);
-  await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(500);await expect(page.locator('#feedback')).toHaveText('3…');
   await page.clock.runFor(750);await expect(page.locator('#feedback')).toHaveText('2…');
   await page.clock.runFor(750);await expect(page.locator('#feedback')).toHaveText('1…');
@@ -228,12 +190,12 @@ test('audio assets load only inside Wrap; a failed bank leaves visual play and p
   let release;
   const gate=new Promise(resolve=>release=resolve);
   await page.route('**/audio/sources.json',async route=>{await gate;await route.fulfill({status:200,contentType:'application/json',body:'{}'});});
-  await action(page,'go:wrap').click({force:true});await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicLoading);
+  await openWrap(page);await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicLoading);
   release();await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicFailed);
   await action(page,'go:wrapPractice').click({force:true});
   for(let lane=0;lane<4;lane++)await page.locator(`[data-lane="${lane}"]`).click({force:true});
   await expect(action(page,'practice-guide')).toBeEnabled();
-  await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(2700);await page.locator('[data-lane="0"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
   await page.clock.runFor(50000);await expect(page.locator('.grade-medal')).toHaveText('C');
 });
