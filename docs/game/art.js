@@ -67,10 +67,57 @@ export function landscape() {
   return svg(240,80,s,'landscape');
 }
 export function moveIcon(id) {
-  if(id==='fold')return svg(24,24,r(2,5,20,15,'red')+r(2,5,20,3,'cream')+r(5,8,14,3,'cream')+r(8,11,8,3,'cream')+r(11,14,2,3,'cream'));
-  if(id==='tape')return svg(24,24,r(3,4,15,15,'gold')+r(6,7,9,9,'cream')+r(9,10,3,3,'ink')+r(14,16,8,5,'gold'));
-  if(id==='ribbon')return svg(24,24,r(4,2,16,4,'gold')+r(6,6,12,12,'red')+r(4,18,16,4,'gold')+r(7,10,10,2,'redLight'));
-  return svg(24,24,r(2,5,6,11,'gold')+r(8,8,3,6,'gold')+r(10,10,5,5,'goldShade')+r(16,5,6,11,'gold')+r(14,8,3,6,'gold')+r(8,15,3,6,'gold')+r(15,15,3,6,'gold'));
+  const c='currentColor';
+  if(id==='fold')return svg(32,32,r(2,7,28,21,'ink')+r(4,9,24,17,c)+`<path d="M4 9H28L16 21Z" fill="#fff3d6"/><path d="M4 26L12 18M28 26L20 18" stroke="#29283d" stroke-width="2"/>`,'move-art');
+  if(id==='tape')return svg(32,32,r(5,3,18,3,'ink')+r(2,6,24,18,'ink')+r(5,6,18,18,c)+r(8,9,12,12,'ink')+r(11,12,6,6,'cream')+r(17,23,13,6,'ink')+r(19,23,9,3,c),'move-art');
+  if(id==='ribbon')return svg(32,32,r(5,2,22,5,'ink')+r(7,7,18,18,'ink')+r(5,25,22,5,'ink')+r(7,3,18,2,'cream')+r(9,7,14,18,c)+r(9,11,14,2,'cream')+r(9,17,14,2,'cream')+r(7,26,18,2,'cream'),'move-art');
+  return svg(32,32,`<path d="M2 5H10V8H13V12H19V8H22V5H30V21H22V18H19V21H21V30L16 27L11 30V21H13V18H10V21H2Z" fill="#29283d"/><path d="M4 7H9V10H12V15H9V19H4ZM28 7H23V10H20V15H23V19H28ZM13 21H15V26H13ZM17 21H19V26H17Z" fill="${c}"/>`+r(13,12,6,7,c),'move-art');
+}
+
+// A complete, lightweight, original pixel environment, rendered behind the game UI.
+export function scene(kind='town') {
+  let s=r(0,0,240,400,'#87c7d4')+r(0,165,240,235,'#edf5e6');
+  for(const [x,y] of [[4,30],[100,16],[196,52]])s+=r(x,y,28,4,'snow')+r(x+5,y-4,16,4,'snow');
+  s+=r(196,13,18,18,'#ffe4a4')+r(200,9,10,26,'#ffe4a4');
+  // Snowy evergreens behind the houses.
+  for(const [x,y] of [[0,110],[35,95],[180,88],[221,114]]){
+    s+=r(x+8,y+10,4,58,'brown');
+    for(let i=0;i<4;i++)s+=r(x+8-i*4,y+i*12,4+i*8,15,'green')+r(x+8-i*4,y+i*12,4+i*8,3,'snow');
+  }
+  for(const [x,y,color] of [[-20,102,'#bb6c62'],[34,80,'#478783'],[158,88,'#a483b5'],[206,110,'#be8957']]){
+    s+=r(x,y+23,49,71,'ink')+r(x+3,y+25,43,66,color);
+    for(let i=0;i<5;i++)s+=r(x-4+i*5,y+22-i*5,57-i*10,7,'ink')+r(x-4+i*5,y+20-i*5,57-i*10,3,'snow');
+    for(const wx of [x+8,x+31])s+=r(wx,y+38,11,16,'ink')+r(wx+2,y+40,7,12,'gold')+r(wx+5,y+40,1,12,'brown')+r(wx+2,y+46,7,1,'brown');
+    s+=r(x+20,y+67,11,27,'ink')+r(x+22,y+69,7,25,'red')+r(x-2,y+94,53,4,'snow');
+  }
+  s+=`<path d="M102 169H139L192 400H40Z" fill="#dfcda8"/><path d="M111 169H128L162 400H73Z" fill="#eddfbd"/>`;
+  for(let y=207;y<400;y+=29)s+=r(82-(y-207)/5,y,76+(y-207)/3,2,'#c7b88e');
+  // Foreground fence and gift stalls.
+  for(let x=0;x<240;x+=14)s+=r(x,331,5,48,'#b78960')+r(x,330,5,4,'snow');
+  s+=r(0,342,240,5,'#946647')+r(0,365,240,5,'#946647');
+  if(kind!=='town'){
+    const indoor=kind==='house';
+    s+=r(0,0,240,400,indoor?'#d6ac80':'#b14c58');
+    for(let x=0;x<240;x+=20)s+=r(x,0,2,400,indoor?'#be946f':'#983e50');
+    s+=r(0,233,240,167,'#b78356');
+    for(let y=241;y<400;y+=23)s+=r(0,y,240,2,'#95643f');
+    for(const x of [16,154]){
+      s+=r(x,38,70,119,'ink')+r(x+4,42,62,111,'cream')+r(x+8,46,54,103,'#87c7d4');
+      s+=r(x+8,114,54,35,'snow')+r(x+32,46,5,103,'brown')+r(x+8,87,54,5,'brown');
+      s+=r(x-4,151,78,7,'brown')+r(x,150,70,3,'gold');
+    }
+    s+=r(5,186,230,18,'ink')+r(9,188,222,7,'goldShade')+r(9,204,10,39,'brown')+r(221,204,10,39,'brown');
+    if(!indoor){
+      for(let x=0;x<240;x+=24)s+=r(x,0,24,25,(x/24)%2?'cream':'red')+r(x,25,24,5,'ink');
+      s+=r(4,190,232,210,'red');
+      for(let x=12;x<240;x+=24)s+=r(x,203,3,197,'#93374d');
+    }
+  }
+  // Evergreen garland, golden bulbs and red bows frame every scene.
+  for(let x=0;x<240;x+=12){let y=5+(Math.floor(x/12)%4)*2;s+=r(x,y,16,8,'green')+r(x+2,y,10,2,'mint')+r(x+5,y+8,3,4,'gold');}
+  for(const x of [20,116,212])s+=r(x,8,5,5,'redLight')+r(x+8,8,5,5,'redLight')+r(x+5,11,3,7,'red');
+  s+=r(0,393,240,7,'snow');
+  return svg(240,400,s,'world-scene').replace('<svg ','<svg preserveAspectRatio="xMidYMid slice" ');
 }
 export function parcel(index,data) {
   const striped=data.striped.includes(index),bow=data.bows.includes(index);

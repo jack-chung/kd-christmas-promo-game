@@ -10,4 +10,4 @@ Choose a preset nickname/helper. Review mode bypasses dates; **Review controls**
 
 Serve `docs/` with `npm run dev` or any static HTTP server. No runtime dependencies or build step. Install test tools with `npm install`; run `npm test` and `npm run test:browser` (installed Chrome required). See [TECHNICAL_PLAN.md](TECHNICAL_PLAN.md) for state, dates, episode extension, and WebKit checks.
 
-Progress stays on the device. No accounts, typed names, analytics, or trackers. All game art and percussion are original. Finale copy/code remain placeholders. This is an unannounced public review preview; `noindex` is requested. GitHub Pages publishes `main:/docs`.
+Progress stays on the device. No accounts, typed names, analytics, or trackers. All game art and synthesized tunes are original. Wrap Station uses four falling-shape lanes; tap matching buttons, or use D F J K / arrow keys on desktop. Finale copy/code remain placeholders. This is an unannounced public review preview; `noindex` is requested. GitHub Pages publishes `main:/docs`.

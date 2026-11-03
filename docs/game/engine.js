@@ -42,7 +42,6 @@ export function countdown(date,now=Date.now()) {const minutes=Math.max(0,Math.ce
 export function clock(ms) {const sec=Math.floor(Math.max(0,ms)/1000);return fmt(C.app.time,{minutes:Math.floor(sec/60),seconds:String(sec%60).padStart(2,'0')});}
 export const grade=ratio=>ratio>=.94?'S':ratio>=.78?'A':ratio>=.52?'B':'C';
 export const timing=(offset,difficulty)=>Math.abs(offset)<=difficulty.perfect?2:Math.abs(offset)<=difficulty.window?1:0;
-export const rhythmAction=(index,wrap=C.wrap)=>wrap.actions[Math.floor(index/2)%wrap.actions.length];
 export const mysteryCode=(mystery=C.mystery)=>mystery.hiddenDigit+mystery.cipherAnswer+mystery.riddleDigit;
 export const mysteryComplete=m=>m && ['hidden','cipher','riddle'].every(id=>m.solved.includes(id));
 export const stars=m=>Math.max(0,3-m.hints.length);
