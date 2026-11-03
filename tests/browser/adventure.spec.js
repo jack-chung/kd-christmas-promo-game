@@ -144,7 +144,7 @@ test('storage denial and malformed saves still allow first-run play',async({page
 
 test('desktop keys, touch-only labels, portrait fit and reduced-motion feedback',async({browser})=>{
   const context=await browser.newContext({viewport:{width:1100,height:850},hasTouch:false,isMobile:false,reducedMotion:'reduce'}),page=await context.newPage();
-  await enter(page);await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await enter(page);await openWrap(page);await action(page,'wrap-start').click();await action(page,'wrap-ready').click();
   await expect(page.locator('kbd').first()).toBeVisible();await page.clock.runFor(2700);await page.keyboard.press('d');await expect(page.locator('#combo')).toHaveText('1× combo');
   const firstNotes=C.wrap.songs[0].variants.tunie.events.slice(0,4);
   for(let i=1;i<4;i++){await page.clock.runFor(firstNotes[i].time-firstNotes[i-1].time);await page.keyboard.press(['d','ArrowDown','j','k'][i]);}

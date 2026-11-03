@@ -7,6 +7,8 @@ Buildless front-end mobile game: native ES modules, HTML/CSS, original SVG pixel
 - `docs/index.html`: game entry; game title and copy come from the content module.
 - `docs/game/content.js`: **all player-facing copy and character names**, preset identities, game release dates, difficulty settings, placeholder finale code/message.
 - `docs/game/engine.js`: save schema/validation, date gates, grading/timing, stacking collision rules; no DOM.
+- `docs/game/sorting.js`: pure endless sorting engine; stages, overrides, queue, scoring and medals.
+- `docs/game/sorting-ui.js`: portrait sorting room, cards, pause, pointer/number-key input and original synthesized soundtrack.
 - `docs/game/rhythm.js`: pure lane/timing judgement, penalties, combos and customer grades.
 - `docs/game/music.js`: lazy CC0 sample bank, sampled lane instruments, original bass/chord/kit/pad backing and output-latency-aware scheduling. `docs/game/audio/` holds the bank, pinned sources, full CC0 licence and reachable credits.
 - `docs/game/app.js`: guarded hash navigation, screens, input, saves, review controls, game loops, audio lifecycle, pause/resume.
@@ -23,7 +25,7 @@ Buildless front-end mobile game: native ES modules, HTML/CSS, original SVG pixel
 Cozy pixel art selected by user November 3, 2026. Preserve the red-cap apron wrapper, green-beanie glasses kid, sunglasses King, singers, and note-creature Tunies. Use original small sprites rather than concept-image crops. No licensed artwork, lyrics, script passages, or prohibited story spoilers. Names and text live in content.js.
 
 ## State and privacy
-`tuneville-gift-v1` localStorage holds schema v2: preset profile, earned slot IDs, paper, sound, Wrap/Tower bests and finale completion. Older schemas reset safely. `tuneville-host-time-v1` stores the latest verified instant. No typed names, tracking or network saves. Storage failure leaves an in-memory game. Review mode is explicit `?review=1`; preview screens never award layers.
+`tuneville-gift-v1` localStorage holds schema v2: preset profile, earned slot IDs, paper, sound, Wrap/Tower/Sorting bests, Sorting practice completion, shared postmark paper IDs and finale completion. Older schemas reset safely. `tuneville-host-time-v1` stores the latest verified instant. No typed names, tracking or network saves. Storage failure leaves an in-memory game. Review mode is explicit `?review=1`; preview screens never award layers.
 
 ## Dates and availability
 `C.episodes` in content.js defines four ordered game slots: Wrap Nov 13, Sorting Office Nov 20, Tower Nov 27, Sleigh-Cart Run Dec 4, all at Toronto midnight (05:00 UTC). Open games stay open. Locked and unbuilt hub cards/house links are disabled, dimmed and have no card arrow; blocked direct game URLs return to the hub. Each slot’s cast selects its distinct card host. Open cards show “Not played yet” until their layer records a completed run, including zero-score runs; then they show the saved best. Unbuilt slots stay coming soon even in review mode. Finale remains Dec 12, 2026 at 4 PM Toronto (`2026-12-12T21:00:00Z`). Countdown targets the next slot date, then finale.
@@ -61,3 +63,8 @@ Runtime needs no npm installation or build. `npm run dev` serves docs/ on port 4
 - Style sheet: https://jack-chung.github.io/kd-christmas-promo-game/art-direction/style-sheet.html
 
 After checks, commit/push to main triggers the authorized preview publication from /docs. Verify the matching Pages build and live assets. No other hosting service is used.
+
+## Sorting Office
+Slot 2 uses the existing Nov 20 trusted-clock gate. `C.sorting` holds all copy, stages, arrival milliseconds, gifts per promotion, difficulty starting stages/climb multipliers, decree pool, queue capacity, warm-up timing, mistake relief, scoring and medal thresholds. Stage 2 expands from three to four streets at `fourAfter`; royal stages use three streets plus Fragile and Royal so there are never more than five targets. Fragile wins over Royal, then street. Every new stage/decree and the fourth street pauses for an icon card; no game time passes during cards, manual pause or backgrounding. Decrees rotate at the content interval; shuffle rotates target order. Stage 8+ repeats the last rules while arrival speeds climb toward the configured floor.
+
+Three correct practice sorts complete the first-visit tutorial; wrong practice inputs retry and gifts never overflow. Each genuine five-oops run immediately awards Ribbon idempotently, updates the shared best and unlocks up to three postmark papers at difficulty-specific thresholds. Papers are shared with the existing gift renderer and collection. Save schema remains v2; missing sorting fields default safely. Review setup offers stages 1–8; ordinary setup has no picker. Original synthesized low bass, pitched landings, royal fanfares and combo echoes add no binary assets and use no bell timbres. Physical phone listening and adult calibration remain human review.

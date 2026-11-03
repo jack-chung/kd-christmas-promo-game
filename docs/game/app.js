@@ -1,3 +1,5 @@
+import {createSorting,sortingMedals} from './sorting.js';
+import {sortingPlayView,activateSorting} from './sorting-ui.js';
 import { C as baseContent, episodeContent } from './content.js';
 let episode=baseContent.episodes.find(ep=>ep.id===Number(new URLSearchParams(location.search).get('episode')))||baseContent.episodes[0];
 let C=episodeContent(episode);
@@ -31,8 +33,9 @@ const status=()=>'<p class="feedback" id="feedback" role="status" aria-live="pol
 function persist(){storageOK=writeSave(storage,save);const notice=$('#storage-notice');if(notice)notice.hidden=storageOK;}
 function toast(message){const el=$('#toast');if(!el)return;clearTimeout(toastTimer);el.textContent=message;el.classList.add('visible');toastTimer=setTimeout(()=>el.classList.remove('visible'),2600);}
 function feedback(message){const el=$('#feedback');if(el)el.textContent=message;}
-const routes=new Set(['onboard','hub','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults','gift','unwrap','collection','finale','finalReveal','certificate','invitation','review']);
-const gated=new Set(['wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults']);
+let sorting=null,sortingResult=null,sortingDifficulty='easy';
+const routes=new Set(['sorting','sortingPlay','sortingResults','onboard','hub','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults','gift','unwrap','collection','finale','finalReveal','certificate','invitation','review']);
+const gated=new Set(['sorting','sortingPlay','sortingResults','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults']);
 
 const music=new Music(()=>save.sound);
 const unlockAudio=()=>music.unlock();
@@ -52,6 +55,9 @@ function navigate(target,{demo=false}={}) {
   preview=demo&&review;
   if(!save.profile&&!['onboard','invitation','review'].includes(target)){target='onboard';preview=false;}
   if(target.startsWith('wrap')){episode=C.episodes.find(ep=>ep.game==='wrap');C=episodeContent(episode);}
+  if(target.startsWith('sorting')){episode=C.episodes.find(ep=>ep.game==='sorting');C=episodeContent(episode);}
+  if(target==='sortingPlay'&&!sorting)target='sorting';
+  if(target==='sortingResults'&&!sortingResult)target='sorting';
   if(target.startsWith('tower')){episode=C.episodes.find(ep=>ep.game==='tower');C=episodeContent(episode);}
   if(gated.has(target)&&!episodeOpen(episode,review))target='hub';
   if(['finalReveal','certificate'].includes(target)&&!save.finale&&!preview)target='finale';
@@ -72,9 +78,9 @@ function render(){
     const message=$('#music-loading');
     if(message){message.textContent=music.state==='failed'?C.wrap.musicFailed:'';message.hidden=music.state==='ready';}
   });
-  const scenes={onboard:onboardView,hub:hubView,wrap:wrapView,wrapPractice:practiceView,wrapOrder:orderView,wrapPlay:wrapPlayView,wrapGift:wrapGiftView,wrapResults:wrapResultsView,tower:towerView,towerPlay:towerPlayView,towerResults:towerResultsView,gift:giftView,unwrap:unwrapView,collection:collectionView,finale:finaleView,finalReveal:finalRevealView,certificate:certificateView,invitation:invitationView,review:reviewView};
-  document.body.dataset.scene=view.startsWith('wrap')?'workshop':'town';
-  document.body.classList.toggle('rhythm-active',Boolean(view==='wrapPlay'||(view==='wrapPractice'&&practice.guided)));
+  const scenes={sorting:sortingView,sortingPlay:()=>sortingPlayView(sorting),sortingResults:sortingResultsView,onboard:onboardView,hub:hubView,wrap:wrapView,wrapPractice:practiceView,wrapOrder:orderView,wrapPlay:wrapPlayView,wrapGift:wrapGiftView,wrapResults:wrapResultsView,tower:towerView,towerPlay:towerPlayView,towerResults:towerResultsView,gift:giftView,unwrap:unwrapView,collection:collectionView,finale:finaleView,finalReveal:finalRevealView,certificate:certificateView,invitation:invitationView,review:reviewView};
+  document.body.dataset.scene=(view.startsWith('wrap')||view.startsWith('sorting'))?'workshop':'town';
+  document.body.classList.toggle('rhythm-active',Boolean(view==='wrapPlay'||(view==='wrapPractice'&&practice.guided)||view==='sortingPlay'));
   root.innerHTML=`<div class="scene-backdrop" aria-hidden="true">${scene(document.body.dataset.scene)}</div>${review?`<div class="review-strip">${esc(C.review.active)} ${button(C.hub.review,'review-menu','text-button')}</div>`:''}
     <header class="topbar"><a href="#hub" class="brand" data-action="go:hub"><span class="brand-gift">${gift({small:true})}</span><span>${esc(C.app.title)}</span></a><div class="top-actions">${view!=='onboard'?nav(C.app.home,'hub','small-button'):''}${button(save.sound?C.app.soundOn:C.app.soundOff,'sound','small-button','aria-pressed="'+save.sound+'"')}</div></header>
     <main class="screen screen-${view}" id="main">${preview?`<p class="preview-label">${esc(C.review.preview)}</p>`:''}${scenes[view]()}${music.wrap?`<p id="music-loading" class="subtle" role="status" ${music.state==='ready'?'hidden':''}>${esc(music.state==='failed'?C.wrap.musicFailed:C.wrap.musicLoading)}</p>`:''}${['unwrap','finalReveal','wrapGift','wrapResults',].includes(view)?celebration():''}</main>
@@ -84,16 +90,17 @@ function render(){
   if(view==='wrapPlay')activateWrap();
   if(view==='wrapPractice')activatePractice();
   if(view==='towerPlay')activateTower();
+  if(view==='sortingPlay')dispose=activateSorting(root,sorting,{finish:finishSorting,music,home:()=>navigate('hub')});
   if(view==='unwrap'||view==='finalReveal'){const id=setTimeout(()=>$('#unwrap-scene')?.classList.add('unwrapped'),80);dispose=()=>clearTimeout(id);}
 }
 function onboardView(){return `<div class="welcome-scene">${landscape()}<div class="welcome-party">${character('kid')}${gift()}${character('wrapper')}</div></div>${heading(C.app.brand,C.profile.title,C.profile.intro)}<div class="nameplate">${eyebrow(C.profile.nameLabel)}<strong id="nickname">${esc(nickname(profile))}</strong>${button(C.profile.shuffle,'shuffle','text-button')}</div><fieldset class="avatar-picker"><legend>${esc(C.profile.choose)}</legend>${C.profile.avatars.map(a=>`<label class="avatar-option"><input type="radio" name="avatar" value="${a.id}" ${profile.avatar===a.id?'checked':''}>${character(a.id)}<span>${esc(a.name)}</span></label>`).join('')}</fieldset>${button(C.profile.start,'profile','primary full')}`;}
 function hubView(){return `${eyebrow(C.hub.eyebrow)}<div class="hub-heading"><div><p class="greeting">${t(C.hub.greeting,{name:nickname(save.profile)})}</p><h1 tabindex="-1">${esc(C.hub.title)}</h1></div>${character(save.profile.avatar)}</div><section class="village" aria-label="${esc(C.app.title)}">${landscape()}<div class="village-houses">${C.episodes.map((ep,i)=>`<button class="house ${episodeOpen(ep,review)?'':'locked'}" data-action="episode:${ep.id}" ${episodeOpen(ep,review)?'':'disabled'} aria-label="${t(C.hub.house,{number:ep.house})}: ${esc(episodeOpen(ep,review)?fmt(C.hub.playEpisode,{number:ep.id}):ep.ready?fmt(C.hub.locked,{date:ep.label}):C.hub.coming)}">${house(i,!episodeOpen(ep,review))}<span class="house-number">${ep.house}</span><span class="house-date">${esc(ep.label)}</span></button>`).join('')}<button class="house finale-house" data-action="go:finale" aria-label="${esc(C.finale.title)}">${house(2,!dateOpen(C.finale.date,review))}<span class="house-number">${C.finale.house}</span><span class="house-date">${esc(C.gift.finale)}</span></button></div><button class="village-gift" data-action="go:gift">${gift({paper:save.paper})}<span>${esc(C.hub.viewGift)}</span><small>${t(C.hub.layerCount,{count:save.layers.length})}</small></button><div class="village-cast">${character('wrapper')}${character('kid')}${character('note')}</div></section><p class="intro">${esc(C.hub.intro)}</p><div class="countdown-card"><span>${esc(C.hub.next)}</span><strong id="countdown"></strong></div>${eyebrow(C.hub.choose)}<p class="subtle">${t(C.hub.selectedEpisode,{number:episode.id,date:episode.label})}</p><div class="adventures">${C.episodes.map(adventure).join('')}</div><div class="hub-links">${nav(C.hub.collection,'collection','secondary')}${nav(C.hub.invite,'invitation','secondary')}</div>`;}
-function adventure(ep){const open=episodeOpen(ep,review);return `<button class="adventure" data-action="episode:${ep.id}" ${open?'':'disabled'}><span class="adventure-number">0${ep.id}</span>${character(ep.cast)}<span class="adventure-copy"><strong>${esc(ep.title)}</strong><small>${esc(ep.label)}</small><span class="availability">${esc(!ep.ready?C.hub.coming:open?(save.layers.includes(ep.id)?fmt(C.app.best,{value:ep.game==='wrap'?save.wrapBest:save.towerBest}):C.app.notPlayed):fmt(C.hub.locked,{date:ep.label}))}</span></span>${open?'<span class="arrow">↗</span>':''}</button>`;}
+function adventure(ep){const open=episodeOpen(ep,review);return `<button class="adventure" data-action="episode:${ep.id}" ${open?'':'disabled'}><span class="adventure-number">0${ep.id}</span>${character(ep.cast)}<span class="adventure-copy"><strong>${esc(ep.title)}</strong><small>${esc(ep.label)}</small><span class="availability">${esc(!ep.ready?C.hub.coming:open?(save.layers.includes(ep.id)?fmt(C.app.best,{value:ep.game==='wrap'?save.wrapBest:ep.game==='sorting'?save.sortingBest:save.towerBest}):C.app.notPlayed):fmt(C.hub.locked,{date:ep.label}))}</span></span>${open?'<span class="arrow">↗</span>':''}</button>`;}
 let lastGateState='';
 function updateCountdown(){const state=C.episodes.map(ep=>episodeOpen(ep,review)).join()+dateOpen(C.finale.date,review);if(lastGateState&&state!==lastGateState){lastGateState=state;navigate('hub');return;}lastGateState=state;const el=$('#countdown');if(!el)return;const next=nextRelease(trusted.now());el.textContent=!trusted.online?C.hub.offline:next?fmt(C.hub.countdown,countdown(next.date,trusted.now())):C.hub.allOpen;}
 function giftView(){return `${heading(C.app.title,C.gift.title,C.gift.intro)}<div class="gift-stage">${gift({paper:save.paper})}<p class="gift-tag">${esc(C.hub.giftTag)}<small>${esc(C.hub.giftTime)}</small></p></div><ol class="layer-list">${C.episodes.map((ep,i)=>`<li class="${save.layers.includes(ep.id)?'collected':''}"><span class="layer-icon">${save.layers.includes(ep.id)?'✓':ep.id}</span><span><strong>${esc(C.gift.layers[i])}</strong><small>${esc(save.layers.includes(ep.id)?C.gift.earned:!ep.ready&&dateOpen(ep.date,review)?C.gift.notBuilt:fmt(C.gift.waiting,{date:ep.label}))}</small></span></li>`).join('')}<li><span class="layer-icon">✦</span><span><strong>${esc(C.gift.finale)}</strong><small>${esc(C.finale.locked)}</small></span></li></ol>${save.finale?nav(C.finale.showCertificate,'certificate','primary full'):dateOpen(C.finale.date,review)?nav(C.finale.title,'finale','primary full'):nav(C.gift.play,'hub','primary full')}`;}
 function unwrapView(){return `<div class="unwrap-scene" id="unwrap-scene">${gift({paper:save.paper})}<span class="spark s1">✦</span><span class="spark s2">✦</span><span class="spark s3">✦</span><span class="spark s4">✦</span></div>${heading(C.gift.cardLabel,(wrapResult?.replay||towerResult?.replay)?C.gift.replayTitle:C.gift.unwrapTitle,C.gift.unwrapCopy)}<article class="keepsake">${character('wrapper')}${eyebrow(C.gift.cardLabel)}<h2>${esc(C.gift.cardTitle)}</h2><p>${esc(C.gift.cardCopy)}</p></article><p class="unlock-banner">${esc(C.gift.paper)}</p>${nav(C.hub.collection,'collection','primary full')}${nav(C.app.home,'hub','secondary full')}`;}
-function collectionView(){return `${heading(C.app.title,C.gift.collectionTitle,C.gift.collectionIntro)}${save.layers.length?`${save.layers.map(id=>{const giftCopy=episodeContent(C.episodes.find(ep=>ep.id===id)).gift;return `<article class="keepsake">${character('wrapper')}${eyebrow(giftCopy.cardLabel)}<h2>${esc(giftCopy.cardTitle)}</h2><p>${esc(giftCopy.cardCopy)}</p></article>`;}).join('')}<div class="paper-grid">${['cranberry','stars'].map(p=>`<article class="paper-card">${gift({paper:p,small:true})}<h2>${esc(p==='stars'?C.gift.starPaper:C.gift.defaultPaper)}</h2>${button(save.paper===p?C.gift.equipped:C.gift.equip,`paper:${p}`,'secondary',save.paper===p?'disabled':'')}</article>`).join('')}</div>`:`<div class="empty-state">${gift()}<p>${esc(C.gift.empty)}</p>${nav(C.gift.play,'hub')}</div>`}`;}
+function collectionView(){return `${heading(C.app.title,C.gift.collectionTitle,C.gift.collectionIntro)}${save.layers.length?`${save.layers.map(id=>{const giftCopy=episodeContent(C.episodes.find(ep=>ep.id===id)).gift;return `<article class="keepsake">${character('wrapper')}${eyebrow(giftCopy.cardLabel)}<h2>${esc(giftCopy.cardTitle)}</h2><p>${esc(giftCopy.cardCopy)}</p></article>`;}).join('')}<div class="paper-grid">${['cranberry','stars',...save.papers].map(p=>`<article class="paper-card">${gift({paper:p,small:true})}<h2>${esc(C.sorting.papers.find(paper=>paper.id===p)?.name||(p==='stars'?C.gift.starPaper:C.gift.defaultPaper))}</h2>${button(save.paper===p?C.gift.equipped:C.gift.equip,`paper:${p}`,'secondary',save.paper===p?'disabled':'')}</article>`).join('')}</div>`:`<div class="empty-state">${gift()}<p>${esc(C.gift.empty)}</p>${nav(C.gift.play,'hub')}</div>`}`;}
 
 function wrapView(){return `${heading(C.wrap.eyebrow,C.wrap.title,C.wrap.intro)}<div class="cast-line">${character('kid')}${character('wrapper')}${character('king')}${character('singer')}</div><section class="instruction-card"><h2>${esc(C.wrap.tutorial)}</h2><ol>${C.wrap.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(C.wrap.tutorialEnd)}</p>${nav(C.wrap.practice,'wrapPractice','secondary full')}</section><fieldset class="difficulty"><legend>${esc(C.wrap.choose)}</legend>${C.wrap.difficulty.map(d=>`<label><input type="radio" name="difficulty" value="${d.id}" ${difficulty===d.id?'checked':''}><strong>${esc(d.label)}</strong><small>${esc(d.detail)}</small></label>`).join('')}</fieldset><p class="subtle">${esc(C.wrap.duration)}</p>${button(C.wrap.start,'wrap-start','primary full')}<p class="subtle"><a href="game/audio/credits.html" target="_blank" rel="noopener">${esc(C.wrap.musicCredits)}</a></p>`;}
 function laneButtons(){return `<div class="lane-buttons ${navigator.maxTouchPoints===0?'keyboard-controls':''}">${C.wrap.actions.map((a,i)=>`<button type="button" class="lane-button lane-${i}" data-lane="${i}" aria-label="${esc(a.label)}">${moveIcon(a.id)}<strong>${esc(a.label)}</strong><kbd>${esc(C.wrap.keys[i])}</kbd></button>`).join('')}</div>`;}
@@ -284,11 +291,11 @@ function activateTower(){
 
 function claim(source){
   const ep=C.episodes.find(ep=>ep.game===source);
-  const result=source==='wrap'?wrapResult:towerResult;
+  const result=source==='wrap'?wrapResult:source==='sorting'?sortingResult:towerResult;
   if(!ep||!result||preview||!episodeOpen(ep,review))return;
   episode=ep;C=episodeContent(ep);
   if(!save.layers.includes(ep.id))save.layers.push(ep.id);
-  save.paper='stars';persist();navigate('unwrap');unlockAudio();note(0,true);
+  if(source!=='sorting')save.paper='stars';persist();navigate('unwrap');unlockAudio();if(source==='sorting')music.tone(60,'tape');else note(0,true);
 }
 function jump(route){
   if(!review||!routes.has(route))return;
@@ -306,17 +313,18 @@ function resetDialog(){
 root.addEventListener('click',event=>{
   const el=event.target.closest('[data-action]');if(!el||el.disabled)return;event.preventDefault();
   const [action,value]=el.dataset.action.split(':');
+  if(action==='sorting-start'||action==='sorting-practice'){const chosen=review?Number($('#sort-stage-select')?.value)||undefined:undefined;const practice=action==='sorting-practice'||(!save.sortingPractice&&!chosen);sorting=createSorting(sortingDifficulty,chosen,practice);unlockAudio();navigate('sortingPlay');return;}
   if(action==='go'){if(value==='wrapPractice')practice=0;navigate(value,{demo:preview&&['unwrap','certificate'].includes(value)});return;}
   if(action==='jump'){jump(value);return;}
   if(action==='review-menu'){navigate('review');return;}
   if(action==='sound'){
-    save.sound=!save.sound;if(save.sound){unlockAudio();note(0,true);}else hush();persist();el.textContent=save.sound?C.app.soundOn:C.app.soundOff;el.setAttribute('aria-pressed',String(save.sound));return;
+    save.sound=!save.sound;if(save.sound){unlockAudio();if(view.startsWith('sorting'))music.tone(60,'tape');else note(0,true);}else hush();persist();el.textContent=save.sound?C.app.soundOn:C.app.soundOff;el.setAttribute('aria-pressed',String(save.sound));return;
   }
   if(action==='shuffle'){const avatar=profile.avatar;profile={...newProfile(),avatar};$('#nickname').textContent=nickname(profile);return;}
   if(action==='profile'){save.profile={...profile};persist();navigate('hub');return;}
   if(action==='episode'){const next=C.episodes.find(ep=>ep.id===Number(value))||C.episodes[0];if(episodeOpen(next,review)){selectEpisode(next);navigate(next.game);}return;}
   if(action==='first-episode'){selectEpisode(C.episodes[0]);navigate('hub');return;}
-  if(action==='paper'){if(save.layers.length&&['cranberry','stars'].includes(value)){save.paper=value;persist();render();}return;}
+  if(action==='paper'){if(save.layers.length&&['cranberry','stars',...save.papers].includes(value)){save.paper=value;persist();render();}return;}
   if(action==='practice-guide'){practice.guided=true;unlockAudio();dispose();render();return;}
   if(action==='wrap-start'){newWrap();unlockAudio();navigate('wrapOrder');return;}
   if(action==='wrap-ready'){run.round=null;run.start=0;run.paused=false;unlockAudio();navigate('wrapPlay');unlockAudio();return;}
@@ -336,7 +344,7 @@ root.addEventListener('click',event=>{
     try{storage?.removeItem(SAVE_KEY);}catch{}selectEpisode(C.episodes[0]);persist();navigate('onboard');toast(C.app.resetDone);return;
   }
 });
-root.addEventListener('change',event=>{if(event.target.name==='avatar')profile.avatar=event.target.value;if(event.target.name==='difficulty')difficulty=event.target.value;});
+root.addEventListener('change',event=>{if(event.target.name==='sorting-difficulty')sortingDifficulty=event.target.value;if(event.target.name==='avatar')profile.avatar=event.target.value;if(event.target.name==='difficulty')difficulty=event.target.value;});
 root.addEventListener('submit',event=>{
   event.preventDefault();
   if(event.target.id==='finale-form'){
@@ -361,3 +369,7 @@ navigate(location.hash.slice(1)||'hub');
 
 refreshTime();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+function sortingView(){return `${heading(C.sorting.eyebrow,C.sorting.title,C.sorting.intro)}<div class="cast-line">${character('singer')}${character('king')}${character('singer')}</div><fieldset class="difficulty"><legend>${esc(C.sorting.choose)}</legend>${C.sorting.difficulties.map(d=>`<label><input type="radio" name="sorting-difficulty" value="${d.id}" ${d.id===sortingDifficulty?'checked':''}><strong>${esc(d.label)}</strong><small>${esc(d.detail)}</small></label>`).join('')}</fieldset>${review?`<label>${esc(C.sorting.reviewStage)} <select id="sort-stage-select"><option value="0">—</option>${C.sorting.stages.map(s=>`<option value="${s.stage}">${s.stage}</option>`).join('')}</select></label>`:''}<p>${esc(C.app.mutedTip)}</p>${button(C.sorting.start,'sorting-start','primary full')}${save.sortingPractice?button(C.sorting.practice,'sorting-practice','secondary full'):''}`;}
+function finishSorting(r){if(r.practice){save.sortingPractice=true;persist();navigate('sorting');toast(C.sorting.practiceDone);return;}sortingResult={...r,replay:save.layers.includes(2)};if(episodeOpen(C.episodes[1],review)){if(!save.layers.includes(2))save.layers.push(2);save.sortingBest=Math.max(save.sortingBest,r.score);save.papers=[...new Set([...save.papers,...sortingMedals(r.difficulty,r.score)])];persist();}navigate('sortingResults');}
+function sortingResultsView(){const r=sortingResult,medals=sortingMedals(r.difficulty,r.score);return `${heading(C.sorting.title,C.sorting.results)}<div class="result-total">${r.score}<small>${esc(C.app.score)}</small></div><p>${t(C.sorting.stats,{sorted:r.sorted,combo:r.bestCombo,stage:r.stage})}</p><p class="unlock-banner">${esc(C.sorting.layer)}</p>${medals.length?medals.map(id=>`<p>${t(C.sorting.medal,{medal:C.sorting.papers.find(p=>p.id===id).medal})}</p>`).join(''):`<p>${esc(C.sorting.noMedal)}</p>`}${button(C.sorting.finish,'claim:sorting','primary full')}${nav(C.app.playAgain,'sorting','secondary full')}`;}

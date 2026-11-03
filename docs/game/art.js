@@ -38,11 +38,17 @@ export function character(id='wrapper',cls='') {
   return svg(40,46,s,`character ${cls}`);
 }
 export function gift({paper='cranberry',open=false,small=false}={}) {
-  const color=paper==='stars'?'green':'red';
-  let s=r(6,28,52,32,'ink')+r(8,30,48,28,color)+r(8,30,48,5,paper==='stars'?'mint':'redLight')+r(8,55,48,3,paper==='stars'?'#1c4d46':'#7f233c');
+  const postmark={'postmark-bronze':'#c58b58','postmark-silver':'#a9c8d0','postmark-gold':'#edc45d'}[paper];
+  const color=postmark||(paper==='stars'?'green':'red');
+  let s=r(6,28,52,32,'ink')+r(8,30,48,28,color)+r(8,30,48,5,postmark?'cream':paper==='stars'?'mint':'redLight')+r(8,55,48,3,postmark?'brown':paper==='stars'?'#1c4d46':'#7f233c');
   s+=`<g class="gift-lid">${r(0,24,64,8,'ink')}${r(2,25,60,5,color)}</g>`+r(27,25,10,33,'gold')+r(29,25,3,33,'cream');
+  if(postmark)for(const [x,y] of [[12,35],[40,45]]){
+    if(paper==='postmark-gold')s+=r(x,y,2,7,'ink')+r(x+5,y-2,2,9,'ink')+r(x+10,y,2,7,'ink')+r(x,y+5,12,4,'ink');
+    else if(paper==='postmark-silver')s+=r(x,y+4,12,2,'ink')+r(x+5,y,2,10,'ink')+r(x+2,y+1,2,2,'ink')+r(x+8,y+7,2,2,'ink');
+    else s+=r(x,y,12,10,'cream')+r(x+3,y+3,6,4,'ink');
+  }
   if(paper==='stars') for(const [x,y] of [[13,37],[44,40],[16,49],[46,52]])s+=r(x,y,6,2,'gold')+r(x+2,y-2,2,6,'gold');
-  else for(const [x,y] of [[13,38],[44,38],[13,49],[44,49]])s+=r(x,y,3,3,'redLight');
+  else if(!postmark)for(const [x,y] of [[13,38],[44,38],[13,49],[44,49]])s+=r(x,y,3,3,'redLight');
   if(!open)s+=`<g class="gift-bow">${r(28,17,8,9,'goldShade')}${r(9,10,15,5,'gold')}${r(6,14,7,8,'gold')}${r(12,20,16,5,'gold')}${r(21,14,6,8,'gold')}${r(40,10,15,5,'gold')}${r(51,14,7,8,'gold')}${r(36,20,16,5,'gold')}${r(37,14,6,8,'gold')}${r(28,17,8,8,'gold')}</g>`;
   else s+=r(18,3,4,5,'gold')+r(40,5,4,6,'gold')+r(30,0,3,4,'cream');
   return svg(64,64,s,`gift-art ${small?'small':''}`);

@@ -6,7 +6,7 @@ export const C = {
   hub: { eyebrow: 'WELCOME TO TUNEVILLE', title: 'A giant gift has arrived!', intro: 'A new game opens each Friday. Play to unwrap the gift, layer by layer.', greeting: 'Hey, {name}!', giftTag: 'DO NOT OPEN UNTIL DECEMBER 12', giftTime: '4 PM', layerCount: '{count} / 4 weekly layers', viewGift: '✦ Visit the mystery gift', choose: 'PICK YOUR NEXT ADVENTURE', wrap: 'Wrap Station', wrapSub: 'Find your rhythm. Make someone’s day.', tower:'Present Tower', towerSub:'One thumb. How high can you go?', play:'▶ Play Wrap Station', locked:'▣ Opens {date}', coming:'Coming soon', house:'House {number}', next:'NEXT GAME', countdown:'{days}d {hours}h {minutes}m', ready:'Wrap Station is open!', finaleReady:'It’s show day! The final layer is ready.', allOpen:'It’s show day! Visit the final gift.', collection:'▤ My keepsakes', invite:'✉ You’re invited', review:'Review controls', gallery:'Art direction gallery ↗', helper:'Your helper', layerOpen:'Layer 1 collected', },
   episodes: [
     {id:1,house:1,game:'wrap',title:'Wrap Station',cast:'wrapper',date:'2026-11-13T05:00:00Z',label:'Nov 13',ready:true},
-    {id:2,house:2,game:'sorting',title:'Sorting Office',cast:'king',date:'2026-11-20T05:00:00Z',label:'Nov 20',ready:false},
+    {id:2,house:2,game:'sorting',title:'Sorting Office',cast:'king',date:'2026-11-20T05:00:00Z',label:'Nov 20',ready:true},
     {id:3,house:3,game:'tower',title:'Present Tower',cast:'kid',date:'2026-11-27T05:00:00Z',label:'Nov 27',ready:true},
     {id:4,house:4,game:'sleigh',title:'Sleigh-Cart Run',cast:'note',date:'2026-12-04T05:00:00Z',label:'Dec 4',ready:false},
   ],
@@ -107,3 +107,27 @@ C.wrap.songs=[
     return [id,{duration:beats*beat,beat,events,automatic}];
   }))};
 });
+
+// Sorting calibration: milliseconds, gifts per promotion, and all rule order live here.
+C.sorting={
+ title:'The Royal Sorting Office', eyebrow:'TAG. SACK. THUMP!', intro:'Match each tag to its street. Keep the belt clear! Five oops ends your shift.',
+ pointer:'☞', choose:'Choose your shift', start:'Start sorting →', practice:'Try the practice', practiceIntro:'☞ Match the tag to the sack. Three gifts. Try again as often as you like!', practiceDone:'Practice complete! Ready for your shift.', continue:'Got it! →', stage:'Stage {stage}', reviewStage:'Start at stage', score:'{score} points · {combo}× combo', oops:'Oops {count} / 5', queue:'Belt {count} / {capacity}', sorted:'Sorted!', echo:'Sorted! …orted! …orted!', oopsLines:['Oh, Christmas tree!', 'Great gumdrops!', 'By my tinsel!'], results:'Your royal sorting report', stats:'{sorted} gifts sorted · best combo {combo} · stage {stage}', finish:'Collect my Ribbon →', layer:'Ribbon collected!', medal:'{medal} postmark earned!', noMedal:'Keep sorting to earn a postmark.', rush:'★ Rush', rushHint:'★ → {seconds}s', fragile:'Fragile shelf', royal:'Royal sack', tag:'Street tag', bow:'Bow', noBow:'No bow', priority:'Fragile first. Then the decree. Then the street.',
+ streets:[{id:'candy',name:'Candy Cane Lane',symbol:'◆',color:'#e5a0ad'},{id:'holly',name:'Holly Hill',symbol:'✚',color:'#79c8b0'},{id:'ginger',name:'Gingerbread Row',symbol:'●',color:'#edc06a'},{id:'tinsel',name:'Tinsel Terrace',symbol:'▲',color:'#8dc7e6'}],
+ patterns:[{id:'striped',label:'Striped',icon:'▨'},{id:'dotted',label:'Dotted',icon:'⠿'},{id:'plain',label:'Plain',icon:'■'}],
+ rules:{streets:'Match the street tag → matching sack',rush:'Golden tag → sort within 2 seconds for bonus points',fragile:'Glass icon → Fragile shelf, whatever the street',royal:'Royal decree → Royal sack. Glass still goes to Fragile!',switch:'A new royal decree! Check the feature and bow.',shuffle:'New decree! The sacks swap places, too.',speed:'You know the rules. The belt gets quicker!'},
+ difficulties:[{id:'easy',label:'Easy',detail:'Gentle start · slow climb',start:1,climb:1.8},{id:'tunie',label:'Tunie',detail:'Three streets · steady climb',start:2,climb:1},{id:'rapper',label:'Rapper',detail:'Fragile first · quick climb',start:4,climb:.6}],
+ stages:[
+ {stage:1,streets:2,arrival:5200,gifts:14,rule:'streets'},
+ {stage:2,streets:3,fourAfter:10,arrival:4200,gifts:24,rule:'streets'},
+ {stage:3,streets:4,arrival:3300,gifts:20,rule:'rush',rush:true},
+ {stage:4,streets:4,arrival:2800,gifts:22,rule:'fragile',rush:true,fragile:true},
+ {stage:5,streets:3,arrival:2400,gifts:24,rule:'royal',rush:true,fragile:true,royal:true},
+ {stage:6,streets:3,arrival:2000,gifts:26,rule:'switch',rush:true,fragile:true,royal:true,switch:30000},
+ {stage:7,streets:3,arrival:1650,gifts:28,rule:'shuffle',rush:true,fragile:true,royal:true,switch:30000,shuffle:true},
+ {stage:8,streets:3,arrival:1300,gifts:30,rule:'speed',rush:true,fragile:true,royal:true,switch:30000,shuffle:true}],
+ tuning:{capacity:4,slowGifts:3,slowArrival:5200,minArrival:450,speedStep:120,mistakeEase:.16,maxEase:.5,rushWindow:2000,basePoints:100,speedPoints:20,rushPoints:40,comboEvery:5,maxMultiplier:5,featureChance:.28},
+ decrees:[{pattern:'striped',bow:true},{pattern:'dotted',bow:false},{pattern:'plain',bow:true},{pattern:'striped',bow:false}],
+ medals:{easy:[800,3000,7500],tunie:[1200,4500,10000],rapper:[1600,6000,14000]},
+ papers:[{id:'postmark-bronze',name:'Bronze parcel paper',medal:'Bronze',color:'#c58b58'},{id:'postmark-silver',name:'Silver snow paper',medal:'Silver',color:'#a9c8d0'},{id:'postmark-gold',name:'Gold crown paper',medal:'Gold',color:'#edc45d'}]
+};
+C.review.routes.push(['sorting','Sorting Office setup']);

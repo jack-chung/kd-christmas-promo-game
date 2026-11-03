@@ -1,6 +1,6 @@
 import { C } from './content.js';
 export const SAVE_KEY = 'tuneville-gift-v1';
-export const freshSave = () => ({version:2,profile:null,layers:[],paper:'cranberry',sound:false,wrapBest:0,towerBest:0,finale:false});
+export const freshSave = () => ({version:2,profile:null,layers:[],paper:'cranberry',sound:false,wrapBest:0,towerBest:0,sortingBest:0,sortingPractice:false,papers:[],finale:false});
 export function validProfile(p) {
   return p && Number.isInteger(p.adjective) && p.adjective >= 0 && p.adjective < C.profile.adjectives.length && Number.isInteger(p.noun) && p.noun >= 0 && p.noun < C.profile.nouns.length && Number.isInteger(p.number) && p.number >= 10 && p.number <= 99 && C.profile.avatars.some(a => a.id === p.avatar);
 }
@@ -11,9 +11,11 @@ export function normalizeSave(raw) {
   if (!raw || raw.version!==2) return s;
   s.profile=validProfile(raw.profile)?raw.profile:null;
   s.layers=Array.isArray(raw.layers)?[...new Set(raw.layers.filter(id=>C.episodes.some(ep=>ep.id===id&&ep.ready)))]:[];
-  s.paper=raw.paper==='stars'&&s.layers.length?'stars':'cranberry';
+  s.papers=Array.isArray(raw.papers)?[...new Set(raw.papers.filter(id=>C.sorting.papers.some(p=>p.id===id)))]:[];
+  s.sortingPractice=raw.sortingPractice===true;
+  s.paper=s.papers.includes(raw.paper)?raw.paper:raw.paper==='stars'&&s.layers.length?'stars':'cranberry';
   s.sound=raw.sound===true;
-  for(const k of ['wrapBest','towerBest'])if(Number.isFinite(raw[k])&&raw[k]>=0)s[k]=Math.floor(raw[k]);
+  for(const k of ['wrapBest','towerBest','sortingBest'])if(Number.isFinite(raw[k])&&raw[k]>=0)s[k]=Math.floor(raw[k]);
   s.finale=raw.finale===true;
   return s;
 }
