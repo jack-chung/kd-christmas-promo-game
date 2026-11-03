@@ -1,0 +1,78 @@
+{
+  "repository": "https://github.com/sgossner/VSCO-2-CE",
+  "revision": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+  "license": "CC0-1.0",
+  "processing": "Mono PCM16, 22050 Hz; leading silence removed at -60dB; peak normalized to -1dB; tail faded over final 80ms.",
+  "samples": [
+    {
+      "file": "fold-59.wav",
+      "instrument": "fold",
+      "midi": 59,
+      "seconds": 1.4,
+      "source": "Percussion/Marimba/Marimba_hit_Outrigger_B2_loud_01.wav"
+    },
+    {
+      "file": "fold-65.wav",
+      "instrument": "fold",
+      "midi": 65,
+      "seconds": 1.4,
+      "source": "Percussion/Marimba/Marimba_hit_Outrigger_F3_loud_01.wav"
+    },
+    {
+      "file": "fold-72.wav",
+      "instrument": "fold",
+      "midi": 72,
+      "seconds": 1.4,
+      "source": "Percussion/Marimba/Marimba_hit_Outrigger_C4_loud_01.wav"
+    },
+    {
+      "file": "tape-62.wav",
+      "instrument": "tape",
+      "midi": 62,
+      "seconds": 1.1,
+      "source": "Strings/Violin Section/Pizz/VlnEns_Pizz_D3_v2_rr1.wav"
+    },
+    {
+      "file": "tape-69.wav",
+      "instrument": "tape",
+      "midi": 69,
+      "seconds": 1.1,
+      "source": "Strings/Violin Section/Pizz/VlnEns_Pizz_A3_v2_rr1.wav"
+    },
+    {
+      "file": "tape-72.wav",
+      "instrument": "tape",
+      "midi": 72,
+      "seconds": 1.1,
+      "source": "Strings/Violin Section/Pizz/VlnEns_Pizz_C4_v2_rr1.wav"
+    },
+    {
+      "file": "ribbon-62.wav",
+      "instrument": "ribbon",
+      "midi": 62,
+      "seconds": 2,
+      "source": "Strings/Harp/KSHarp_D4_mf.wav"
+    },
+    {
+      "file": "ribbon-69.wav",
+      "instrument": "ribbon",
+      "midi": 69,
+      "seconds": 2,
+      "source": "Strings/Harp/KSHarp_A4_mf.wav"
+    },
+    {
+      "file": "bow-79.wav",
+      "instrument": "bow",
+      "midi": 79,
+      "seconds": 1.8,
+      "source": "Percussion/Glock/glock_medium_G4.wav"
+    },
+    {
+      "file": "bass-36.wav",
+      "instrument": "bass",
+      "midi": 36,
+      "seconds": 1.3,
+      "source": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr1.wav"
+    }
+  ]
+}

@@ -44,9 +44,8 @@ export function episodeContent(episode) {
 }
 export const hiddenTargets=(mystery=C.mystery)=>mystery.parcels.striped.filter(id=>mystery.parcels.bows.includes(id));
 
-// Original tunes, written for this game. MIDI pitches; no recordings or borrowed songs.
-// Charts are content data: each variant resolves to {time (ms), lane (0–3), midi}.
-// Equal times are a chord. Edit/replace any variant with a literal event array.
+// Public-domain melody transcriptions. No lyrics or modern arrangements.
+// Pairs are MIDI pitch / duration in quarter-note beats; 0 is a rest.
 C.wrap.keys=['D','F','J','K'];
 C.wrap.songLabel='♪ {title}';
 C.wrap.timeLeft='{seconds}s';
@@ -56,15 +55,60 @@ C.wrap.practiceFree='Play with the sounds';
 C.wrap.practiceFinish='Ready for a song!';
 C.wrap.practiceNext='Next: {move}';
 C.wrap.empty='Wait for your shape!';
+C.wrap.musicLoading='Warming up the band…';
+C.wrap.musicFailed='The band couldn’t load. Follow the shapes and keep wrapping!';
+C.wrap.musicCredits='Music & sound credits';
+C.wrap.countIn='{count}…';
 C.wrap.songs=[
-  {id:'paper-parade',title:'Paper Parade',bass:[48,53,55,48],melody:[60,64,67,64,62,65,69,65,64,67,72,71,69,67,64,62,60,64,67,72,71,67,65,62,64,65,67,69,67,64,62,60]},
-  {id:'royal-ribbon',title:'Royal Ribbon',bass:[50,55,57,50],melody:[62,66,69,74,73,69,66,62,64,67,71,67,66,69,74,69,67,71,74,76,74,71,67,64,66,69,73,69,67,66,64,62]},
-  {id:'pips-bounce',title:'Pip’s Bounce',bass:[48,57,53,55],melody:[67,64,60,64,69,67,64,60,65,69,72,69,67,65,62,59,60,67,64,72,69,64,67,60,65,69,67,62,64,67,62,60]},
-].map(song=>({...song,variants:Object.fromEntries([
-  ['easy',1500,32,[0,1,0,0,1,0,1,1]],
-  ['tunie',750,64,[0,1,2,3,1,0,3,2]],
-  ['rapper',600,80,[0,2,1,3,2,0,3,1]],
-].map(([id,step,count,lanes])=>[id,{
-  duration:48000,beat:step,
-  events:Array.from({length:count},(_,i)=>({time:i*step,lane:lanes[i%lanes.length],midi:song.melody[i%song.melody.length]})).flatMap((event,i)=>id==='rapper'&&i%12===7?[event,{...event,lane:(event.lane+2)%4,midi:event.midi+7}]:[event]),
-}]))}));
+  {id:'deck-the-halls',title:'Deck the Halls',meter:4,
+    chords:[[48,52,55],[48,52,55],[55,59,62],[48,52,55],[48,52,55],[48,52,55],[55,59,62],[48,52,55],
+      [55,59,62],[48,52,55],[55,59,62],[48,52,55],[48,52,55],[53,57,60],[55,59,62],[48,52,55]],
+    phrase:[[67,1.5],[65,.5],[64,1],[62,1],[60,1],[62,1],[64,1],[60,1],
+      [62,.5],[64,.5],[65,.5],[62,.5],[64,1.5],[62,.5],[60,2],[0,2],
+      [67,1.5],[65,.5],[64,1],[62,1],[60,1],[62,1],[64,1],[60,1],
+      [62,.5],[64,.5],[65,.5],[62,.5],[64,1.5],[62,.5],[60,2],[0,2],
+      [62,1.5],[64,.5],[65,1],[62,1],[64,1.5],[65,.5],[67,1],[62,1],
+      [64,.5],[66,.5],[67,1],[69,.5],[71,.5],[72,1],[71,1],[69,1],[67,2],
+      [67,1.5],[65,.5],[64,1],[62,1],[60,1],[62,1],[64,1],[60,1],
+      [69,.5],[69,.5],[69,.5],[69,.5],[67,1.5],[65,.5],[64,1],[62,1],[60,2]]},
+  {id:'o-christmas-tree',title:'O Christmas Tree',meter:4,
+    chords:[[48,52,55],[48,52,55],[55,59,62],[48,52,55],[48,52,55],[48,52,55],[55,59,62],[48,52,55],
+      [48,52,55],[53,57,60],[55,59,62],[48,52,55],[48,52,55],[48,52,55],[55,59,62],[48,52,55]],
+    phrase:[[67,1],[72,1.5],[72,.5],[72,1],[74,1],[76,1.5],[76,.5],[76,2],
+      [76,.5],[74,.5],[76,1],[77,1],[71,1],[74,1],[72,2],
+      [67,1],[72,1.5],[72,.5],[72,1],[74,1],[76,1.5],[76,.5],[76,2],
+      [76,.5],[74,.5],[76,1],[77,1],[71,1],[74,1],[72,2],
+      [79,1],[79,.5],[76,.5],[81,1.5],[79,.5],[79,1],[77,1],[77,1],[77,1.5],
+      [77,.5],[74,1],[79,1.5],[77,.5],[77,1],[76,1],[76,1],[67,1],
+      [72,1.5],[72,.5],[72,1],[74,1],[76,1.5],[76,.5],[76,2],
+      [76,.5],[74,.5],[76,1],[77,1],[71,1],[74,1],[72,2],[0,1]]},
+  {id:'up-on-the-housetop',title:'Up on the Housetop',meter:4,
+    chords:[[48,52,55],[48,52,55],[53,57,60],[48,52,55],[48,52,55],[48,52,55],[55,59,62],[48,52,55],
+      [53,57,60],[48,52,55],[55,59,62],[48,52,55],[48,52,55],[53,57,60],[55,59,62],[48,52,55]],
+    phrase:[[67,1],[67,.5],[67,.5],[69,1],[67,1],[64,1],[60,2],[0,1],
+      [64,1],[64,1],[62,1],[62,1],[60,1],[62,1],[64,2],
+      [67,1],[67,.5],[67,.5],[69,1],[67,1],[64,1],[60,2],[0,1],
+      [64,1],[64,1],[62,1],[62,1],[60,1],[62,1],[60,2],
+      [72,1],[72,1],[69,2],[67,1],[67,1],[64,2],
+      [65,1],[65,1],[69,1],[69,1],[67,3],[0,1],
+      [67,1],[67,.5],[67,.5],[72,1],[72,1],[71,1],[69,1],[67,2],
+      [69,1],[69,1],[67,1],[65,1],[64,1],[62,1],[60,2]]},
+].map(song=>{
+  // One full melody at each tempo: difficulties never rearrange its pitches.
+  const beats=song.phrase.reduce((n,[,length])=>n+length,0);
+  return {...song,variants:Object.fromEntries(['easy','tunie','rapper'].map(id=>{
+    const beat=id==='rapper'?650:750,events=[],automatic=[];
+    let position=0,last=-Infinity,note=0;
+    for(const [midi,length] of song.phrase){
+      const time=position*beat;position+=length;
+      if(!midi)continue;
+      const lane=id==='easy'?note%2:note%4;
+      if(id==='easy'&&time-last<1500)automatic.push({time,midi,lane});
+      else {events.push({time,midi,lane});last=time;
+        if(id==='rapper'&&note%12===7)events.push({time,midi:midi-12,lane:(lane+2)%4});
+      }
+      note++;
+    }
+    return [id,{duration:beats*beat,beat,events,automatic}];
+  }))};
+});

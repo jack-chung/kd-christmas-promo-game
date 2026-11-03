@@ -75,12 +75,17 @@ function navigate(target,{demo=false}={}) {
 }
 function render(){
   const p=save.profile||profile;
+  music.wrap=view.startsWith('wrap');
+  if(music.wrap)music.load().then(()=>{
+    const message=$('#music-loading');
+    if(message){message.textContent=music.state==='failed'?C.wrap.musicFailed:'';message.hidden=music.state==='ready';}
+  });
   const scenes={onboard:onboardView,hub:hubView,wrap:wrapView,wrapPractice:practiceView,wrapOrder:orderView,wrapPlay:wrapPlayView,wrapGift:wrapGiftView,wrapResults:wrapResultsView,mystery:mysteryView,mysteryMap:caseMapView,hidden:hiddenView,cipher:cipherView,riddle:riddleView,mysteryCode:codeView,mysteryResults:caseResultsView,tower:towerView,towerPlay:towerPlayView,towerResults:towerResultsView,gift:giftView,unwrap:unwrapView,collection:collectionView,future:futureView,finale:finaleView,finalReveal:finalRevealView,certificate:certificateView,invitation:invitationView,review:reviewView};
   document.body.dataset.scene=view.startsWith('wrap')?'workshop':['hidden','cipher','riddle','mysteryCode'].includes(view)?'house':'town';
   document.body.classList.toggle('rhythm-active',Boolean(view==='wrapPlay'||(view==='wrapPractice'&&practice.guided)));
   root.innerHTML=`<div class="scene-backdrop" aria-hidden="true">${scene(document.body.dataset.scene)}</div>${review?`<div class="review-strip">${esc(C.review.active)} ${button(C.hub.review,'review-menu','text-button')}</div>`:''}
     <header class="topbar"><a href="#hub" class="brand" data-action="go:hub"><span class="brand-gift">${gift({small:true})}</span><span>${esc(C.app.title)}</span></a><div class="top-actions">${view!=='onboard'?nav(C.app.home,'hub','small-button'):''}${button(save.sound?C.app.soundOn:C.app.soundOff,'sound','small-button','aria-pressed="'+save.sound+'"')}</div></header>
-    <main class="screen screen-${view}" id="main">${preview?`<p class="preview-label">${esc(C.review.preview)}</p>`:''}${scenes[view]()}${['unwrap','finalReveal','wrapGift','wrapResults','mysteryResults'].includes(view)?celebration():''}</main>
+    <main class="screen screen-${view}" id="main">${preview?`<p class="preview-label">${esc(C.review.preview)}</p>`:''}${scenes[view]()}${music.wrap?`<p id="music-loading" class="subtle" role="status" ${music.state==='ready'?'hidden':''}>${esc(music.state==='failed'?C.wrap.musicFailed:C.wrap.musicLoading)}</p>`:''}${['unwrap','finalReveal','wrapGift','wrapResults','mysteryResults'].includes(view)?celebration():''}</main>
     <footer class="footer"><p>${esc(C.app.privacy)}</p><p id="storage-notice" class="storage-notice" ${storageOK?'hidden':''}>${esc(C.app.storage)}</p><div>${nav(C.hub.invite,'invitation','text-button')}${nav(C.hub.review,'review','text-button')}<a href="art-direction/">${esc(C.hub.gallery)}</a></div><p class="preview-caption">${esc(C.app.preview)}</p></footer>
     <div id="toast" class="toast" role="status"></div><div id="modal-root"></div>`;
   if(view==='hub'){const id=setInterval(updateCountdown,1000);dispose=()=>clearInterval(id);updateCountdown();}
@@ -99,7 +104,7 @@ function giftView(){return `${heading(C.app.title,C.gift.title,C.gift.intro)}<di
 function unwrapView(){return `<div class="unwrap-scene" id="unwrap-scene">${gift({paper:save.paper})}<span class="spark s1">✦</span><span class="spark s2">✦</span><span class="spark s3">✦</span><span class="spark s4">✦</span></div>${heading(C.gift.cardLabel,wrapResult?.replay||caseResult?.replay?C.gift.replayTitle:C.gift.unwrapTitle,C.gift.unwrapCopy)}<article class="keepsake">${character('wrapper')}${eyebrow(C.gift.cardLabel)}<h2>${esc(C.gift.cardTitle)}</h2><p>${esc(C.gift.cardCopy)}</p></article><p class="unlock-banner">${esc(C.gift.paper)}</p>${nav(C.hub.collection,'collection','primary full')}${nav(C.app.home,'hub','secondary full')}`;}
 function collectionView(){return `${heading(C.app.title,C.gift.collectionTitle,C.gift.collectionIntro)}${save.layers.length?`${save.layers.map(id=>{const giftCopy=episodeContent(C.episodes.find(ep=>ep.id===id)).gift;return `<article class="keepsake">${character('wrapper')}${eyebrow(giftCopy.cardLabel)}<h2>${esc(giftCopy.cardTitle)}</h2><p>${esc(giftCopy.cardCopy)}</p></article>`;}).join('')}<div class="paper-grid">${['cranberry','stars'].map(p=>`<article class="paper-card">${gift({paper:p,small:true})}<h2>${esc(p==='stars'?C.gift.starPaper:C.gift.defaultPaper)}</h2>${button(save.paper===p?C.gift.equipped:C.gift.equip,`paper:${p}`,'secondary',save.paper===p?'disabled':'')}</article>`).join('')}</div>`:`<div class="empty-state">${gift()}<p>${esc(C.gift.empty)}</p>${nav(C.gift.play,'hub')}</div>`}`;}
 
-function wrapView(){return `${heading(C.wrap.eyebrow,C.wrap.title,C.wrap.intro)}<div class="cast-line">${character('kid')}${character('wrapper')}${character('king')}${character('singer')}</div><section class="instruction-card"><h2>${esc(C.wrap.tutorial)}</h2><ol>${C.wrap.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(C.wrap.tutorialEnd)}</p>${nav(C.wrap.practice,'wrapPractice','secondary full')}</section><fieldset class="difficulty"><legend>${esc(C.wrap.choose)}</legend>${C.wrap.difficulty.map(d=>`<label><input type="radio" name="difficulty" value="${d.id}" ${difficulty===d.id?'checked':''}><strong>${esc(d.label)}</strong><small>${esc(d.detail)}</small></label>`).join('')}</fieldset><p class="subtle">${esc(C.wrap.duration)}</p>${button(C.wrap.start,'wrap-start','primary full')}`;}
+function wrapView(){return `${heading(C.wrap.eyebrow,C.wrap.title,C.wrap.intro)}<div class="cast-line">${character('kid')}${character('wrapper')}${character('king')}${character('singer')}</div><section class="instruction-card"><h2>${esc(C.wrap.tutorial)}</h2><ol>${C.wrap.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(C.wrap.tutorialEnd)}</p>${nav(C.wrap.practice,'wrapPractice','secondary full')}</section><fieldset class="difficulty"><legend>${esc(C.wrap.choose)}</legend>${C.wrap.difficulty.map(d=>`<label><input type="radio" name="difficulty" value="${d.id}" ${difficulty===d.id?'checked':''}><strong>${esc(d.label)}</strong><small>${esc(d.detail)}</small></label>`).join('')}</fieldset><p class="subtle">${esc(C.wrap.duration)}</p>${button(C.wrap.start,'wrap-start','primary full')}<p class="subtle"><a href="game/audio/credits.html" target="_blank" rel="noopener">${esc(C.wrap.musicCredits)}</a></p>`;}
 function laneButtons(){return `<div class="lane-buttons ${navigator.maxTouchPoints===0?'keyboard-controls':''}">${C.wrap.actions.map((a,i)=>`<button type="button" class="lane-button lane-${i}" data-lane="${i}" aria-label="${esc(a.label)}">${moveIcon(a.id)}<strong>${esc(a.label)}</strong><kbd>${esc(C.wrap.keys[i])}</kbd></button>`).join('')}</div>`;}
 function laneField(){return `<div class="rhythm-field" aria-hidden="true"><div class="lane-grid">${C.wrap.actions.map((a,i)=>`<div class="rhythm-lane lane-${i}"><span class="lane-top">${moveIcon(a.id)}</span><span class="target-shape">${moveIcon(a.id)}</span><span class="lane-burst">✦</span></div>`).join('')}</div><div class="hit-line"></div><div id="falling-objects"></div></div>`;}
 function practiceView(){
@@ -192,9 +197,10 @@ function activateWrap(){
   const song=C.wrap.songs[run.customer],chart=song.variants[run.difficulty.id];
   if(!run.round)run.round=createRound(chart,run.difficulty);
   if(!run.start)run.start=performance.now()+run.difficulty.travel;
-  const round=run.round,baseScore=run.score;
+  const round=run.round,baseScore=run.score,automatic=chart.automatic||[];
   let frame=0;
-  run.audioIndex=Math.max(0,Math.ceil((performance.now()-run.start)/chart.beat));
+  run.audioIndex=Math.max(-6,Math.ceil((performance.now()-run.start)/(chart.beat/2)));
+  run.autoIndex=0;
   function update(){
     $('#wrap-score').textContent=baseScore+round.score;
     $('#combo').textContent=fmt(C.wrap.combo,{count:round.combo});
@@ -217,9 +223,16 @@ function activateWrap(){
       if(time>=chart.duration+run.difficulty.window){
         run.results.push(roundResult(round));run.score=baseScore+round.score;run.maxCombo=Math.max(run.maxCombo,round.maxCombo);run.combo=0;navigate('wrapGift');return;
       }
-      while(run.audioIndex*chart.beat<chart.duration&&run.start+run.audioIndex*chart.beat-now<350+music.latency*1000){
-        music.backing(song,chart.beat,run.audioIndex,run.start+run.audioIndex*chart.beat);run.audioIndex++;
+      const lookahead=350+music.latency*1000;
+      while(run.audioIndex*chart.beat/2<chart.duration&&run.start+run.audioIndex*chart.beat/2-now<lookahead){
+        if(run.audioIndex>=0||run.audioIndex%2===0)music.backing(song,chart.beat,run.audioIndex,run.start+run.audioIndex*chart.beat/2);
+        run.audioIndex++;
       }
+      while(run.autoIndex<automatic.length&&run.start+automatic[run.autoIndex].time-now<lookahead){
+        const event=automatic[run.autoIndex++];music.automatic(event,run.start+event.time);
+      }
+      if(time<0&&time>=-3*chart.beat)feedback(fmt(C.wrap.countIn,{count:Math.ceil(-time/chart.beat)}));
+      else if(time>=0&&$('#feedback').textContent.endsWith('…'))feedback('');
       paintNotes(chart,round.judged,time,run.difficulty.travel);
       $('#song-time').textContent=fmt(C.wrap.timeLeft,{seconds:Math.max(0,Math.ceil((chart.duration-Math.max(0,time))/1000))});
     }
@@ -234,7 +247,18 @@ function pauseGame(){
   $('#pause-layer').innerHTML=`<div class="pause-backdrop"><section class="pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title"><h2 id="pause-title">${esc(C.app.paused)}</h2><p>${esc(C.app.pausedCopy)}</p>${button(C.app.resume,'resume','primary full')}${button(save.sound?C.app.soundOn:C.app.soundOff,'sound','secondary full','aria-pressed="'+save.sound+'"')}${nav(C.app.home,'hub','secondary full')}</section></div>`;
   $('#pause-layer button')?.focus();
 }
-function resumeGame(){const game=view==='wrapPlay'?run:tower;if(!game?.paused)return;if(view==='wrapPlay'){run.start+=performance.now()-run.pauseAt;run.audioIndex=Math.max(0,Math.ceil((performance.now()-run.start)/run.round.chart.beat));}game.paused=false;unlockAudio();$('#pause-layer').innerHTML='';(view==='wrapPlay'?$('[data-lane]'):$('[data-action="tower-drop"]'))?.focus();}
+function resumeGame(){
+  const game=view==='wrapPlay'?run:tower;if(!game?.paused)return;
+  if(view==='wrapPlay'){
+    run.start+=performance.now()-run.pauseAt;
+    const elapsed=performance.now()-run.start,chart=run.round.chart,automatic=chart.automatic||[];
+    run.audioIndex=Math.max(-6,Math.ceil(elapsed/(chart.beat/2)));
+    run.autoIndex=automatic.findIndex(e=>e.time>=elapsed);
+    if(run.autoIndex<0)run.autoIndex=automatic.length;
+  }
+  game.paused=false;unlockAudio();$('#pause-layer').innerHTML='';
+  (view==='wrapPlay'?$('[data-lane]'):$('[data-action="tower-drop"]'))?.focus();
+}
 
 function activateTower(){
   const canvas=$('#tower-canvas'),ctx=canvas.getContext('2d');

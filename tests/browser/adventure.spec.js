@@ -97,7 +97,7 @@ for(const difficulty of C.wrap.difficulty)test(`Wrap Station ${difficulty.id}: t
   }
   await expect(page.locator('main')).toHaveClass('screen screen-wrapResults');await expect(page.locator('.mini-grade')).toHaveText(['S','S','S']);
   await action(page,'claim:wrap').click({force:true});await expect(page.locator('main')).toHaveClass('screen screen-unwrap');
-  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.layers).toEqual([1]);expect(saved.wrapBest).toBeGreaterThan(10000);
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.layers).toEqual([1]);expect(saved.wrapBest).toBeGreaterThan(5000);
 });
 
 test('practice: four free sounds, forgiving guided objects and no failure',async({page})=>{
@@ -115,7 +115,7 @@ test('practice: four free sounds, forgiving guided objects and no failure',async
 test('wrong shapes miss, swipes do not score, empty taps break combos and unattended songs finish',async({page})=>{
   await enter(page);await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(2700);await page.locator('[data-lane="3"]').click({force:true});await expect(page.locator('#wrap-score')).toHaveText('0');await expect(page.locator('#feedback')).toHaveText('Match the shape!');
-  await page.clock.runFor(750);await page.locator('[data-lane="1"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
+  await page.clock.runFor(C.wrap.songs[0].variants.tunie.events[1].time);await page.locator('[data-lane="1"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
   // A moving pointer across the playfield is not a tap target.
   const box=await page.locator('.rhythm-field').boundingBox();await page.mouse.move(box.x+10,box.y+100);await page.mouse.down();await page.mouse.move(box.x+box.width-10,box.y+100);await page.mouse.up();await expect(page.locator('#combo')).toHaveText('1× combo');
   await page.clock.runFor(350);await page.locator('[data-lane="0"]').click({force:true});await expect(page.locator('#combo')).toHaveText('0× combo');
@@ -184,8 +184,9 @@ test('desktop keys, touch-only labels, portrait fit and reduced-motion feedback'
   const context=await browser.newContext({viewport:{width:1100,height:850},hasTouch:false,isMobile:false,reducedMotion:'reduce'}),page=await context.newPage();
   await enter(page);await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await expect(page.locator('kbd').first()).toBeVisible();await page.clock.runFor(2700);await page.keyboard.press('d');await expect(page.locator('#combo')).toHaveText('1× combo');
-  await page.clock.runFor(750);await page.keyboard.press('ArrowDown');await expect(page.locator('#combo')).toHaveText('2× combo');
-  await page.clock.runFor(750);await page.keyboard.press('j');await page.clock.runFor(750);await page.keyboard.press('k');await expect(page.locator('#combo')).toHaveText('4× combo');
+  const firstNotes=C.wrap.songs[0].variants.tunie.events.slice(0,4);
+  for(let i=1;i<4;i++){await page.clock.runFor(firstNotes[i].time-firstNotes[i-1].time);await page.keyboard.press(['d','ArrowDown','j','k'][i]);}
+  await expect(page.locator('#combo')).toHaveText('4× combo');
   const field=await page.locator('main').boundingBox();expect(field.width).toBeLessThanOrEqual(480);expect(Math.abs(field.x+field.width/2-550)).toBeLessThan(2);
   for(const size of [{width:320,height:568},{width:390,height:844},{width:768,height:1024}]){
     await page.setViewportSize(size);const button=await page.locator('.lane-button').last().boundingBox();expect(button.y+button.height).toBeLessThanOrEqual(size.height);expect(button.width).toBeGreaterThan(50);
@@ -194,19 +195,45 @@ test('desktop keys, touch-only labels, portrait fit and reduced-motion feedback'
   expect(await page.locator('.character').first().evaluate(el=>getComputedStyle(el).animationName)).toBe('none');await context.close();
 });
 
-test('sound: four instruments, melody only on a matching hit, mute and resume',async({page})=>{
+test('sound: sampled instruments, matching melody, count-in, mute and resume',async({page})=>{
   await page.addInitScript(()=>{
     window.played=[];
-    const Audio=window.AudioContext||window.webkitAudioContext,create=Audio.prototype.createOscillator;
-    Audio.prototype.createOscillator=function(){const osc=create.call(this),start=osc.start,set=osc.frequency.setValueAtTime;osc.frequency.setValueAtTime=function(hz,...args){osc.scheduledHz=hz;return set.call(this,hz,...args);};osc.start=function(...args){window.played.push({type:osc.type,hz:osc.scheduledHz});return start.apply(this,args);};return osc;};
+    const Audio=window.AudioContext||window.webkitAudioContext,create=Audio.prototype.createBufferSource;
+    Audio.prototype.createBufferSource=function(){const source=create.call(this),start=source.start;
+      source.start=function(...args){window.played.push({length:source.buffer.length,rate:source.playbackRate.value});return start.apply(this,args);};return source;};
   });
-  await enter(page);await action(page,'sound').click({force:true});await action(page,'go:wrap').click({force:true});await action(page,'go:wrapPractice').click({force:true});
-  await page.evaluate(()=>window.played=[]);
+  await enter(page);await action(page,'sound').click({force:true});await action(page,'go:wrap').click({force:true});
+  await expect(page.locator('#music-loading')).toBeHidden();
+  await action(page,'go:wrapPractice').click({force:true});await page.evaluate(()=>window.played=[]);
   for(let lane=0;lane<4;lane++)await page.locator(`[data-lane="${lane}"]`).click({force:true});
-  const sounds=await page.evaluate(()=>window.played);expect([...new Set(sounds.map(s=>s.type))].sort()).toEqual(['sawtooth','sine','triangle']);
-  expect(sounds.some(s=>Math.abs(s.hz-261.6256)<1)).toBe(true);
-  await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});await page.clock.runFor(2700);
+  const sounds=await page.evaluate(()=>window.played);expect(sounds).toHaveLength(4);
+  expect(new Set(sounds.map(s=>s.length)).size).toBe(4);
+  await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await page.clock.runFor(500);await expect(page.locator('#feedback')).toHaveText('3…');
+  await page.clock.runFor(750);await expect(page.locator('#feedback')).toHaveText('2…');
+  await page.clock.runFor(750);await expect(page.locator('#feedback')).toHaveText('1…');
+  await page.clock.runFor(700);
   await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="3"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(0);
-  await page.clock.runFor(750);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="1"]').click({force:true});expect(await page.evaluate(()=>window.played.some(s=>Math.abs(s.hz-329.6276)<1))).toBe(true);
-  await action(page,'pause').click({force:true});await action(page,'sound').filter({visible:true}).click({force:true});await action(page,'resume').click({force:true});await page.clock.runFor(750);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="2"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(0);await action(page,'pause').click({force:true});await action(page,'sound').filter({visible:true}).click({force:true});await action(page,'resume').click({force:true});await page.clock.runFor(750);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="3"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBeGreaterThan(0);
+  const chart=C.wrap.songs[0].variants.tunie;
+  await page.clock.runFor(chart.events[1].time);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="1"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(1);
+  await action(page,'pause').click({force:true});await action(page,'sound').filter({visible:true}).click({force:true});await action(page,'resume').click({force:true});
+  await page.clock.runFor(chart.events[2].time-chart.events[1].time);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="2"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(0);
+  await action(page,'pause').click({force:true});await action(page,'sound').filter({visible:true}).click({force:true});await action(page,'resume').click({force:true});
+  await page.clock.runFor(chart.events[3].time-chart.events[2].time);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="3"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(1);
+});
+
+test('audio assets load only inside Wrap; a failed bank leaves visual play and practice available',async({page})=>{
+  const requests=[];page.on('request',request=>{if(request.url().includes('/audio/'))requests.push(request.url());});
+  await enter(page);expect(requests).toEqual([]);
+  let release;
+  const gate=new Promise(resolve=>release=resolve);
+  await page.route('**/audio/sources.json',async route=>{await gate;await route.fulfill({status:200,contentType:'application/json',body:'{}'});});
+  await action(page,'go:wrap').click({force:true});await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicLoading);
+  release();await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicFailed);
+  await action(page,'go:wrapPractice').click({force:true});
+  for(let lane=0;lane<4;lane++)await page.locator(`[data-lane="${lane}"]`).click({force:true});
+  await expect(action(page,'practice-guide')).toBeEnabled();
+  await action(page,'go:wrap').click({force:true});await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await page.clock.runFor(2700);await page.locator('[data-lane="0"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
+  await page.clock.runFor(50000);await expect(page.locator('.grade-medal')).toHaveText('C');
 });
