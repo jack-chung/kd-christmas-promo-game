@@ -23,10 +23,10 @@ test.afterEach(async({page})=>{expect(page.__errors).toEqual([]);});
 test('first run, date guards, review finale code, certificate, invitation, and reset',async({page})=>{
   const name=await enter(page,'/');
   await expect(page.locator('.greeting')).toContainText(name);
-  await action(page,'episode:3').first().click({force:true});await expect(page.locator('h1')).toContainText('Nov 27');await action(page,'go:hub').first().click({force:true});
+  await expect(action(page,'episode:3').first()).toBeDisabled();
   await action(page,'sound').click({force:true});await expect(action(page,'sound')).toHaveAttribute('aria-pressed','true');await action(page,'sound').click({force:true});
-  await page.goto('/#wrap');await expect(page.locator('main')).toHaveClass('screen screen-future');
-  await page.goto('/#wrapPlay');await expect(page.locator('main')).toHaveClass('screen screen-future');
+  await page.goto('/#wrap');await expect(page.locator('main')).toHaveClass('screen screen-hub');
+  await page.goto('/#wrapPlay');await expect(page.locator('main')).toHaveClass('screen screen-hub');
   await page.goto('/#certificate');await expect(page.locator('main')).toHaveClass('screen screen-finale');
   await expect(page.locator('#finale-form')).toHaveCount(0);
   await action(page,'go:review').click({force:true});await action(page,'review-toggle').click({force:true});
@@ -40,7 +40,7 @@ test('first run, date guards, review finale code, certificate, invitation, and r
   await expect(page.locator('.event-facts')).toContainText('9670 Bayview Avenue');
   await expect(page.locator('.donation')).toContainText('canned food item');
   await action(page,'go:review').click({force:true});await action(page,'review-toggle').click({force:true});
-  await page.goto('/#wrap');await expect(page.locator('main')).toHaveClass('screen screen-future');
+  await page.goto('/#wrap');await expect(page.locator('main')).toHaveClass('screen screen-hub');
   await action(page,'go:review').click({force:true});await action(page,'reset').click({force:true});await action(page,'reset-cancel').click({force:true});await expect(page.locator('.pause-backdrop')).toHaveCount(0);
   await action(page,'reset').click({force:true});await action(page,'reset-confirm').click({force:true});
   await expect(page.locator('main')).toHaveClass('screen screen-onboard');
