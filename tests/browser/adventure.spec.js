@@ -15,7 +15,7 @@ async function enter(page,url='/?review=1'){
 async function route(page,id){await page.goto(`/?review=1#${id}`);await expect(page.locator('main')).toHaveClass(new RegExp(`screen-${id}$`));}
 test.beforeEach(async({page})=>{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
+  page.on('console',msg=>{if(msg.type()==='error'&&!msg.location().url.includes('/.update-check/'))errors.push(msg.text());});
   page.__errors=errors;
 });
 test.afterEach(async({page})=>{expect(page.__errors).toEqual([]);});

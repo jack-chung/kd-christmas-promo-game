@@ -137,3 +137,5 @@ C.sorting={
  papers:[{id:'postmark-bronze',name:'Bronze parcel paper',medal:'Bronze',color:'#c58b58'},{id:'postmark-silver',name:'Silver snow paper',medal:'Silver',color:'#a9c8d0'},{id:'postmark-gold',name:'Gold crown paper',medal:'Gold',color:'#edc45d'}]
 };
 C.review.routes.push(['sorting','Sorting Office setup']);
+
+C.update={interval:300000,note:'New things just arrived in Tuneville!'};
