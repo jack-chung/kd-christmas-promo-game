@@ -18,7 +18,7 @@ for(const id of [A,B]){
 }
 const types={html:'text/html',js:'text/javascript',css:'text/css',json:'application/json',wav:'audio/wav',png:'image/png',svg:'image/svg+xml'};
 const test=base.extend({host:async({},use)=>{
- let current=A,incomplete=false,stale=false;const requests=[];
+ let current=A,incomplete=false,stale=false;const requests=[],removed=new Set(),downloads=[];
  const server=createServer((req,res)=>{
   const path=new URL(req.url,'http://localhost').pathname;requests.push(path);res.setHeader('Date','Tue, 03 Nov 2026 17:00:00 GMT');
   let body,type='text/html';
@@ -30,16 +30,16 @@ const test=base.extend({host:async({},use)=>{
    body=bundles[A].files['index.html'].toString().replace('src="boot.js"',`src="releases/${A}/boot.js"`);
   }else if(path.startsWith('/preview/releases/')){
    const [,id,file]=path.match(/\/releases\/([^/]+)\/(.*)/)||[];
-   body=bundles[id]?.files[file];type=types[file?.split('.').at(-1)]||'text/plain';
+   body=removed.has(id)?undefined:bundles[id]?.files[file];type=types[file?.split('.').at(-1)]||'text/plain';
    if(incomplete&&id===B&&file==='game/sorting-music.js'){res.statusCode=503;body='not deployed';}
    if(stale&&id===B&&file==='game/style.css')body=bundles[A].files[file];
   }
   if(body===undefined){res.statusCode=404;body='missing';}
-  res.setHeader('Content-Type',type);res.end(body);
+  downloads.push({path,bytes:Buffer.byteLength(body)});res.setHeader('Content-Type',type);res.end(body);
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const url=`http://127.0.0.1:${server.address().port}/preview/`;
- await use({url,requests,deploy:()=>{current=B;},incomplete:value=>{incomplete=value;},stale:value=>{stale=value;}});
+ await use({url,requests,downloads,prune:id=>removed.add(id),deploy:()=>{current=B;},incomplete:value=>{incomplete=value;},stale:value=>{stale=value;}});
  server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
 }});
 async function enter(page,host){
@@ -96,4 +96,32 @@ test('a modal or focused text field on a calm screen defers reloading until both
  host.deploy();await page.clock.fastForward(300001);await page.waitForTimeout(1800);await expect(page.locator('#update-note')).toHaveCount(0);
  await page.locator('#update-test-modal').evaluate(el=>el.remove());await page.waitForTimeout(1800);await expect(page.locator('[data-build-id]')).toHaveText(A);
  await page.locator('#update-test-input').evaluate(el=>el.remove());await buildB(page);
+});
+
+test('slim release stays within budget and an open pruned release updates after leaving paused play',async({page,host,context})=>{
+ const config=JSON.parse(await readFile(new URL('../../scripts/build-config.json',import.meta.url)));
+ for(const path of manifest.files)expect(path==='index.html'||path==='boot.js'||path.startsWith('game/')).toBe(true);
+ const releaseBytes=Object.values(bundles[A].files).reduce((sum,bytes)=>sum+bytes.length,0);
+ expect(releaseBytes).toBeLessThanOrEqual(config.maxReleaseBytes);
+ expect(releaseBytes).toBeLessThan(1500000);
+ await enter(page,host);
+ const firstOpenBytes=host.downloads.reduce((sum,{bytes})=>sum+bytes,0);expect(firstOpenBytes).toBeLessThan(1500000);
+ await page.reload();
+ const saved=await page.evaluate(()=>localStorage.getItem('tuneville-gift-v1'));
+ const gallery=page.locator('a[href*="art-direction/"]');expect(await gallery.getAttribute('href')).toBe(host.url+'art-direction/');
+ await page.locator('[data-action="review-menu"]').click({force:true});await page.locator('[data-action="jump:wrapPlay"]').click({force:true});await page.locator('[data-action="pause"]').click({force:true});
+ const beforeUpdate=host.downloads.length;host.deploy();host.prune(A);
+ // This request bypasses the worker: the old release really is gone from the host.
+ expect((await context.request.get(host.url+'releases/'+A+'/game/sorting-music.js')).status()).toBe(404);
+ // Lazy old-build assets still resolve from the complete local cache while play is unsafe.
+ expect(await page.evaluate(async id=>{await import(new URL('releases/'+id+'/game/sorting-music.js',location.href));const r=await fetch(new URL('releases/'+id+'/game/audio/bass-36.wav',location.href));return r.ok;},A)).toBe(true);
+ await recheck(page);await page.waitForTimeout(2000);await expect(page.locator('[data-build-id]')).toHaveText(A);await expect(page.locator('#update-note')).toHaveCount(0);
+ await page.locator('.pause-card [data-action="go:hub"]').click({force:true});await buildB(page);
+ expect(await page.evaluate(()=>localStorage.getItem('tuneville-gift-v1'))).toBe(saved);
+ expect(page.url()).toBe(host.url+'?review=1&episode=1#hub');
+ await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update();});
+ await expect.poll(()=>page.evaluate(async()=>{if(!navigator.serviceWorker.controller)return '';return new Promise(resolve=>{const c=new MessageChannel();c.port1.onmessage=e=>resolve(e.data);navigator.serviceWorker.controller.postMessage({type:'build-id'},[c.port2]);});})).toBe(B);
+ const updateBytes=host.downloads.slice(beforeUpdate).reduce((sum,{bytes})=>sum+bytes,0);
+ expect(updateBytes).toBeLessThan(1500000);
+ console.log(JSON.stringify({browser:test.info().project.name,releaseBytes,firstOpenBytes,updateBytes}));
 });

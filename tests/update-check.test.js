@@ -1,7 +1,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile,writeFile} from 'node:fs/promises';
-import {build} from '../scripts/build.mjs';
+import {readFile,writeFile,mkdtemp,cp,rm,readdir} from 'node:fs/promises';
+import {build,releaseBudget,retainedReleases} from '../scripts/build.mjs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {UpdateCheck,safeView,publishedBuild} from '../docs/game/update-check.js';
 const pause=()=>new Promise(resolve=>setTimeout(resolve,15));
 function fixture(extra={}){const calls=[],data=new Map();const u=new UpdateCheck({running:'old',discover:async()=> 'a'.repeat(20),safe:()=>true,prepare:async()=>{},notice:()=>calls.push('note'),hide:()=>{},reload:url=>calls.push(url),url:()=> 'https://example.org/game/?review=1&episode=2#collection',storage:{getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v)},delay:1,...extra});return {u,calls,data};}
@@ -38,4 +40,29 @@ test('unwritable save cancels navigation and leaves the target available for a l
  let writable=false;const {u,calls,data}=fixture({beforeReload:()=>{if(!writable)throw Error('storage full');}});
  await u.check();await pause();assert.equal(calls.length,1);assert.equal(data.size,0);
  writable=true;await u.consider();assert.equal(calls.length,3);assert.equal(data.size,1);
+});
+
+test('release budget rejects oversized downloads and non-game files',()=>{
+ assert.equal(releaseBudget({'index.html':'hello','game/audio/CC0-1.0.txt':'licence'},30),12);
+ assert.throws(()=>releaseBudget({'game/style.css':Buffer.alloc(3000001)},3000000),/exceeds budget/);
+ for(const path of ['art-direction/index.html','review/screen.png','update-check-review.md','game/internal.html','game/../notes.md'])assert.throws(()=>releaseBudget({[path]:''},3000000),/Non-game/);
+ assert.deepEqual(retainedReleases('b',['c','b','a','d'],3),['b','c','a']);
+});
+test('build keeps only three recent slim releases and gates actual size, contents and history',async()=>{
+ const temp=await mkdtemp(join(tmpdir(),'tuneville-build-')),root=temp+'/';
+ try{
+  await cp(new URL('../scripts',import.meta.url),root+'scripts',{recursive:true});
+  await cp(new URL('../docs/game',import.meta.url),root+'docs/game',{recursive:true});
+  const ids=[];
+  for(let i=0;i<5;i++){
+   await writeFile(root+'docs/game/style.css','/* generation '+i+' */');
+   ids.unshift(await build(false,root));await build(true,root);
+   assert.deepEqual((await readdir(root+'docs/releases')).sort(),ids.slice(0,3).sort());
+   assert.deepEqual(JSON.parse(await readFile(root+'docs/releases.json')),ids.slice(0,3));
+  }
+  const current=ids[0];
+  await writeFile(root+'docs/releases/'+current+'/notes.md','extra');await assert.rejects(build(true,root),/Non-game/);
+  await rm(root+'docs/releases/'+current+'/notes.md');
+  await writeFile(root+'docs/game/style.css',Buffer.alloc(3000001));await assert.rejects(build(false,root),/exceeds budget/);
+ }finally{await rm(temp,{recursive:true,force:true});}
 });

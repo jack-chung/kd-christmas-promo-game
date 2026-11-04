@@ -44,8 +44,10 @@ export class UpdateCheck {
 export async function prepareBuild(id){
  const base=new URL('releases/'+id+'/',SITE_ROOT);
  const response=await fetch(new URL('manifest.json',base),{cache:'no-store'});
- const manifest=await response.json();if(manifest.id!==id)throw Error('Deploy not ready');
+ if(!response.ok)throw Error('Deploy not ready');
+ const manifest=await response.clone().json();if(manifest.id!==id)throw Error('Deploy not ready');
  const cache=await caches.open('tuneville-build-'+id);
+ await cache.put(new URL('manifest.json',base),response);
  for(const path of manifest.files){
   const url=new URL(path,base);if(await cache.match(url))continue;
   const file=await fetch(url,{cache:'no-store'});if(!file.ok)throw Error('Incomplete deploy');

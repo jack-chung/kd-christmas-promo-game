@@ -6,7 +6,9 @@ self.addEventListener('install',event=>event.waitUntil((async()=>{
  const cache=await caches.open(CACHE);
  // Immutable paths: a missing file fails installation instead of borrowing another build.
  for(const path of [...BUILD.files,'manifest.json']){
-  const url=new URL(path,release),response=await fetch(url,{cache:'no-store'});
+  const url=new URL(path,release);
+  // Update preparation already verifies this cache; recheck its bytes without downloading twice.
+  const response=await cache.match(url)||await fetch(url,{cache:'no-store'});
   if(!response.ok)throw Error('Incomplete build');
   if(path!=='manifest.json'){
    const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',await response.clone().arrayBuffer()))].map(n=>n.toString(16).padStart(2,'0')).join('');
