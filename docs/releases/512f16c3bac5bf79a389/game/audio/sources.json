@@ -1,0 +1,107 @@
+{
+  "repository": "https://github.com/sgossner/VSCO-2-CE",
+  "revision": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+  "license": "CC0-1.0",
+  "processing": "Mono PCM16, 22050 Hz; leading silence removed at -60dB; peak normalized to -1dB; tail faded over final 80ms.",
+  "samples": [
+    {
+      "file": "fold-59.wav",
+      "instrument": "fold",
+      "midi": 59,
+      "seconds": 1.4,
+      "source": "Percussion/Marimba/Marimba_hit_Outrigger_B2_loud_01.wav"
+    },
+    {
+      "file": "fold-65.wav",
+      "instrument": "fold",
+      "midi": 65,
+      "seconds": 1.4,
+      "source": "Percussion/Marimba/Marimba_hit_Outrigger_F3_loud_01.wav"
+    },
+    {
+      "file": "fold-72.wav",
+      "instrument": "fold",
+      "midi": 72,
+      "seconds": 1.4,
+      "source": "Percussion/Marimba/Marimba_hit_Outrigger_C4_loud_01.wav"
+    },
+    {
+      "file": "tape-62.wav",
+      "instrument": "tape",
+      "midi": 62,
+      "seconds": 1.1,
+      "source": "Strings/Violin Section/Pizz/VlnEns_Pizz_D3_v2_rr1.wav"
+    },
+    {
+      "file": "tape-69.wav",
+      "instrument": "tape",
+      "midi": 69,
+      "seconds": 1.1,
+      "source": "Strings/Violin Section/Pizz/VlnEns_Pizz_A3_v2_rr1.wav"
+    },
+    {
+      "file": "tape-72.wav",
+      "instrument": "tape",
+      "midi": 72,
+      "seconds": 1.1,
+      "source": "Strings/Violin Section/Pizz/VlnEns_Pizz_C4_v2_rr1.wav"
+    },
+    {
+      "file": "ribbon-62.wav",
+      "instrument": "ribbon",
+      "midi": 62,
+      "seconds": 2,
+      "source": "Strings/Harp/KSHarp_D4_mf.wav"
+    },
+    {
+      "file": "ribbon-69.wav",
+      "instrument": "ribbon",
+      "midi": 69,
+      "seconds": 2,
+      "source": "Strings/Harp/KSHarp_A4_mf.wav"
+    },
+    {
+      "file": "bow-79.wav",
+      "instrument": "bow",
+      "midi": 79,
+      "seconds": 1.8,
+      "source": "Percussion/Glock/glock_medium_G4.wav"
+    },
+    {
+      "file": "bass-36.wav",
+      "instrument": "bass",
+      "midi": 36,
+      "seconds": 1.3,
+      "source": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr1.wav"
+    }
+  ],
+  "sortingArrangement": {
+    "title": "Good King Wenceslas",
+    "melody": "Anonymous, Tempus adest floridum; Piae Cantiones (1582).",
+    "edition": "Hutchins, Carols Old and Carols New (1916), no. 415; Mutopia-2007/01/10-905. Edition and typesetting public domain.",
+    "source": "https://www.mutopiaproject.org/ftp/Anonymous/GoodKingWenceslas/GoodKingWenceslas.ly",
+    "sourceSha256": "d5967412ef47cc91add5eb361c25392273aaa7557028bfd76b1becb3af0e35e7",
+    "use": "Complete 17-bar melody transposed A major to G major; original bass, chords, kit and three verse textures by The Tuneville Gift. No lyrics or existing recordings/arrangements used.",
+    "instruments": [
+      "fold (marimba)",
+      "ribbon (harp)",
+      "tape (pizzicato strings)",
+      "bass (pizzicato contrabass)",
+      "original generated kick, snare, shaker, pad"
+    ],
+    "newAudioBytes": 0
+  },
+  "sortingFeedback": {
+    "use": "Original G-major landing cues (G4\u2013E5 marimba plus octave harp), string promotion fanfare, harp/string combo echo and 2.8\u20133.4-second results flourish. Same CC0 recordings; no existing arrangements or recordings used. Original generated woody pop, comic spring and paper rasp.",
+    "newAudioBytes": 0
+  },
+  "joyArrangement": {
+    "title": "Joy to the World / ANTIOCH",
+    "melody": "Lowell Mason (1792\u20131872), The Modern Psalmist (1839), p. 144.",
+    "edition": "Mutopia-2008/01/13-1223, Steve Dunlop. Edition and typesetting public domain.",
+    "source": "https://www.mutopiaproject.org/ftp/HandelGF/antioch/antioch.ly",
+    "sourceSha256": "ecd34e100586b875d39ef2989d62af7c8a4f1b89f39e52f44ddb3f2d28fc8761",
+    "use": "Complete 19-bar soprano melody transposed D major to C major; durations doubled into four-beat bars. Original harmony, backing and all three difficulty charts by The Tuneville Gift. No lyrics or existing recordings/arrangements used.",
+    "newAudioBytes": 0
+  }
+}

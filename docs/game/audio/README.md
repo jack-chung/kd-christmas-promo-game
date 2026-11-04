@@ -38,3 +38,5 @@ All recordings are from **VSCO 2 Community Edition**, Versilian Studios / Sam Go
 To reproduce, download each pinned source file in `sources.json`, use FFmpeg `silenceremove=start_periods=1:start_threshold=-60dB,atrim=duration=<seconds>,afade=t=in:d=0.002,afade=t=out:st=<seconds-.08>:d=0.08`, downmix/resample with `-ac 1 -ar 22050`, measure `volumedetect`, then apply constant gain to reach -1 dB peak. Preserve WAV PCM16 output. Source files remain upstream; only processed excerpts are bundled.
 
 Mix gains and the compressor are in `../music.js`. OfflineAudioContext checks establish an audible backing floor, melody RMS above backing and peak headroom. Listening on actual phone speakers remains the acceptance check for timbre, balance and recognisability.
+
+<!-- Slim-release review deployment verification: November 3, 2026. -->
