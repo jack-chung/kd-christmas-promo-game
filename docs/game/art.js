@@ -15,7 +15,9 @@ export function character(id='wrapper',cls='') {
     s+=r(8,1,4,8,'gold')+r(18,0,4,9,'gold')+r(28,1,4,8,'gold')+r(9,6,22,5,'gold')+r(18,7,3,2,'red');
     s+=r(8,14,24,3,'ink')+r(10,15,8,6,'ink')+r(22,15,8,6,'ink')+r(11,16,3,1,'snow')+r(23,16,3,1,'snow');
     s+=r(14,23,13,3,'ink')+r(17,25,7,2,'cream');
-    s+=r(6,29,28,12,'ink')+r(8,30,24,10,'red')+r(17,29,6,12,'gold')+r(7,29,6,4,'cream')+r(27,29,6,4,'cream');
+    s+=r(6,29,28,12,'ink')+r(8,30,24,10,'#745a87')+r(17,29,6,12,'gold')+r(7,29,6,4,'goldShade')+r(27,29,6,4,'goldShade');
+    // Gold note embroidery on a purple royal coat, with structured gold shoulders.
+    s+=r(27,34,1,4,'gold')+r(28,34,3,1,'gold')+r(25,37,3,2,'gold');
     s+=r(3,29,5,8,'skinShade')+r(32,27,5,8,'skinShade')+r(10,41,8,3,'ink')+r(24,41,8,3,'ink');
   } else if(id==='singer') {
     s+=r(8,7,25,22,'ink')+r(12,3,18,6,'ink')+r(13,9,16,17,'skinShade');

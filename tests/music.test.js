@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,statSync} from 'node:fs';
 import {C} from '../docs/game/content.js';
+import {normalizeSave} from '../docs/game/engine.js';
 import {Music} from '../docs/game/music.js';
 
 test('all difficulties retain the complete carol; only Easy fills uncharted notes',()=>{
@@ -48,4 +49,19 @@ test('backing schedules harmony and kit without playing chart melody; late attac
   assert.ok(calls.some(c=>c.instrument==='bass'));assert.ok(calls.some(c=>c.drum==='kick'));assert.ok(calls.some(c=>c.pad));
   assert.ok(calls.filter(c=>c.midi).every(c=>c.midi<=67));
   calls.length=0;music.backing(song,750,0,performance.now()-500);assert.deepEqual(calls,[]);
+});
+
+
+test('third customer uses the complete ANTIOCH melody and legacy song metadata is ignored',()=>{
+  const song=C.wrap.songs[2];
+  assert.equal(song.id,'joy-to-the-world');assert.equal(song.title,'Joy to the World');
+  assert.deepEqual(song.phrase.slice(0,9),[[72,2],[71,1.5],[69,.5],[67,3],[65,1],[64,2],[62,2],[60,3],[67,1]]);
+  assert.equal(song.phrase.length,57);
+  assert.equal(song.phrase.reduce((sum,[,duration])=>sum+duration,0),76);
+  assert.equal(song.chords.length*song.meter,76);
+  const save=normalizeSave({version:2,layers:[1],wrapBest:1234,song:'up-on-the-housetop'});
+  assert.deepEqual(save.layers,[1]);assert.equal(save.wrapBest,1234);assert.equal(save.song,undefined);
+  const {finale,...ordinaryCopy}=C;
+  assert.doesNotMatch(JSON.stringify(ordinaryCopy),/santa|housetop|jingle bells|jesus|meaning of christmas/i);
+  assert.equal(C.episodes[3].title,'Sleigh-Cart Run');
 });

@@ -3,7 +3,12 @@
 Generated with the built-in image_gen tool. All designs are original concepts; character appearance is proposed, not production casting. Each image uses the common brief plus its style and screen brief below.
 
 ## Common brief
-Use case: ui-mockup. Original polished portrait mobile game screen, edge-to-edge 2:3 portrait, no device frame. Audience ages 8–11, cool expressive characters not preschool. Tuneville Christmas town in cheerful daylight. Palette cranberry, pine, gold, ice blue. Consistent original cast: helper Chinese-Canadian kid with short black hair, teal jacket; Tansy Chinese-Canadian teen with black bob, cranberry cap, gold apron; Filbert younger brother with round glasses and green beanie; King Dazzlebaum brown-skinned jolly flashy adult with crown and patterned cranberry coat, two diverse backup singers; diverse Tunies. Large legible grade-3 text. No publisher artwork, logos, lyrics, script quotations. Absolutely no storms, lightning, darkness, power outages, candles, bells as gifts, or nativity. 
+Use case: ui-mockup. Original polished portrait mobile game screen, edge-to-edge 2:3 portrait, no device frame. Audience ages 8–11, cool expressive characters not preschool. Tuneville Christmas town in cheerful daylight. Palette cranberry, pine, gold, ice blue. Consistent original cast: helper Chinese-Canadian kid with short black hair, teal jacket; Tansy Chinese-Canadian teen with black bob, cranberry cap, gold apron; Filbert younger brother with round glasses and green beanie; King Dazzlebaum brown-skinned jolly flashy adult with crown and purple coat with structured gold shoulders and gold music-note trim, two diverse backup singers; diverse Tunies. Large legible grade-3 text. No publisher artwork, logos, lyrics, script quotations. Absolutely no storms, lightning, darkness, power outages, candles, bells as gifts, or nativity.
+
+## Production costume and copy rules
+No Santa-style hats (red with white trim) on any character, including background Tunies. Use brimmed caps without white trim, beanies, earmuffs and scarves. King Dazzlebaum must read as a king: crown, purple coat, gold shoulders and music-note embroidery; no red robe with white fur trim. Tansy's cranberry brimmed cap and Filbert's green beanie remain. Archived gallery PNGs are historical mock-ups and stay unchanged.
+
+No character mentions Jesus or teaches the meaning of Christmas. Sacred public-domain carols and titles are permitted without explanation. The existing show-day finale is exempt and unchanged.
 
 ## Wrapping-paper craft
 Everything made of cut wrapping paper, folded ribbon and translucent tape. Tactile fibers, torn edges, bold angular silhouettes, graphic patterned paper, contemporary collage with attitude.

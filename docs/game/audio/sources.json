@@ -94,5 +94,14 @@
   "sortingFeedback": {
     "use": "Original G-major landing cues (G4\u2013E5 marimba plus octave harp), string promotion fanfare, harp/string combo echo and 2.8\u20133.4-second results flourish. Same CC0 recordings; no existing arrangements or recordings used. Original generated woody pop, comic spring and paper rasp.",
     "newAudioBytes": 0
+  },
+  "joyArrangement": {
+    "title": "Joy to the World / ANTIOCH",
+    "melody": "Lowell Mason (1792\u20131872), The Modern Psalmist (1839), p. 144.",
+    "edition": "Mutopia-2008/01/13-1223, Steve Dunlop. Edition and typesetting public domain.",
+    "source": "https://www.mutopiaproject.org/ftp/HandelGF/antioch/antioch.ly",
+    "sourceSha256": "ecd34e100586b875d39ef2989d62af7c8a4f1b89f39e52f44ddb3f2d28fc8761",
+    "use": "Complete 19-bar soprano melody transposed D major to C major; durations doubled into four-beat bars. Original harmony, backing and all three difficulty charts by The Tuneville Gift. No lyrics or existing recordings/arrangements used.",
+    "newAudioBytes": 0
   }
 }

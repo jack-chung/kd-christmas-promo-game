@@ -54,6 +54,7 @@ for(const difficulty of C.wrap.difficulty)test(`Wrap Station ${difficulty.id}: t
   for(let customer=0;customer<3;customer++){
     await action(page,'wrap-ready').click({force:true});
     const chart=C.wrap.songs[customer].variants[difficulty.id];
+    await expect(page.locator('.rhythm-cast p')).toHaveText(`♪ ${C.wrap.songs[customer].title}`);
     await expect(page.locator('.rhythm-lane')).toHaveCount(4);await expect(page.locator('.lane-button')).toHaveCount(4);
     expect(await page.locator('kbd').first().isVisible()).toBe(false);
     if(customer===0){
@@ -91,7 +92,11 @@ test('practice: four free sounds, forgiving guided objects and no failure',async
 });
 
 test('wrong shapes miss, swipes do not score, empty taps break combos and unattended songs finish',async({page})=>{
-  await enter(page);await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await enter(page);await openWrap(page);
+  // Let the loading message settle before forced clicks on the short phone viewport.
+  // Otherwise WebKit can move the Ready button between pointerdown and pointerup.
+  await expect(page.locator('#music-loading')).toBeHidden();
+  await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(2700);await page.locator('[data-lane="3"]').click({force:true});await expect(page.locator('#wrap-score')).toHaveText('0');await expect(page.locator('#feedback')).toHaveText('Match the shape!');
   await page.clock.runFor(C.wrap.songs[0].variants.tunie.events[1].time);await page.locator('[data-lane="1"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
   // A moving pointer across the playfield is not a tap target.
