@@ -17,3 +17,5 @@ Every target file is downloaded and checked before the note. This includes the a
 5. Open the keepsakes/gift and check they also accept updates; unwrap and finale celebrations must wait until Town.
 
 Physical phone testing remains human verification; automated Chrome and WebKit runs emulate a portrait phone.
+
+<!-- Review deployment marker: second-build live update acceptance, November 3, 2026. -->
