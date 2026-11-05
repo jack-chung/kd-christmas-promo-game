@@ -1,3 +1,6 @@
+import {celebration,activateResults} from './results-feedback.js';
+import {createSleigh,recordSleigh} from './sleigh.js';
+import {sleighPlayView,activateSleigh} from './sleigh-ui.js';
 import {createSorting,sortingTop,recordSorting} from './sorting.js';
 import {sortingPlayView,activateSorting,activateSortingResults} from './sorting-ui.js';
 import { C as baseContent, episodeContent } from './content.js';
@@ -30,14 +33,15 @@ const button=(text,action,cls='primary',extra='')=>`<button type="button" class=
 const nav=(text,route,cls='primary',extra='')=>button(text,`go:${route}`,cls,extra);
 const eyebrow=text=>`<p class="eyebrow">${esc(text)}</p>`;
 const heading=(small,title,copy='')=>`${eyebrow(small)}<h1 tabindex="-1">${esc(title)}</h1>${copy?`<p class="intro">${esc(copy)}</p>`:''}`;
-const celebration=(count=24)=>`<div class="confetti" aria-hidden="true">${Array.from({length:count},(_,i)=>`<i style="--x:${(i*37)%100}%;--delay:${i%6*.08}s;--turn:${i*53}deg;--colour:${['#f4c766','#cc79a7','#56b4e9','#009e73'][i%4]}"></i>`).join('')}</div>`;
+
 const status=()=>'<p class="feedback" id="feedback" role="status" aria-live="polite"></p>';
 function persist(){storageOK=writeSave(storage,save);const notice=$('#storage-notice');if(notice)notice.hidden=storageOK;}
 function toast(message){const el=$('#toast');if(!el)return;clearTimeout(toastTimer);el.textContent=message;el.classList.add('visible');toastTimer=setTimeout(()=>el.classList.remove('visible'),2600);}
 function feedback(message){const el=$('#feedback');if(el)el.textContent=message;}
+let sleigh=null,sleighResult=null;
 let sorting=null,sortingResult=null,sortingDifficulty='easy';
-const routes=new Set(['sorting','sortingPlay','sortingResults','onboard','hub','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults','gift','unwrap','collection','finale','finalReveal','certificate','invitation','review']);
-const gated=new Set(['sorting','sortingPlay','sortingResults','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults']);
+const routes=new Set(['sleigh','sleighPlay','sleighResults','sorting','sortingPlay','sortingResults','onboard','hub','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults','gift','unwrap','collection','finale','finalReveal','certificate','invitation','review']);
+const gated=new Set(['sleigh','sleighPlay','sleighResults','sorting','sortingPlay','sortingResults','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults']);
 
 let sessionStorage;try{sessionStorage=window.sessionStorage;}catch{}
 const updates=new UpdateCheck({storage:sessionStorage,safe:()=>safeView(view,{hidden:document.hidden,modal:Boolean(document.querySelector('[aria-modal="true"]')),editing:Boolean(document.activeElement?.matches('input:not([type=radio]):not([type=checkbox]),textarea,[contenteditable="true"]'))}),prepare:prepareBuild,beforeReload:()=>{persist();trusted.now();if(!storageOK)throw Error('Save unavailable');},notice:()=>{persist();trusted.now();const el=document.createElement('div');el.id='update-note';el.className='update-note';el.setAttribute('role','status');el.textContent=C.update.note;document.body.append(el);},hide:()=>document.querySelector('#update-note')?.remove()});
@@ -62,6 +66,9 @@ function navigate(target,{demo=false}={}) {
   if(target.startsWith('sorting')){episode=C.episodes.find(ep=>ep.game==='sorting');C=episodeContent(episode);}
   if(target==='sortingPlay'&&!sorting)target='sorting';
   if(target==='sortingResults'&&!sortingResult)target='sorting';
+  if(target.startsWith('sleigh')){episode=C.episodes.find(ep=>ep.game==='sleigh');C=episodeContent(episode);}
+  if(target==='sleighPlay'&&!sleigh)target='sleigh';
+  if(target==='sleighResults'&&!sleighResult)target='sleigh';
   if(target.startsWith('tower')){episode=C.episodes.find(ep=>ep.game==='tower');C=episodeContent(episode);}
   if(gated.has(target)&&!episodeOpen(episode,review))target='hub';
   if(['finalReveal','certificate'].includes(target)&&!save.finale&&!preview)target='finale';
@@ -82,15 +89,17 @@ function render(){
     const message=$('#music-loading');
     if(message){message.textContent=music.state==='failed'?(view.startsWith('sorting')?C.sorting.music.failed:C.wrap.musicFailed):'';message.hidden=music.state==='ready';}
   });
-  const scenes={sorting:sortingView,sortingPlay:()=>sortingPlayView(sorting),sortingResults:sortingResultsView,onboard:onboardView,hub:hubView,wrap:wrapView,wrapPractice:practiceView,wrapOrder:orderView,wrapPlay:wrapPlayView,wrapGift:wrapGiftView,wrapResults:wrapResultsView,tower:towerView,towerPlay:towerPlayView,towerResults:towerResultsView,gift:giftView,unwrap:unwrapView,collection:collectionView,finale:finaleView,finalReveal:finalRevealView,certificate:certificateView,invitation:invitationView,review:reviewView};
+  const scenes={sleigh:sleighView,sleighPlay:sleighPlayView,sleighResults:sleighResultsView,sorting:sortingView,sortingPlay:()=>sortingPlayView(sorting),sortingResults:sortingResultsView,onboard:onboardView,hub:hubView,wrap:wrapView,wrapPractice:practiceView,wrapOrder:orderView,wrapPlay:wrapPlayView,wrapGift:wrapGiftView,wrapResults:wrapResultsView,tower:towerView,towerPlay:towerPlayView,towerResults:towerResultsView,gift:giftView,unwrap:unwrapView,collection:collectionView,finale:finaleView,finalReveal:finalRevealView,certificate:certificateView,invitation:invitationView,review:reviewView};
   document.body.dataset.scene=(view.startsWith('wrap')||view.startsWith('sorting'))?'workshop':'town';
-  document.body.classList.toggle('rhythm-active',Boolean(view==='wrapPlay'||(view==='wrapPractice'&&practice.guided)||view==='sortingPlay'));
+  document.body.classList.toggle('rhythm-active',Boolean(view==='wrapPlay'||(view==='wrapPractice'&&practice.guided)||view==='sortingPlay'||view==='sleighPlay'));
   root.innerHTML=`<div class="scene-backdrop" aria-hidden="true">${scene(document.body.dataset.scene)}</div>${review?`<div class="review-strip">${esc(C.review.active)} <small data-build-id>${BUILD_ID}</small> ${button(C.hub.review,'review-menu','text-button')}</div>`:''}
     <header class="topbar"><a href="#hub" class="brand" data-action="go:hub"><span class="brand-gift">${gift({small:true})}</span><span>${esc(C.app.title)}</span></a><div class="top-actions">${view!=='onboard'?nav(C.app.home,'hub','small-button'):''}${button(save.sound?C.app.soundOn:C.app.soundOff,'sound','small-button','aria-pressed="'+save.sound+'"')}</div></header>
     <main class="screen screen-${view}" id="main">${preview?`<p class="preview-label">${esc(C.review.preview)}</p>`:''}${scenes[view]()}${music.wrap?`<p id="music-loading" class="subtle" role="status" ${music.state==='ready'?'hidden':''}>${esc(music.state==='failed'?C.wrap.musicFailed:C.wrap.musicLoading)}</p>`:''}${['unwrap','finalReveal','wrapGift','wrapResults',].includes(view)?celebration():''}</main>
     <footer class="footer"><p>${esc(C.app.privacy)}</p><p id="storage-notice" class="storage-notice" ${storageOK?'hidden':''}>${esc(C.app.storage)}</p><div>${nav(C.hub.invite,'invitation','text-button')}${nav(C.hub.review,'review','text-button')}<a href="${new URL('art-direction/',SITE_ROOT)}">${esc(C.hub.gallery)}</a></div><p class="preview-caption">${esc(C.app.preview)}</p></footer>
     <div id="toast" class="toast" role="status"></div><div id="modal-root"></div>`;
   if(view==='hub'){const id=setInterval(updateCountdown,1000);dispose=()=>clearInterval(id);updateCountdown();}
+  if(view==='sleighResults')dispose=activateResults(music,sleighResult);
+  if(view==='sleighPlay')dispose=activateSleigh(root,sleigh,{music,finish:finishSleigh,home:()=>navigate('hub'),towerBest:save.towerBest});
   if(view==='sortingResults')dispose=activateSortingResults(music,sortingResult);
   if(view==='wrapPlay')activateWrap();
   if(view==='wrapPractice')activatePractice();
@@ -102,7 +111,7 @@ function onboardView(){return `<div class="welcome-scene">${landscape()}<div cla
 function hubView(){return `${eyebrow(C.hub.eyebrow)}<div class="hub-heading"><div><p class="greeting">${t(C.hub.greeting,{name:nickname(save.profile)})}</p><h1 tabindex="-1">${esc(C.hub.title)}</h1></div>${character(save.profile.avatar)}</div><section class="village" aria-label="${esc(C.app.title)}">${landscape()}<div class="village-houses">${C.episodes.map((ep,i)=>`<button class="house ${episodeOpen(ep,review)?'':'locked'}" data-action="episode:${ep.id}" ${episodeOpen(ep,review)?'':'disabled'} aria-label="${t(C.hub.house,{number:ep.house})}: ${esc(episodeOpen(ep,review)?fmt(C.hub.playEpisode,{number:ep.id}):ep.ready?fmt(C.hub.locked,{date:ep.label}):C.hub.coming)}">${house(i,!episodeOpen(ep,review))}<span class="house-number">${ep.house}</span><span class="house-date">${esc(ep.label)}</span></button>`).join('')}<button class="house finale-house" data-action="go:finale" aria-label="${esc(C.finale.title)}">${house(2,!dateOpen(C.finale.date,review))}<span class="house-number">${C.finale.house}</span><span class="house-date">${esc(C.gift.finale)}</span></button></div><button class="village-gift" data-action="go:gift">${gift({paper:save.paper})}<span>${esc(C.hub.viewGift)}</span><small>${t(C.hub.layerCount,{count:save.layers.length})}</small></button><div class="village-cast">${character('wrapper')}${character('kid')}${character('note')}</div></section><p class="intro">${esc(C.hub.intro)}</p><div class="countdown-card"><span>${esc(C.hub.next)}</span><strong id="countdown"></strong></div>${eyebrow(C.hub.choose)}<p class="subtle">${t(C.hub.selectedEpisode,{number:episode.id,date:episode.label})}</p><div class="adventures">${C.episodes.map(adventure).join('')}</div><div class="hub-links">${nav(C.hub.collection,'collection','secondary')}${nav(C.hub.invite,'invitation','secondary')}</div>`;}
 const sortingNumber=value=>value.toLocaleString('en-US');
 function sortingHubBest(){const best=sortingTop(save.sortingBests);return fmt(C.sorting.scoring.hubBest,{score:sortingNumber(best.score),difficulty:C.sorting.difficulties.find(d=>d.id===best.difficulty).label});}
-function adventure(ep){const open=episodeOpen(ep,review);return `<button class="adventure" data-action="episode:${ep.id}" ${open?'':'disabled'}><span class="adventure-number">0${ep.id}</span>${character(ep.cast)}<span class="adventure-copy"><strong>${esc(ep.title)}</strong><small>${esc(ep.label)}</small><span class="availability">${esc(!ep.ready?C.hub.coming:open?(save.layers.includes(ep.id)?(ep.game==='sorting'?sortingHubBest():fmt(C.app.best,{value:ep.game==='wrap'?save.wrapBest:save.towerBest})):C.app.notPlayed):fmt(C.hub.locked,{date:ep.label}))}</span></span>${open?'<span class="arrow">↗</span>':''}</button>`;}
+function adventure(ep){const open=episodeOpen(ep,review);return `<button class="adventure" data-action="episode:${ep.id}" ${open?'':'disabled'}><span class="adventure-number">0${ep.id}</span>${character(ep.cast)}<span class="adventure-copy"><strong>${esc(ep.title)}</strong><small>${esc(ep.label)}</small><span class="availability">${esc(!ep.ready?C.hub.coming:open?(ep.game==='sleigh'?(save.sleighPlayed?fmt(C.sleigh.best,{count:save.sleighBest}):C.app.notPlayed):save.layers.includes(ep.id)?(ep.game==='sorting'?sortingHubBest():fmt(C.app.best,{value:ep.game==='wrap'?save.wrapBest:save.towerBest})):C.app.notPlayed):fmt(C.hub.locked,{date:ep.label}))}</span></span>${open?'<span class="arrow">↗</span>':''}</button>`;}
 let lastGateState='';
 function updateCountdown(){const state=C.episodes.map(ep=>episodeOpen(ep,review)).join()+dateOpen(C.finale.date,review);if(lastGateState&&state!==lastGateState){lastGateState=state;navigate('hub');return;}lastGateState=state;const el=$('#countdown');if(!el)return;const next=nextRelease(trusted.now());el.textContent=!trusted.online?C.hub.offline:next?fmt(C.hub.countdown,countdown(next.date,trusted.now())):C.hub.allOpen;}
 function giftView(){return `${heading(C.app.title,C.gift.title,C.gift.intro)}<div class="gift-stage">${gift({paper:save.paper})}<p class="gift-tag">${esc(C.hub.giftTag)}<small>${esc(C.hub.giftTime)}</small></p></div><ol class="layer-list">${C.episodes.map((ep,i)=>`<li class="${save.layers.includes(ep.id)?'collected':''}"><span class="layer-icon">${save.layers.includes(ep.id)?'✓':ep.id}</span><span><strong>${esc(C.gift.layers[i])}</strong><small>${esc(save.layers.includes(ep.id)?C.gift.earned:!ep.ready&&dateOpen(ep.date,review)?C.gift.notBuilt:fmt(C.gift.waiting,{date:ep.label}))}</small></span></li>`).join('')}<li><span class="layer-icon">✦</span><span><strong>${esc(C.gift.finale)}</strong><small>${esc(C.finale.locked)}</small></span></li></ol>${save.finale?nav(C.finale.showCertificate,'certificate','primary full'):dateOpen(C.finale.date,review)?nav(C.finale.title,'finale','primary full'):nav(C.gift.play,'hub','primary full')}`;}
@@ -320,12 +329,13 @@ function resetDialog(){
 root.addEventListener('click',event=>{
   const el=event.target.closest('[data-action]');if(!el||el.disabled)return;event.preventDefault();
   const [action,value]=el.dataset.action.split(':');
+  if(action==='sleigh-start'||action==='sleigh-practice'){const chosen=review?Number($('#sleigh-stage-select')?.value)||1:1;sleigh=createSleigh({stage:chosen,practice:action==='sleigh-practice'||(!save.sleighPractice&&chosen===1)});unlockAudio();navigate('sleighPlay');return;}
   if(action==='sorting-start'||action==='sorting-practice'){const chosen=review?Number($('#sort-stage-select')?.value)||undefined:undefined;const practice=action==='sorting-practice'||(!save.sortingPractice&&!chosen);sorting=createSorting(sortingDifficulty,chosen,practice);unlockAudio();navigate('sortingPlay');return;}
   if(action==='go'){if(value==='wrapPractice')practice=0;navigate(value,{demo:preview&&['unwrap','certificate'].includes(value)});return;}
   if(action==='jump'){jump(value);return;}
   if(action==='review-menu'){navigate('review');return;}
   if(action==='sound'){
-    save.sound=!save.sound;if(save.sound){unlockAudio();if(view.startsWith('sorting'))music.tone(60,'tape');else note(0,true);}else hush();persist();el.textContent=save.sound?C.app.soundOn:C.app.soundOff;el.setAttribute('aria-pressed',String(save.sound));return;
+    save.sound=!save.sound;if(save.sound){unlockAudio();if(view.startsWith('sleigh'))music.tone(72,'tape');else if(view.startsWith('sorting'))music.tone(60,'tape');else note(0,true);}else hush();persist();el.textContent=save.sound?C.app.soundOn:C.app.soundOff;el.setAttribute('aria-pressed',String(save.sound));return;
   }
   if(action==='shuffle'){const avatar=profile.avatar;profile={...newProfile(),avatar};$('#nickname').textContent=nickname(profile);return;}
   if(action==='profile'){save.profile={...profile};persist();navigate('hub');return;}
@@ -347,7 +357,7 @@ root.addEventListener('click',event=>{
   if(action==='review-toggle'){review=!review;const url=new URL(location.href);if(review)url.searchParams.set('review','1');else url.searchParams.delete('review');history.replaceState(null,'',url);navigate('review');return;}
   if(action==='reset'){resetDialog();return;}if(action==='reset-cancel'){$('#modal-root').innerHTML='';$('[data-action="reset"]')?.focus();return;}
   if(action==='reset-confirm'){
-    dispose();save=freshSave();profile=newProfile();run=null;tower=null;wrapResult=null;towerResult=null;practice=0;
+    dispose();save=freshSave();profile=newProfile();run=null;tower=null;sleigh=null;sleighResult=null;wrapResult=null;towerResult=null;practice=0;
     try{storage?.removeItem(SAVE_KEY);}catch{}selectEpisode(C.episodes[0]);persist();navigate('onboard');toast(C.app.resetDone);return;
   }
 });
@@ -388,3 +398,10 @@ function sortingResultsView(){
  const row=(key,label,value)=>`<div><dt>${esc(label)}</dt><dd data-points="${key}" data-value="${value}">${sortingNumber(value)}</dd></div>`;
  return `<section class="sorting-party" data-celebration="${r.celebration}">${heading(S.title,L.party)}${r.best?`<p class="sorting-new-best">★ ${esc(L.newBest)}</p>`:''}<div class="sorting-medals">${r.medals.map((id,i)=>`<p class="sorting-medal-stamp" style="--stamp-delay:${i*.18}s">✦ ${t(S.medal,{medal:S.papers.find(p=>p.id===id).medal})}</p>`).join('')}</div><dl class="sorting-breakdown">${row('base',fmt(L.base,{count:r.sorted,points:S.tuning.basePoints}),r.points.base)}${row('quick',L.quickTotal,r.points.quick)}${row('rush',L.rushTotal,r.points.rush)}${row('combo',L.comboTotal,r.points.combo)}</dl><div class="result-total" id="sorting-total" data-value="${r.score}">${sortingNumber(r.score)}<small>${esc(L.total)}</small></div><p class="sorting-personal-best">${t(L.best,{difficulty,score:sortingNumber(r.personalBest)})}</p><p>${t(L.bestRun,{combo:r.bestCombo,stage:r.stage})}</p><p class="unlock-banner">${esc(S.layer)}</p>${r.medals.length?'':`<p>${esc(S.noMedal)}</p>`}${button(S.finish,'claim:sorting','primary full')}${nav(C.app.playAgain,'sorting','secondary full')}</section>${celebration(24+r.celebration*12)}`;
 }
+
+function sleighView(){const S=C.sleigh;return `${heading(S.eyebrow,S.title,S.intro)}<div class="single-art">${character('note')}</div><p class="unlock-banner">${t(S.goal,{count:S.medalsAt[0]})}</p><p class="instruction-card">${esc(S.controls)}</p><p>${esc(S.keyboard)}</p><p class="personal-best">${t(S.best,{count:save.sleighBest})}</p>${save.towerBest?`<p>${t(S.pennant,{count:save.towerBest})}</p>`:''}${review?`<label>${esc(S.reviewStage)} <select id="sleigh-stage-select">${S.stages.map(c=>`<option value="${c.stage}">${c.stage}</option>`).join('')}</select></label>`:''}<p>${esc(C.app.mutedTip)}</p>${button(S.start,'sleigh-start','primary full')}${button(S.practice,'sleigh-practice','secondary full')}`;}
+function finishSleigh(r){if(r.practice){save.sleighPractice=true;persist();navigate('sleigh');toast(C.sleigh.practiceDone);return;}
+ // Single finished-run handoff for the forthcoming Treasure Book rewards.
+ sleighResult=recordSleigh(save,r);if(sleighResult.wonLayer&&episodeOpen(C.episodes[3],review)&&!save.layers.includes(4))save.layers.push(4);persist();navigate('sleighResults');
+}
+function sleighResultsView(){const r=sleighResult,S=C.sleigh;return `<section class="sorting-party" data-celebration="${r.celebration}">${heading(S.results,S.over)}<div class="single-art">${character(save.profile.avatar)}</div>${r.best?`<p class="sorting-new-best">${esc(S.newBest)}</p>`:''}<div class="result-total">${r.delivered}<small>${t(S.record,{count:r.delivered})}</small></div>${r.medal>=0?`<p class="sorting-medal-stamp">${t(S.medal,{medal:S.medals[r.medal]})}</p><p class="unlock-banner">${esc(S.layer)}</p>`:`<p>${t(S.near,{count:S.medalsAt[0]-r.delivered})}</p>`}<p>${t(S.distance,{count:r.distance})}</p><p>${t(S.best,{count:r.personalBest})}</p>${nav(S.again,'sleigh','primary full')}${nav(C.app.home,'hub','secondary full')}</section>${celebration(24+r.celebration*12)}`;}

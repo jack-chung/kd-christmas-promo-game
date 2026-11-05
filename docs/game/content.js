@@ -139,3 +139,25 @@ C.sorting={
 C.review.routes.push(['sorting','Sorting Office setup']);
 
 C.update={interval:300000,note:'New things just arrived in Tuneville!'};
+
+C.sleigh={
+ title:'Pip’s Sleigh-Cart Run',eyebrow:'THE LAST MILE OF THE GIFT',intro:'Pip has a cart full of kindness. Hop through Tuneville, protect the stack and deliver at glowing doors.',
+ goal:'Win the Tissue: deliver {count} gifts',start:'Let’s deliver →',practice:'Try the practice',practiceIntro:'Tap to hop over three fences. Then collect a gift. Keep trying — practice is safe!',practiceDone:'Ready for the delivery round!',practiceRetry:'Try that fence again. Tap to hop!',
+ controls:'Tap to hop · Hold for height · Tap again for a double hop',keyboard:'Space / ↑ to hop · Escape to pause',stack:'{count} / {max} gifts',record:'{count} gifts delivered',best:'Best: {count} gifts delivered',distance:'{count} m travelled',progress:'Tissue: {count} / {goal} delivered',stage:'Street {stage}',reviewStage:'Start at stage',continue:'Let’s go →',
+ results:'Special delivery!',over:'Oh, sugarplums! The cart needs a rest.',near:'Just {count} more deliveries to win Tissue. Try again!',layer:'Tissue won!',again:'Another delivery round →',medals:['Bronze','Silver','Gold'],medal:'{medal} delivery medal',newBest:'New best!',pennant:'Tower best: {count} high',road:'Tuneville delivery road. Pip rides the gift cart.',
+ messages:{hop:'Boing!',catch:'Caught it!',pickup:'One more gift!',hit:'Hop to catch it back!',lost:'Off it goes!',deliver:'Great gumdrops! +1 delivered',land:'',crash:'Oh, sugarplums!'},
+ tuning:{startingGifts:6,maxGifts:8,gravity:1050,hop:310,doubleHop:340,holdLift:650,holdTime:.24,catchTime:1.1,catchHeight:142,catchBounce:10,catchDrift:32,catchReach:12,pickupReach:27,fenceClearance:32,archClearance:8,gapWidth:100,movingSpeed:12,doorFirst:6,doorEvery:28,doorWidth:78,ceilingDistance:150000,ceilingWarning:.08,ceilingSpacing:.09},
+ medalsAt:[4,10,20],
+ stages:[
+  {stage:1,at:0,speed:112,warning:2.12,spacing:[1.25,1.9],icon:'▥ ↑',rule:'Tap to hop over fences. Hold to go higher. Tap again for a double hop.'},
+  {stage:2,at:3,speed:116,warning:2.05,spacing:[1.2,1.8],icon:'▣ +1',rule:'Collect loose gifts. Some need a hop. Your cart holds eight.'},
+  {stage:3,at:6,speed:120,warning:1.98,spacing:[1.25,1.9],icon:'▣ → ▱',rule:'Land on a glowing doormat to deliver. Each delivery uses the top gift. Skipping a door is fine.'},
+  {stage:4,at:9,speed:124,warning:1.9,spacing:[.65,.9],icon:'⌒ →',rule:'Stay on the road under garlands. Don’t hop!'},
+  {stage:5,at:30,speed:132,warning:1.78,spacing:[1.1,1.7],icon:'▰ ↑↑',rule:'Wide gingerbread pothole! Hold for height or double hop across.'},
+  {stage:6,at:55,speed:142,warning:1.65,spacing:[1.05,1.6],icon:'▰ ↔',rule:'Runaway toboggans move toward you. Watch their approach and hop.'},
+  {stage:7,at:80,speed:154,warning:1.52,spacing:[.95,1.5],icon:'▥ ⌒',rule:'Watch each obstacle. Fences, garlands and gaps arrive in mixed patterns.'},
+  {stage:8,at:110,speed:164,warning:1.42,spacing:[.9,1.4],icon:'→ →',rule:'You know the road. The cart keeps getting faster!'}
+ ]
+};
+C.episodes.find(ep=>ep.game==='sleigh').ready=true;
+C.review.routes.push(['sleigh','Sleigh-Cart Run setup']);

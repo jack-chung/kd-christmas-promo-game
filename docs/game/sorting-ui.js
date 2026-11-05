@@ -45,9 +45,4 @@ export function activateSorting(root,r,{finish,music,home}){
  return ()=>{clearTimeout(popupTimer);disposed=true;soundtrack?.dispose();cancelAnimationFrame(frame);root.removeEventListener('click',click);root.removeEventListener('pointerdown',pointer);document.removeEventListener('keydown',key);document.removeEventListener('visibilitychange',hidden);root.removeEventListener('contextmenu',context);music.hush();};
 }
 
-export function activateSortingResults(music,result){
- const cues=new SortingFeedback(music);let disposed=false;
- music.unlock();
- music.load().then(()=>{if(!disposed&&!document.hidden)cues.celebrate(result.celebration);});
- return ()=>{disposed=true;music.hush();};
-}
+export {activateResults as activateSortingResults} from './results-feedback.js';

@@ -14,7 +14,7 @@ for(const ep of C.episodes)test(`host boundary ${ep.label}, device dates cannot 
   await page.goto('/#hub');
   const cards=page.locator('.adventures .adventure');
   await expect(cards.locator('strong')).toHaveText(C.episodes.map(ep=>ep.title));
-  if(ep.id>=2)await expect(cards.nth(1)).toBeEnabled();else await expect(cards.nth(1)).toBeDisabled();await expect(cards.nth(3)).toBeDisabled();
+  if(ep.id>=2)await expect(cards.nth(1)).toBeEnabled();else await expect(cards.nth(1)).toBeDisabled();if(ep.id===4)await expect(cards.nth(3)).toBeEnabled();else await expect(cards.nth(3)).toBeDisabled();
   await expect(cards.nth(0)).toContainText('Not played yet');
   if(ep.id>=3)await expect(cards.nth(2)).toContainText('Not played yet');
   else await expect(cards.nth(2)).toContainText('Opens Nov 27');
@@ -31,14 +31,15 @@ test('offline reload retains verified games and freezes future unlocks',async({p
   await page.goto('/#tower');await expect(page.locator('main')).toHaveClass('screen screen-hub');
   await page.goto('/#finale');await expect(page.locator('#finale-form')).toHaveCount(0);
 });
-test('zero-score completions earn each built game’s own layer exactly once',async({page})=>{
+test('legacy Wrap and Tower zero-score completions keep their existing layer rules',async({page})=>{
   await page.clock.install({time:new Date('2040-01-01')});
   await page.clock.pauseAt(new Date('2040-01-01T00:00:01Z'));
   await page.goto('/?review=1');await page.locator('[data-action="profile"]').click({force:true});
   await page.goto('/?review=1#wrap');
   await page.locator('[data-action="wrap-start"]').click({force:true});
   for(let i=0;i<3;i++){
-    await page.locator('[data-action="wrap-ready"]').click({force:true});
+    await page.locator('[data-action="wrap-ready"]').evaluate(el=>el.click());
+    await expect(page.locator('main')).toHaveClass('screen screen-wrapPlay');
     await page.clock.fastForward(65000);
     await expect(page.locator('main')).toHaveClass('screen screen-wrapGift');
     await page.locator('[data-action="wrap-next"]').evaluate(el=>el.click());
@@ -71,14 +72,14 @@ test('hub cards disable unavailable games, show distinct hosts and distinguish u
     await cards.nth(i).dispatchEvent('click');await expect(page).toHaveURL(/#hub$/);
     await expect(page.locator(`.village-houses [data-action="episode:${i+1}"]`)).toBeDisabled();
   }
-  await expect(cards.nth(1)).toContainText('Opens Nov 20');await expect(cards.nth(3)).toContainText('Coming soon');
+  await expect(cards.nth(1)).toContainText('Opens Nov 20');await expect(cards.nth(3)).toContainText('Opens Dec 4');
   const hosts=['wrapper','king','kid','note'];expect(C.episodes.map(ep=>ep.cast)).toEqual(hosts);
   for(let i=0;i<4;i++){
     const expected=await page.evaluate(html=>{const el=document.createElement('div');el.innerHTML=html;return el.firstElementChild.outerHTML;},character(hosts[i]));
     expect(await cards.nth(i).locator('.character').evaluate(el=>el.outerHTML)).toEqual(expected);
   }
   await page.goto('/?review=1#hub');await expect(cards.nth(2)).toBeEnabled();await expect(cards.nth(2)).toContainText('Not played yet');await expect(cards.nth(2).locator('.arrow')).toHaveCount(1);
-  await expect(cards.nth(1)).toBeEnabled();await expect(cards.nth(3)).toBeDisabled();
+  await expect(cards.nth(1)).toBeEnabled();await expect(cards.nth(3)).toBeEnabled();await expect(cards.nth(3)).toContainText('Not played yet');
   await page.evaluate(()=>{const key='tuneville-gift-v1',s=JSON.parse(localStorage.getItem(key));s.layers=[1,3];s.wrapBest=321;s.towerBest=7;localStorage.setItem(key,JSON.stringify(s));});
   await page.reload();await expect(cards.nth(0)).toContainText('Best: 321');await expect(cards.nth(2)).toContainText('Best: 7');
 });

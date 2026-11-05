@@ -1,6 +1,6 @@
 import {BUILD_ID,SITE_ROOT} from './build-info.js';
 export {BUILD_ID};
-export const safeView=(view,{hidden=false,modal=false,editing=false}={})=>!hidden&&!modal&&!editing&&['hub','wrap','sorting','tower','collection','gift'].includes(view);
+export const safeView=(view,{hidden=false,modal=false,editing=false}={})=>!hidden&&!modal&&!editing&&['hub','wrap','sorting','tower','sleigh','collection','gift'].includes(view);
 export async function publishedBuild(fetcher=fetch){
  const options={cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(8000)};
  const probeURL=new URL('.update-check/'+crypto.randomUUID(),SITE_ROOT);

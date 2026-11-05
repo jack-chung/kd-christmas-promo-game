@@ -13,7 +13,7 @@ test('Toronto weekly midnights and show time unlock at the exact instant',()=>{
 });
 test('old saves reset safely; new saves retain only valid rewards',()=>{
   assert.deepEqual(normalizeSave({version:1,layers:[1]}),freshSave());
-  assert.deepEqual(normalizeSave({...freshSave(),layers:[1,2,3,4]}).layers,[1,2,3]);
+  assert.deepEqual(normalizeSave({...freshSave(),layers:[1,2,3,4]}).layers,[1,2,3,4]);
   assert.equal(normalizeSave({...freshSave(),profile:{avatar:'bad'}}).profile,null);
 });
 test('blocked storage and damaged JSON leave a playable fresh state',()=>{
