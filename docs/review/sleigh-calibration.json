@@ -1,0 +1,6172 @@
+{
+  "physics": {
+    "tap": {
+      "peak": 75.67187500000006,
+      "flight": 0.9666666666666645
+    },
+    "hold": {
+      "peak": 150.48437500000003,
+      "flight": 1.404166666666663
+    },
+    "double": {
+      "peak": 150.99218750000017,
+      "flight": 1.487499999999996
+    }
+  },
+  "windows": [
+    {
+      "stage": 1,
+      "speed": 190,
+      "delivery": 0.3,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.36500000000000027,
+      "moving": 0.2750000000000002,
+      "gap": 0.5950000000000004,
+      "snowman": 0.8949999999999962
+    },
+    {
+      "stage": 2,
+      "speed": 196,
+      "delivery": 0.3,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.3750000000000003,
+      "moving": 0.2900000000000002,
+      "gap": 0.6200000000000004,
+      "snowman": 0.8949999999999962
+    },
+    {
+      "stage": 3,
+      "speed": 204,
+      "delivery": 0.3,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.3900000000000003,
+      "moving": 0.3100000000000002,
+      "gap": 0.6450000000000005,
+      "snowman": 0.8949999999999962
+    },
+    {
+      "stage": 4,
+      "speed": 210,
+      "delivery": 0.28,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.4000000000000003,
+      "moving": 0.32000000000000023,
+      "gap": 0.6650000000000005,
+      "snowman": 0.8949999999999962
+    },
+    {
+      "stage": 5,
+      "speed": 220,
+      "delivery": 0.26,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.4150000000000003,
+      "moving": 0.34000000000000025,
+      "gap": 0.7000000000000005,
+      "snowman": 0.8949999999999962
+    },
+    {
+      "stage": 6,
+      "speed": 232,
+      "delivery": 0.24,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.43500000000000033,
+      "moving": 0.35500000000000026,
+      "gap": 0.7300000000000005,
+      "snowman": 0.8949999999999962
+    },
+    {
+      "stage": 7,
+      "speed": 248,
+      "delivery": 0.22,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.45000000000000034,
+      "moving": 0.3750000000000003,
+      "gap": 0.7750000000000006,
+      "snowman": 0.8949999999999962
+    },
+    {
+      "stage": 8,
+      "speed": 264,
+      "delivery": 0.18,
+      "guidedFence": 0.34000000000000025,
+      "guidedMoving": 0.25500000000000017,
+      "fence": 0.46500000000000036,
+      "moving": 0.4000000000000003,
+      "gap": 0.8100000000000006,
+      "snowman": 0.8899999999999962
+    }
+  ],
+  "runs": [
+    {
+      "seed": 1,
+      "elapsed": 501.5249999997082,
+      "delivered": 29,
+      "complete": true,
+      "distance": 163987.04286107334,
+      "doors": 32,
+      "rate": 0.90625,
+      "medals": {
+        "4": 101.17500000002659,
+        "10": 234.01666666661816,
+        "20": 371.7749999998262
+      },
+      "longest": 1.1749999999999983,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.9499999999999886
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.499999999999307
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.499999999999307
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 26.42499999999914
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 45.75833333333138
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 45.75833333333138
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 50.44999999999778
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 68.45000000000054
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 68.45000000000054
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 75.22500000000593
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 94.50833333335461
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 94.50833333335461
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 99.23333333335837
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 118.51666666670705
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 118.51666666670705
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 122.53333333337692
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 141.83333333336867
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 141.83333333336867
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 146.05833333336483
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 164.3916666666815
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 164.3916666666815
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 164.60000000001463
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 174.64166666667217
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 187.37499999999392
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 203.62499999997914
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 218.89166666663192
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 234.69999999995088
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 249.96666666660366
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 265.2583333332564
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 276.01666666657997
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 286.6166666665703
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 296.9333333332276
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 308.1333333332174
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 321.399999999872
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 337.06666666652444
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 347.8333333331813
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 358.2083333331719
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 372.14166666649254
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 382.8083333331495
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 393.39999999980654
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 407.57499999979365
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 418.9083333331167
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 429.6916666664402
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 443.39166666642774
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 459.38333333307986
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 474.68333333306595
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 485.94166666638904
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 496.26666666637965
+        }
+      ],
+      "hits": {
+        "snowman": 7,
+        "moving": 5,
+        "gap": 6,
+        "fence": 12
+      },
+      "stage": 8
+    },
+    {
+      "seed": 2,
+      "elapsed": 459.1666666664134,
+      "delivered": 20,
+      "complete": true,
+      "distance": 143785.54458330412,
+      "doors": 26,
+      "rate": 0.7692307692307693,
+      "medals": {
+        "4": 99.50833333335859,
+        "10": 231.87499999995345,
+        "20": 440.93333333309664
+      },
+      "longest": 1.1583333333333317,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.8666666666666556
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 21.8749999999994
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 21.8749999999994
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 24.749999999999236
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.39166666666485
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.39166666666485
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.08333333333125
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.46666666666643
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.46666666666643
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.31666666667188
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.6916666666865
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.6916666666865
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.54166666669036
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 115.54166666670469
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 115.54166666670469
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 119.64166666670795
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.66666666670397
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.66666666670397
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 143.67500000003366
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 163.37500000001575
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 163.37500000001575
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 168.67500000001093
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 184.48333333332988
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 200.3749999999821
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 216.5249999999674
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 232.43333333328627
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 247.89166666660554
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 263.7333333332578
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 280.11666666657624
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 296.508333333228
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 313.02499999987964
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 327.7916666665329
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 343.9499999998515
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 359.8333333331704
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 374.8166666664901
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 390.5083333331425
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 401.78333333313225
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 413.0666666664553
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 424.8333333331113
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 441.25833333309635
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 457.2249999997485
+        }
+      ],
+      "hits": {
+        "moving": 6,
+        "fence": 1,
+        "gap": 4,
+        "snowman": 11
+      },
+      "stage": 8
+    },
+    {
+      "seed": 3,
+      "elapsed": 453.39999999975197,
+      "delivered": 21,
+      "complete": true,
+      "distance": 140817.37350691637,
+      "doors": 27,
+      "rate": 0.7777777777777778,
+      "medals": {
+        "4": 100.74166666669291,
+        "10": 263.29999999992486,
+        "20": 431.26666666643877
+      },
+      "longest": 1.1833333333333316,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 4.041666666666657
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.116666666665996
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.116666666665996
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.966666666665834
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 45.424999999998064
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 45.424999999998064
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 50.24999999999779
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 69.4000000000013
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 69.4000000000013
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 76.25000000000675
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 94.25000000002107
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 94.25000000002107
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 99.04166666669155
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.61666666670634
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.61666666670634
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.69166666670958
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 141.25000000003587
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 141.25000000003587
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 145.29166666669886
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 164.11666666668174
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 164.11666666668174
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 170.40833333334268
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.89166666666193
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 201.00833333331485
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 217.15833333330016
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 232.90833333328584
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 248.51666666660498
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 263.64999999992455
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 278.83333333324407
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 294.61666666656305
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 305.64999999988635
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 317.07499999987596
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 330.1249999998641
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 346.74166666651564
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 362.37499999983476
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 378.90833333315305
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 394.9666666664718
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 411.5666666664567
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 421.94166666644725
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 433.3166666664369
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 446.89166666642456
+        }
+      ],
+      "hits": {
+        "moving": 2,
+        "gap": 4,
+        "snowman": 12,
+        "fence": 4
+      },
+      "stage": 8
+    },
+    {
+      "seed": 4,
+      "elapsed": 465.55833333307424,
+      "delivered": 22,
+      "complete": true,
+      "distance": 147021.47931246916,
+      "doors": 29,
+      "rate": 0.7586206896551724,
+      "medals": {
+        "4": 100.15833333335911,
+        "10": 250.06666666660357,
+        "20": 438.1416666664325
+      },
+      "longest": 1.1583333333333317,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.958333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.149999999999327
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.149999999999327
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.974999999999167
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.199999999998134
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.199999999998134
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.9583333333312
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 68.70000000000074
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 68.70000000000074
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 75.5500000000062
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.55000000002052
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.55000000002052
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 98.28333333335762
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.35000000003946
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.35000000003946
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.39166666670934
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.87500000003712
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.87500000003712
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.0750000000333
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.20833333335014
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.20833333335014
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 162.41666666668328
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 172.72500000000724
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.5583333333289
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 201.6666666666476
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 218.03333333329937
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 234.53333333328436
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 250.5583333332698
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 266.0333333332557
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 282.2749999999076
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 292.84166666656466
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 304.0166666665545
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 314.42499999987837
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 325.13333333320196
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 338.3416666665233
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 354.2583333331755
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 369.8333333331613
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 385.95833333314664
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 402.2249999997985
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 412.72499999978896
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 422.97499999977964
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 438.4333333330989
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 449.8416666664219
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 460.12499999974585
+        }
+      ],
+      "hits": {
+        "gap": 7,
+        "fence": 2,
+        "arch": 1,
+        "snowman": 9,
+        "moving": 3
+      },
+      "stage": 8
+    },
+    {
+      "seed": 5,
+      "elapsed": 462.86666666641,
+      "delivered": 18,
+      "complete": true,
+      "distance": 145969.74072913613,
+      "doors": 27,
+      "rate": 0.6666666666666666,
+      "medals": {
+        "4": 99.2166666666917,
+        "10": 279.6916666665766
+      },
+      "longest": 1.1916666666666649,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.883333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 21.974999999999394
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 21.974999999999394
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 24.774999999999235
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.08333333333153
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.08333333333153
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 47.97499999999792
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.46666666666643
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.46666666666643
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.31666666667188
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.75000000001988
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.75000000001988
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.4250000000236
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.42500000003872
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.42500000003872
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.43333333337524
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 138.4416666667051
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 138.4416666667051
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 142.45000000003478
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 161.49166666668413
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 161.49166666668413
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 161.70000000001727
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 173.1000000000069
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 186.2333333333283
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 202.32499999998032
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 218.41666666663235
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 233.65833333328516
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 248.34166666660514
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 263.9333333332576
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 280.22499999990947
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 296.00833333322845
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 312.66666666654663
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 328.1499999998659
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 344.4333333331844
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 359.2499999998376
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 375.1749999998231
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 391.4749999998083
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 402.23333333313184
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 412.4833333331225
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 425.5833333331106
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 441.2166666664297
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 452.0583333330865
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 462.533333333077
+        }
+      ],
+      "hits": {
+        "gap": 7,
+        "moving": 3,
+        "snowman": 13,
+        "arch": 1,
+        "fence": 9
+      },
+      "stage": 8
+    },
+    {
+      "seed": 6,
+      "elapsed": 463.61666666640934,
+      "delivered": 23,
+      "complete": true,
+      "distance": 145977.98035413632,
+      "doors": 26,
+      "rate": 0.8846153846153846,
+      "medals": {
+        "4": 100.10000000002573,
+        "10": 232.0583333332866,
+        "20": 410.2499999997912
+      },
+      "longest": 1.141666666666665,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 4.049999999999991
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.35833333333265
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.35833333333265
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 26.13333333333249
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.56666666666478
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.56666666666478
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 49.13333333333119
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.8166666666667
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.8166666666667
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.65833333333882
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.25000000002028
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.25000000002028
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 98.12500000002416
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.70000000003894
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.70000000003894
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.6750000000421
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.20000000003682
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.20000000003682
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.3333333333664
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.76666666668297
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.76666666668297
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 170.29166666667612
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.44999999999567
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 201.61666666664763
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 217.1666666666335
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 232.52499999995285
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 247.63333333327245
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 264.4499999999238
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 280.08333333324293
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 295.65833333322877
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 312.24999999988034
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 327.90833333319944
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 343.44999999985197
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 359.62499999983726
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 369.774999999828
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 379.94166666648545
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 395.37499999980474
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 410.6999999997908
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 426.9666666664427
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 442.54999999976184
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 457.8416666664146
+        }
+      ],
+      "hits": {
+        "fence": 10,
+        "moving": 2,
+        "snowman": 12,
+        "arch": 3
+      },
+      "stage": 8
+    },
+    {
+      "seed": 7,
+      "elapsed": 442.9666666664281,
+      "delivered": 18,
+      "complete": true,
+      "distance": 135596.62358330752,
+      "doors": 24,
+      "rate": 0.75,
+      "medals": {
+        "4": 102.55833333336102,
+        "10": 249.92499999993703
+      },
+      "longest": 1.1833333333333316,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.9749999999999885
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.041666666666
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.041666666666
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.78333333333251
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.8499999999981
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.8499999999981
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 49.34999999999784
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 68.38333333333382
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 68.38333333333382
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 75.22500000000593
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 96.04166666668917
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 96.04166666668917
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 100.85833333335967
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 119.30000000004101
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 119.30000000004101
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 123.50000000004435
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 143.2000000000341
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 143.2000000000341
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 147.35833333336365
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 165.70000000001363
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 165.70000000001363
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 172.36666666667423
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 187.90833333332677
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 203.66666666664577
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 219.174999999965
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 234.35833333328452
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 250.42499999993657
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 266.1916666665889
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 282.2999999999076
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 297.0916666665608
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 313.57499999987914
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 329.9749999998642
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 345.60833333318334
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 360.8083333331695
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 376.2999999998221
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 391.71666666647474
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 407.15833333312736
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 423.0666666664462
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 439.99166666643083
+        }
+      ],
+      "hits": {
+        "fence": 6,
+        "gap": 1,
+        "snowman": 12,
+        "arch": 1,
+        "moving": 11
+      },
+      "stage": 8
+    },
+    {
+      "seed": 8,
+      "elapsed": 427.358333333109,
+      "delivered": 20,
+      "complete": true,
+      "distance": 129287.38581247641,
+      "doors": 24,
+      "rate": 0.8333333333333334,
+      "medals": {
+        "4": 99.31666666669177,
+        "10": 232.77499999995263,
+        "20": 420.25833333311544
+      },
+      "longest": 1.1583333333333317,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.8916666666666555
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.83333333333268
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.83333333333268
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.54999999999919
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.558333333331504
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.558333333331504
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.18333333333124
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.84166666666673
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.84166666666673
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.68333333333884
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.68333333335316
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.68333333335316
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.44166666669028
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.17500000003852
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.17500000003852
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.3416666667085
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.35833333337
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.35833333337
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.54166666669954
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.5833333333498
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.5833333333498
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 162.79166666668294
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 173.83333333333957
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 184.44166666666325
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 201.6749999999809
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 217.24166666663342
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 233.0249999999524
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 249.93333333327035
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 265.75833333325596
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 281.6583333332415
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 296.9999999998942
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 312.63333333321333
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 327.59166666653306
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 342.99166666651905
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 358.94999999983787
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 374.09166666649077
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 389.6416666664766
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 405.4499999997956
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 420.6916666664484
+        }
+      ],
+      "hits": {
+        "gap": 7,
+        "moving": 2,
+        "snowman": 10,
+        "fence": 5
+      },
+      "stage": 8
+    },
+    {
+      "seed": 9,
+      "elapsed": 451.7833333330868,
+      "delivered": 24,
+      "complete": true,
+      "distance": 140339.32977080517,
+      "doors": 26,
+      "rate": 0.9230769230769231,
+      "medals": {
+        "4": 99.01666666669153,
+        "10": 216.0333333333012,
+        "20": 368.1249999998295
+      },
+      "longest": 1.1833333333333316,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 4.066666666666658
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.583333333332693
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.583333333332693
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.274999999999206
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.28333333333152
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.28333333333152
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.11666666666458
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 66.76666666666587
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 66.76666666666587
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 73.68333333333804
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.68333333335316
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.68333333335316
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.33333333335686
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.3166666667061
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.3166666667061
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.35000000004264
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.89166666670286
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.89166666670286
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.8833333333659
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 163.1333333333493
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 163.1333333333493
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 163.34166666668244
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 174.85833333333863
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.69999999999544
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 201.1499999999814
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 216.53333333330073
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 231.6666666666203
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 247.83333333327226
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 263.3749999999248
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 274.19999999991495
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 284.3166666665724
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 300.1583333332247
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 310.46666666654863
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 320.75833333320594
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 336.41666666652503
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 352.9499999998433
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 368.5666666664958
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 384.5249999998146
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 400.958333333133
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 416.0666666664526
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 432.23333333310455
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 447.2916666664242
+        }
+      ],
+      "hits": {
+        "snowman": 15,
+        "gap": 4,
+        "arch": 1,
+        "moving": 9,
+        "fence": 3
+      },
+      "stage": 8
+    },
+    {
+      "seed": 10,
+      "elapsed": 467.9666666664054,
+      "delivered": 19,
+      "complete": true,
+      "distance": 148697.9258402462,
+      "doors": 26,
+      "rate": 0.7307692307692307,
+      "medals": {
+        "4": 98.90000000002478,
+        "10": 262.06666666659265
+      },
+      "longest": 1.1833333333333316,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.983333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.008333333332725
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.008333333332725
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 24.924999999999226
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 42.93333333333154
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 42.93333333333154
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 47.62499999999794
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.39166666666637
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.39166666666637
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.23333333333848
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.2333333333528
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.2333333333528
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.12500000002336
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 115.79166666670488
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 115.79166666670488
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 119.90000000004149
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 138.22500000003862
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 138.22500000003862
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 142.27500000003494
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 160.2833333333519
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 160.2833333333519
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 160.49166666668503
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 171.16666666667533
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 183.14166666666443
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 199.58333333331615
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 214.83333333330228
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 230.50833333328802
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 246.23333333327372
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 262.433333333259
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 278.49999999991104
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 295.3749999998957
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 311.2999999998812
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 327.4499999998665
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 343.7166666665184
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 359.0916666665044
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 374.47499999982375
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 389.4333333331435
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 405.28333333312906
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 420.016666666449
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 435.6083333331015
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 451.67499999975354
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 467.649999999739
+        }
+      ],
+      "hits": {
+        "fence": 8,
+        "snowman": 10,
+        "gap": 6,
+        "moving": 4
+      },
+      "stage": 8
+    },
+    {
+      "seed": 11,
+      "elapsed": 446.3833333330917,
+      "delivered": 21,
+      "complete": true,
+      "distance": 137388.30674997318,
+      "doors": 26,
+      "rate": 0.8076923076923077,
+      "medals": {
+        "4": 101.28333333336,
+        "10": 247.02499999993967,
+        "20": 406.18333333312825
+      },
+      "longest": 1.1916666666666649,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.908333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.51666666666603
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.51666666666603
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.408333333332532
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.85833333333149
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.85833333333149
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.68333333333121
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.6083333333332
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.6083333333332
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.45000000000532
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 94.74166666668813
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 94.74166666668813
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 99.58333333335865
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 118.3166666667069
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 118.3166666667069
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 122.39166666671014
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 141.3583333333691
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 141.3583333333691
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 145.4666666666987
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 164.98333333334762
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 164.98333333334762
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 169.8333333333432
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.79999999999535
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 201.14166666664806
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 216.56666666663403
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 232.43333333328627
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 247.391666666606
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 262.67499999992543
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 278.4583333332444
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 294.00833333323027
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 304.3333333332209
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 314.94166666654456
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 328.84999999986525
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 344.73333333318413
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 360.6499999998363
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 376.6249999998218
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 388.1499999998113
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 398.42499999980197
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 409.4083333331253
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 422.59999999978
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 437.99166666643265
+        }
+      ],
+      "hits": {
+        "snowman": 11,
+        "gap": 5,
+        "fence": 1,
+        "moving": 3
+      },
+      "stage": 8
+    },
+    {
+      "seed": 12,
+      "elapsed": 441.1749999997631,
+      "delivered": 19,
+      "complete": true,
+      "distance": 135208.65195830722,
+      "doors": 24,
+      "rate": 0.7916666666666666,
+      "medals": {
+        "4": 101.21666666669329,
+        "10": 266.26666666658883
+      },
+      "longest": 1.1499999999999984,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.8333333333333224
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.149999999999327
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.149999999999327
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 26.01666666666583
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.024999999998144
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.024999999998144
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.599999999997884
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.38333333333303
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.38333333333303
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.20833333333846
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 94.70833333335477
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 94.70833333335477
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 99.46666666669189
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.72500000003976
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.72500000003976
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.78333333337632
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.14166666670354
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.14166666670354
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.2333333333665
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 164.08333333334843
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 164.08333333334843
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 169.62500000001006
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.14166666666262
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 200.9916666666482
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 217.63333333329973
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 234.3833333332845
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 250.2083333332701
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 266.6166666665885
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 281.7499999999081
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 297.2166666665607
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 313.6833333332124
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 329.23333333319823
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 345.79999999984983
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 360.9583333331694
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 376.783333333155
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 392.6166666664739
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 408.3416666664596
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 423.9083333331121
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 440.80833333309675
+        }
+      ],
+      "hits": {
+        "fence": 2,
+        "snowman": 15,
+        "moving": 3,
+        "gap": 2
+      },
+      "stage": 8
+    },
+    {
+      "seed": 13,
+      "elapsed": 436.83333333310037,
+      "delivered": 21,
+      "complete": true,
+      "distance": 133647.1966458079,
+      "doors": 26,
+      "rate": 0.8076923076923077,
+      "medals": {
+        "4": 99.31666666669177,
+        "10": 247.3249999999394,
+        "20": 403.23333333313093
+      },
+      "longest": 1.1499999999999984,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.9999999999999885
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.83333333333268
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.83333333333268
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.674999999999184
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.708333333331495
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.708333333331495
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.399999999997895
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.65833333333325
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.65833333333325
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.50000000000536
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.79166666668658
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.79166666668658
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.51666666669034
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.17500000003852
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.17500000003852
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.19166666670839
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.75833333337056
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.75833333337056
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 143.85833333336683
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.28333333335007
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.28333333335007
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 168.958333333344
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 184.59999999999644
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 200.49166666664865
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 216.39999999996752
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 231.8916666666201
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 247.94999999993883
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 263.23333333325826
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 279.4333333332435
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 295.024999999896
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 309.73333333321597
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 326.0249999998678
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 342.8416666665192
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 353.12499999984317
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 364.44999999983287
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 374.5916666664903
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 384.7416666664811
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 399.19166666646794
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 409.8333333331249
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 421.03333333311474
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 436.4583333331007
+        }
+      ],
+      "hits": {
+        "fence": 1,
+        "gap": 2,
+        "snowman": 11,
+        "arch": 1,
+        "moving": 1
+      },
+      "stage": 8
+    },
+    {
+      "seed": 14,
+      "elapsed": 472.74166666640104,
+      "delivered": 25,
+      "complete": true,
+      "distance": 150447.51010413448,
+      "doors": 30,
+      "rate": 0.8333333333333334,
+      "medals": {
+        "4": 97.87500000002396,
+        "10": 217.54999999996647,
+        "20": 366.7833333331641
+      },
+      "longest": 1.166666666666665,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.9249999999999887
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 21.93333333333273
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 21.93333333333273
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 24.749999999999236
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 42.86666666666488
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 42.86666666666488
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 47.44166666666462
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 66.51666666666567
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 66.51666666666567
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 73.35833333333778
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 91.46666666668553
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 91.46666666668553
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 96.12500000002257
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.55000000003882
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.55000000003882
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.550000000042
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.4500000000366
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.4500000000366
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.48333333336626
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.49166666668322
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.49166666668322
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 162.70000000001636
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 173.34166666667335
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 186.558333333328
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 202.95833333331308
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 218.04999999996602
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 233.37499999995208
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 248.4249999999384
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 263.7999999999244
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 279.4166666665769
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 289.85833333323404
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 300.28333333322456
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 310.89166666654825
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 321.808333333205
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 332.40833333319534
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 342.9166666665191
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 354.15833333317556
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 367.1749999998304
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 377.58333333315426
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 388.25833333314455
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 403.11666666646437
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 419.0416666664499
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 435.89166666643456
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 451.89166666642
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 462.39166666641046
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 472.42499999973467
+        }
+      ],
+      "hits": {
+        "fence": 3,
+        "snowman": 12,
+        "moving": 12,
+        "gap": 1
+      },
+      "stage": 8
+    },
+    {
+      "seed": 15,
+      "elapsed": 444.84999999975975,
+      "delivered": 19,
+      "complete": true,
+      "distance": 137432.26154163948,
+      "doors": 26,
+      "rate": 0.7307692307692307,
+      "medals": {
+        "4": 99.71666666669209,
+        "10": 263.84166666659104
+      },
+      "longest": 1.1583333333333317,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.8416666666666557
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.449999999999367
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.449999999999367
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.241666666665875
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.141666666664804
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.141666666664804
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.84999999999787
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 66.84999999999927
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 66.84999999999927
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 73.5916666666713
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.85000000001996
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.85000000001996
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.7166666666905
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.68333333337226
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.68333333337226
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.77500000004218
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.10833333337115
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.10833333337115
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 143.21666666670075
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 161.82500000001716
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 161.82500000001716
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 169.07500000001056
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 184.74166666666298
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 200.45833333331535
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 215.41666666663508
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 230.91666666662098
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 247.49999999993923
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 264.2583333332573
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 280.9166666665755
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 296.1583333332283
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 311.82499999988073
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 327.61666666653304
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 343.30833333318543
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 354.12499999984226
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 364.2249999998331
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 380.2916666664851
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 390.7333333331423
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 401.55833333313245
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 411.933333333123
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 423.0666666664462
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 433.72499999976986
+        }
+      ],
+      "hits": {
+        "arch": 1,
+        "moving": 5,
+        "snowman": 9,
+        "fence": 1,
+        "gap": 3
+      },
+      "stage": 8
+    },
+    {
+      "seed": 16,
+      "elapsed": 440.9583333330966,
+      "delivered": 18,
+      "complete": true,
+      "distance": 134407.56924997456,
+      "doors": 24,
+      "rate": 0.75,
+      "medals": {
+        "4": 101.12500000002655,
+        "10": 296.4166666665614
+      },
+      "longest": 1.1583333333333317,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 4.016666666666656
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.341666666665983
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.341666666665983
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 26.108333333332492
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.97499999999809
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.97499999999809
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 49.86666666666448
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 68.46666666666722
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 68.46666666666722
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 75.30833333333933
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 94.45000000002123
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 94.45000000002123
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 99.25000000002505
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 118.12500000004007
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 118.12500000004007
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 122.3000000000434
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 142.80000000003446
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 142.80000000003446
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 146.9916666666973
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 167.15833333334564
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 167.15833333334564
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 172.24166666667435
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 187.95833333332672
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 203.43333333331265
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 219.2416666666316
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 234.91666666661735
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 250.13333333327017
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 265.69166666658936
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 280.47499999990924
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 296.8083333332277
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 312.3416666665469
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 328.78333333319864
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 344.7916666665174
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 360.5416666665031
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 370.5999999998273
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 381.9916666664836
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 396.38333333313716
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 411.78333333312315
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 427.7916666664419
+        }
+      ],
+      "hits": {
+        "fence": 4,
+        "moving": 5,
+        "gap": 4,
+        "snowman": 8
+      },
+      "stage": 8
+    },
+    {
+      "seed": 17,
+      "elapsed": 463.9833333330757,
+      "delivered": 23,
+      "complete": true,
+      "distance": 146260.76281941397,
+      "doors": 27,
+      "rate": 0.8518518518518519,
+      "medals": {
+        "4": 99.40833333335851,
+        "10": 215.18333333330196,
+        "20": 395.96666666647087
+      },
+      "longest": 1.1166666666666651,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.933333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.39999999999937
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.39999999999937
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.14166666666588
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.09999999999814
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.09999999999814
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.91666666666453
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.96666666666682
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.96666666666682
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.80833333333894
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.80833333335326
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.80833333335326
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.55833333335704
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.34166666670532
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.34166666670532
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.48333333337528
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.33333333337094
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.33333333337094
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 143.54166666670045
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.4250000000166
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.4250000000166
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 169.01666666667728
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.17499999999592
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 200.48333333331533
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 215.59999999996825
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 230.891666666621
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 246.23333333327372
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 261.79999999992623
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 276.8083333332459
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 293.3749999998975
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 309.8333333332159
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 324.7916666665356
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 340.00833333318843
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 350.33333333317904
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 360.5833333331697
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 375.6916666664893
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 385.95833333314664
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 396.24999999980395
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 411.84166666645643
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 427.37499999977564
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 442.9999999997614
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 458.18333333308095
+        }
+      ],
+      "hits": {
+        "moving": 6,
+        "snowman": 11,
+        "gap": 2,
+        "fence": 8
+      },
+      "stage": 8
+    },
+    {
+      "seed": 18,
+      "elapsed": 468.9416666664045,
+      "delivered": 22,
+      "complete": true,
+      "distance": 148816.96258330153,
+      "doors": 27,
+      "rate": 0.8148148148148148,
+      "medals": {
+        "4": 99.70000000002541,
+        "10": 246.14166666660714,
+        "20": 440.0083333330975
+      },
+      "longest": 1.1999999999999982,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.8583333333333223
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.574999999999303
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.574999999999303
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 26.27499999999915
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.28333333333146
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.28333333333146
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.99166666666453
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 66.99166666666605
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 66.99166666666605
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 73.89166666667154
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.16666666668688
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.16666666668688
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.8833333333573
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.00000000003918
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.00000000003918
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.11666666670912
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.20000000003773
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.20000000003773
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 143.3333333333673
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 161.54166666668408
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 161.54166666668408
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 161.75000000001722
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 173.2250000000068
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 184.36666666666332
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 199.48333333331624
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 214.98333333330214
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 230.09166666662173
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 246.66666666660666
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 262.41666666659233
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 277.9999999999115
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 293.77499999989715
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 308.94999999988335
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 325.42499999986836
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 340.9666666665209
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 357.341666666506
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 373.4166666664914
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 388.3666666664778
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 404.6833333331296
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 420.7249999997817
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 435.8416666664346
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 447.04999999975774
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 457.7416666664147
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 468.6249999997381
+        }
+      ],
+      "hits": {
+        "fence": 10,
+        "snowman": 7,
+        "gap": 6,
+        "moving": 5
+      },
+      "stage": 8
+    },
+    {
+      "seed": 19,
+      "elapsed": 464.29166666640873,
+      "delivered": 23,
+      "complete": true,
+      "distance": 146406.71635413618,
+      "doors": 30,
+      "rate": 0.7666666666666667,
+      "medals": {
+        "4": 99.47500000002523,
+        "10": 278.69999999991086,
+        "20": 386.28333333314635
+      },
+      "longest": 1.1916666666666649,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 4.02499999999999
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.60833333333269
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.60833333333269
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.299999999999205
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.07499999999814
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.07499999999814
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.716666666664544
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.4416666666664
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.4416666666664
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.27500000000518
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 92.64166666668646
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 92.64166666668646
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.52500000002368
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.51666666670546
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.51666666670546
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.5916666667087
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.18333333337017
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.18333333337017
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.21666666669984
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.37500000001666
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.37500000001666
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 162.5833333333498
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 172.62500000000733
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.44999999999567
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 201.03333333331483
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 216.27499999996763
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 232.90833333328584
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 248.4249999999384
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 264.1499999999241
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 279.09166666657717
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 295.3083333332291
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 305.88333333321947
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 317.3083333332091
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 328.2583333331991
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 338.3499999998566
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 348.35833333318084
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 358.7249999998381
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 372.40833333315896
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 383.79166666648194
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 394.11666666647255
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 405.3916666664623
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 416.8499999997852
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 427.92499999977514
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 438.69999999976534
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 448.9416666664227
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 458.99166666641355
+        }
+      ],
+      "hits": {
+        "fence": 10,
+        "gap": 1,
+        "snowman": 10,
+        "moving": 3
+      },
+      "stage": 8
+    },
+    {
+      "seed": 20,
+      "elapsed": 483.5083333330579,
+      "delivered": 22,
+      "complete": true,
+      "distance": 154540.0211249665,
+      "doors": 27,
+      "rate": 0.8148148148148148,
+      "medals": {
+        "4": 101.9916666666939,
+        "10": 219.39166666663147,
+        "20": 445.4499999997592
+      },
+      "longest": 1.2083333333333315,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.9499999999999886
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 23.258333333332654
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 23.258333333332654
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 26.174999999999155
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 45.049999999998086
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 45.049999999998086
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 49.81666666666448
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 69.50833333333472
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 69.50833333333472
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 76.34166666667349
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 95.28333333335523
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 95.28333333335523
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 100.10833333335907
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 118.86666666670733
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 118.86666666670733
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 122.91666666671055
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 142.60000000003464
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 142.60000000003464
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 146.6666666666976
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 166.60833333334614
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 166.60833333334614
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 171.40000000000845
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 187.5916666666604
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 204.46666666664504
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 219.9249999999643
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 235.3833333332836
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 250.71666666660298
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 266.2833333332555
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 282.0749999999078
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 297.5083333332271
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 313.5916666665458
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 329.3583333331981
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 346.06666666651626
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 356.68333333317327
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 366.99999999983055
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 381.2166666664843
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 397.3416666664696
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 413.774999999788
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 430.4666666664395
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 445.89166666642546
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 461.433333333078
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 476.75833333306406
+        }
+      ],
+      "hits": {
+        "fence": 8,
+        "arch": 1,
+        "snowman": 15,
+        "gap": 2,
+        "moving": 6
+      },
+      "stage": 8
+    }
+  ],
+  "perfectRuns": [
+    {
+      "seed": 1,
+      "elapsed": 514.3249999996966,
+      "delivered": 28,
+      "complete": true,
+      "distance": 171309.36549995877,
+      "doors": 32,
+      "rate": 0.875,
+      "medals": {
+        "4": 100.17500000002579,
+        "10": 230.2416666666216,
+        "20": 376.15833333315555
+      },
+      "longest": 1.249999999999998,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.9166666666666554
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.241666666666045
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.241666666666045
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.066666666665885
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.7749999999981
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.7749999999981
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 49.449999999997836
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 68.64166666666736
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 68.64166666666736
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 75.3833333333394
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.65833333335394
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.65833333335394
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 98.39166666669104
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.191666666706
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.191666666706
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.16666666670916
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.17500000003776
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.17500000003776
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 143.3916666667006
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 161.40000000001754
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 161.40000000001754
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 161.60833333335069
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 172.2250000000077
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 182.82499999999806
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 199.51666666664954
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 215.14166666663533
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 230.79999999995442
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 247.3583333332727
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 262.99999999992514
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 278.92499999991065
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 294.48333333322984
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 305.0833333332202
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 315.541666666544
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 326.4083333332008
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 336.97499999985786
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 347.083333333182
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 361.33333333316904
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 376.5333333331552
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 392.27499999980756
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 408.8166666664592
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 419.03333333311656
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 430.274999999773
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 441.7583333330959
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 452.84999999975247
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 463.77499999974253
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 477.43333333306344
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 492.3083333330499
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 508.66666666636837
+        }
+      ],
+      "hits": {
+        "fence": 9,
+        "snowman": 7,
+        "moving": 8,
+        "gap": 10
+      },
+      "stage": 8
+    },
+    {
+      "seed": 2,
+      "elapsed": 523.0916666663553,
+      "delivered": 25,
+      "complete": true,
+      "distance": 175639.08624995692,
+      "doors": 32,
+      "rate": 0.78125,
+      "medals": {
+        "4": 99.83333333335885,
+        "10": 276.8666666665792,
+        "20": 447.5499999997573
+      },
+      "longest": 1.2416666666666647,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.933333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.708333333332686
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.708333333332686
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.43333333333253
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.36666666666479
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.36666666666479
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 49.09166666666452
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.21666666666623
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.21666666666623
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 73.93333333333824
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.18333333335356
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.18333333335356
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 98.02500000002408
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.80833333337236
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.80833333337236
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.94166666670898
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 139.78333333337054
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 139.78333333337054
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 143.9500000000334
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 162.09166666668358
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 162.09166666668358
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 162.30000000001672
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 173.8750000000062
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 184.85833333332954
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 200.39166666664875
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 216.17499999996772
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 231.5999999999537
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 246.9083333332731
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 262.9583333332585
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 273.791666666582
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 284.7583333332387
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 295.6749999998954
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 306.45833333321895
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 319.583333333207
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 335.54999999985915
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 350.46666666651225
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 366.5333333331643
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 382.43333333314985
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 398.02499999980233
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 409.67499999979174
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 420.7249999997817
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 432.8999999997706
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 447.76666666642376
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 458.8083333330804
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 470.08333333307013
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 483.0416666663917
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 499.3166666663769
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 515.1916666663625
+        }
+      ],
+      "hits": {
+        "fence": 6,
+        "moving": 7,
+        "snowman": 11,
+        "gap": 9
+      },
+      "stage": 8
+    },
+    {
+      "seed": 3,
+      "elapsed": 459.1666666664134,
+      "delivered": 18,
+      "complete": true,
+      "distance": 143509.4205208041,
+      "doors": 25,
+      "rate": 0.72,
+      "medals": {
+        "4": 100.51666666669273,
+        "10": 281.2666666665752
+      },
+      "longest": 1.1916666666666649,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.958333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.591666666666026
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.591666666666026
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.466666666665862
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.474999999998175
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.474999999998175
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.23333333333124
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 66.99999999999939
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 66.99999999999939
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 73.91666666667156
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.92500000002082
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.92500000002082
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 98.77500000002468
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.05833333337256
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.05833333337256
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.0500000000424
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.26666666670343
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.26666666670343
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.42500000003298
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 164.4250000000148
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 164.4250000000148
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 170.11666666667628
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 186.09999999999508
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 202.0583333333139
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 217.79166666663292
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 234.74999999995083
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 250.1083333332702
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 265.8749999999225
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 281.58333333324157
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 296.7666666665611
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 313.2666666665461
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 329.4416666665314
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 344.51666666651766
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 360.10833333317015
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 375.99166666648904
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 391.9249999998079
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 407.2749999997939
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 423.45833333311253
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 439.408333333098
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 454.84999999975065
+        }
+      ],
+      "hits": {
+        "moving": 1,
+        "snowman": 6,
+        "gap": 2,
+        "fence": 5
+      },
+      "stage": 8
+    },
+    {
+      "seed": 4,
+      "elapsed": 573.4999999996428,
+      "delivered": 25,
+      "complete": true,
+      "distance": 201818.12216661216,
+      "doors": 34,
+      "rate": 0.7352941176470589,
+      "medals": {
+        "4": 99.71666666669209,
+        "10": 232.0499999999533,
+        "20": 472.6249999997345
+      },
+      "longest": 1.2916666666666645,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.983333333333322
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.233333333332713
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.233333333332713
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.008333333332555
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 43.49166666666484
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 43.49166666666484
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 48.23333333333124
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 67.99166666666684
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 67.99166666666684
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 74.87500000000566
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.21666666668692
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.21666666668692
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 97.87500000002396
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 116.36666666670534
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 116.36666666670534
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 120.49166666670862
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.6500000000364
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.6500000000364
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.8166666666993
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 164.57500000001465
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 164.57500000001465
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 169.5416666666768
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 185.18333333332924
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 200.5749999999819
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 216.29166666663428
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 232.59166666661946
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 248.14999999993864
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 263.9833333332576
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 280.366666666576
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 296.1166666665617
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 311.499999999881
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 327.98333333319937
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 343.1666666665189
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 359.5749999998373
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 370.2583333331609
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 381.541666666484
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 396.6583333331369
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 412.2833333331227
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 427.2416666664424
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 442.7249999997617
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 458.14999999974765
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 472.99999999973414
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 488.24166666638695
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 504.0416666663726
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 519.9499999996915
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 535.5999999996773
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 546.3666666663341
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 557.0583333329911
+        }
+      ],
+      "hits": {
+        "moving": 5,
+        "fence": 1,
+        "arch": 1,
+        "gap": 6,
+        "snowman": 18
+      },
+      "stage": 8
+    },
+    {
+      "seed": 5,
+      "elapsed": 488.5833333330533,
+      "delivered": 24,
+      "complete": true,
+      "distance": 157622.90520829838,
+      "doors": 28,
+      "rate": 0.8571428571428571,
+      "medals": {
+        "4": 100.22500000002583,
+        "10": 247.8416666666056,
+        "20": 425.73333333311047
+      },
+      "longest": 1.166666666666665,
+      "timeline": [
+        {
+          "type": "card",
+          "stage": 1,
+          "at": 0
+        },
+        {
+          "type": "play",
+          "stage": 1,
+          "at": 3.9999999999999885
+        },
+        {
+          "type": "lesson",
+          "stage": 2,
+          "at": 22.34166666666604
+        },
+        {
+          "type": "card",
+          "stage": 2,
+          "at": 22.34166666666604
+        },
+        {
+          "type": "play",
+          "stage": 2,
+          "at": 25.266666666665873
+        },
+        {
+          "type": "lesson",
+          "stage": 3,
+          "at": 44.42499999999812
+        },
+        {
+          "type": "card",
+          "stage": 3,
+          "at": 44.42499999999812
+        },
+        {
+          "type": "play",
+          "stage": 3,
+          "at": 49.158333333331186
+        },
+        {
+          "type": "lesson",
+          "stage": 4,
+          "at": 68.70833333333408
+        },
+        {
+          "type": "card",
+          "stage": 4,
+          "at": 68.70833333333408
+        },
+        {
+          "type": "play",
+          "stage": 4,
+          "at": 75.55833333333953
+        },
+        {
+          "type": "lesson",
+          "stage": 5,
+          "at": 93.6083333333539
+        },
+        {
+          "type": "card",
+          "stage": 5,
+          "at": 93.6083333333539
+        },
+        {
+          "type": "play",
+          "stage": 5,
+          "at": 98.32500000002432
+        },
+        {
+          "type": "lesson",
+          "stage": 6,
+          "at": 117.40833333337284
+        },
+        {
+          "type": "card",
+          "stage": 6,
+          "at": 117.40833333337284
+        },
+        {
+          "type": "play",
+          "stage": 6,
+          "at": 121.41666666670936
+        },
+        {
+          "type": "lesson",
+          "stage": 7,
+          "at": 140.85000000003623
+        },
+        {
+          "type": "card",
+          "stage": 7,
+          "at": 140.85000000003623
+        },
+        {
+          "type": "play",
+          "stage": 7,
+          "at": 144.8833333333659
+        },
+        {
+          "type": "lesson",
+          "stage": 8,
+          "at": 164.41666666668146
+        },
+        {
+          "type": "card",
+          "stage": 8,
+          "at": 164.41666666668146
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 169.59166666667676
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 186.09999999999508
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 202.4499999999802
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 218.14999999996593
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 232.87499999995254
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 248.133333333272
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 264.90833333325673
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 281.8833333332413
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 297.4166666665605
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 308.49166666655043
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 319.30833333320726
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 332.9499999998615
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 348.6999999998472
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 364.34999999983296
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 379.84166666648554
+        },
+        {
+          "type": "pattern",
+          "id": "pair",
+          "at": 395.2583333331382
+        },
+        {
+          "type": "pattern",
+          "id": "final-mix",
+          "at": 410.42499999979105
+        },
+        {
+          "type": "pattern",
+          "id": "big-double",
+          "at": 426.14999999977675
+        },
+        {
+          "type": "pattern",
+          "id": "high-gift",
+          "at": 442.0499999997623
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 457.27499999974845
+        },
+        {
+          "type": "pattern",
+          "id": "door-trial",
+          "at": 472.3416666664014
+        },
+        {
+          "type": "pattern",
+          "id": "hop-down",
+          "at": 482.7916666663919
+        }
+      ],
+      "hits": {
+        "snowman": 4,
+        "gap": 3,
+        "arch": 1,
+        "moving": 8,
+        "fence": 7
+      },
+      "stage": 8
+    }
+  ]
+}

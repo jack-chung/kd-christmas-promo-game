@@ -1,7 +1,7 @@
 import {Music} from './music.js';
 import {C} from './content.js';
 
-// Numeric score is fetched with this module only when Sorting Office plays.
+// Numeric score is fetched lazily; Sleigh reuses this scheduler with its own score.
 export const sortingScore={
 phrase:[
  [67,1],[67,1],[67,1],[69,1], [67,1],[67,1],[62,2],
@@ -18,9 +18,9 @@ phrase:[
  [50,54,57],[43,47,50],[50,54,57],[48,52,55],[43,47,50]]};
 
 // A separate, duckable band bus shares the decoded bank and AudioContext with cues.
-// The score runs on the audio clock; sorting inputs never advance its notes.
+// The score runs on the audio clock; gameplay inputs never advance its notes.
 export class SortingMusic {
-  constructor(music){this.music=music;this.band=null;this.step=0;this.nextAt=0;this.hidden=false;this.liftUntil=0;this.stage=0;this.secondsPerBeat=60/C.sorting.music.bpm;}
+  constructor(music,{score=sortingScore,settings=C.sorting.music}={}){this.score=score;this.settings=settings;this.music=music;this.band=null;this.step=0;this.nextAt=0;this.hidden=false;this.liftUntil=0;this.stage=0;this.secondsPerBeat=60/this.settings.bpm;}
   ready(){
     const m=this.music;if(m.state!=='ready'||!m.context)return false;
     if(!this.band){
@@ -38,19 +38,19 @@ export class SortingMusic {
     if(!this.ready()||m.context.state!=='running')return;
     const now=m.context.currentTime;
     if(stage!==this.stage){this.stage=stage;this.liftUntil=now+.65;}
-    const gain=this.band.bus.gain,level=(duck||now<this.liftUntil)? .14 : .65;
+    const gain=this.band.bus.gain,level=(duck||now<this.liftUntil)? (this.settings.duckLevel??.14) : (this.settings.level??.65);
     if(this.level!==level){gain.cancelScheduledValues(now);gain.setTargetAtTime(level,now,.08);this.level=level;}
     if(!this.nextAt||this.nextAt<now-.2)this.nextAt=now+.025;
     while(this.nextAt<now+.18){
       // Tempo changes on bar boundaries, preserving the scheduled phrase and groove.
-      if(this.step%8===0)this.secondsPerBeat=60/Math.min(C.sorting.music.maxBpm,C.sorting.music.bpm+(stage-1)*C.sorting.music.stageBpm);
+      if(this.step%8===0)this.secondsPerBeat=60/Math.min(this.settings.maxBpm,this.settings.bpm+(stage-1)*this.settings.stageBpm);
       this.schedule(this.step,this.nextAt-now,stage);
       this.step++;this.nextAt+=this.secondsPerBeat/2;
     }
   }
   schedule(step,delay,stage){
     if(!this.ready())return;
-    const song=sortingScore,loop=song.chords.length*8,index=step%loop,bar=Math.floor(index/8),beat=Math.floor(index/2),half=index%2,variation=Math.floor(step/loop)%3,b=this.band,chord=song.chords[bar],quarter=this.secondsPerBeat;
+    const song=this.score,loop=song.chords.length*8,index=step%loop,bar=Math.floor(index/8),beat=Math.floor(index/2),half=index%2,variation=Math.floor(step/loop)%3,b=this.band,chord=song.chords[bar],quarter=this.secondsPerBeat;
     let at=0;
     for(const [midi,length] of song.phrase){if(at*2===index)b.sample(midi,variation===1?'ribbon':'fold',delay,.75,quarter*length*.96);at+=length;}
     b.drum('shaker',delay,half?.045:.065);

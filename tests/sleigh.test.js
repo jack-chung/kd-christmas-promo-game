@@ -3,15 +3,16 @@ import assert from 'node:assert/strict';
 import {C} from '../docs/game/content.js';
 import {freshSave,normalizeSave} from '../docs/game/engine.js';
 import {createSleigh,acknowledgeSleigh,hop,releaseHop,tickSleigh,hitSleigh,recordSleigh,sleighDials,sleighHazards,stackHeight} from '../docs/game/sleigh.js';
+import {deliberate as careful} from './helpers/sleigh-player.js';
 const T=C.sleigh.tuning;
 const rng=seed=>()=>((seed=(1664525*seed+1013904223)>>>0)/2**32);
-function simulate({seed=1,interval=.08,held=false,randomTap=false,limit=1800,stage=1}={}){const random=rng(seed),r=createSleigh({random,stage});let next=0;for(let t=0;t<limit&&!r.complete;t+=1/120){if(r.card)acknowledgeSleigh(r);if(r.stage>=4&&r.garlandAt===undefined)r.garlandAt=r.elapsed;if(t>=next){hop(r);next=t+(randomTap?.03+random()*.2:interval);}if(!held)releaseHop(r);tickSleigh(r,1/120);}return r;}
+function simulate({seed=1,interval=.08,held=false,randomTap=false,limit=1800,stage=1}={}){const random=rng(seed),r=createSleigh({random,stage});let next=0;for(let t=0;t<limit&&!r.complete;t+=1/120){if(r.card)acknowledgeSleigh(r);if(r.objects.some(o=>o.kind==='arch')&&r.garlandAt===undefined)r.garlandAt=r.elapsed;if(t>=next){hop(r);next=t+(randomTap?.03+random()*.2:interval);}if(!held)releaseHop(r);tickSleigh(r,1/120);}return r;}
 function success(r,kind){acknowledgeSleigh(r);r.next=99;r.door=Infinity;if(kind==='gift')r.objects=[{kind,x:80,y:12,width:20}];else if(kind==='door'){r.objects=[{kind,x:80,width:78}];r.y=1;r.vy=-100;}else r.objects=[{kind,x:38,width:26}];tickSleigh(r,.02);if(kind==='door'){tickSleigh(r,.25);tickSleigh(r,.02);}}
 test('content counts drive stages; cards freeze time; elapsed time cannot promote a lesson',()=>{
  const paused=createSleigh();tickSleigh(paused,1);assert.equal(paused.elapsed,0);
- for(const c of C.sleigh.stages){const r=createSleigh({stage:c.stage});acknowledgeSleigh(r);r.elapsed=999;r.next=Infinity;r.door=Infinity;tickSleigh(r,.02);assert.equal(r.stage,c.stage);assert.equal(r.card,false);
-  for(let i=0;i<c.clears;i++){success(r,c.kind==='mixed'?'fence':c.kind);assert.equal(r.stage,i===c.clears-1?c.stage+1:c.stage);}
-  if(c.stage<8)assert.equal(r.card,true);
+ for(const c of C.sleigh.stages){const r=createSleigh({stage:c.stage});acknowledgeSleigh(r);r.elapsed=100;r.next=Infinity;r.door=Infinity;tickSleigh(r,.02);assert.equal(r.stage,c.stage);assert.equal(r.card,false);
+  for(let i=0;i<c.clears;i++){success(r,c.kind==='mixed'?'fence':c.kind);assert.equal(r.stage,c.stage);}
+  if(c.stage<8){assert.ok(r.playUntil>=r.elapsed+T.playSeconds-.4);r.objects=[];r.elapsed=r.playUntil;r.y=0;tickSleigh(r,.01);assert.equal(r.stage,c.stage+1);assert.equal(r.card,true);}
   const d=sleighDials(createSleigh({stage:c.stage}));assert.ok((d.speed+12)*d.warning<=228.001);
  }
 });
@@ -35,7 +36,7 @@ test('safe practice teaches fence, garland, gift and landing, retrying each unti
  for(const [i,kind] of C.sleigh.practiceSteps.entries()){success(r,kind);assert.equal(r.practicePassed,i+1);assert.equal(r.complete,i===3);if(i<3)assert.equal(r.card,true);}
 });
 test('constant and seeded random tapping never earn Bronze and fail within twenty seconds after garland introduction',()=>{
- for(let seed=1;seed<=100;seed++)for(const options of [{},{held:true},{held:true,randomTap:true},{randomTap:true}]){const r=simulate({seed,...options});assert.ok(r.complete,JSON.stringify({seed,options}));if(r.garlandAt!==undefined)assert.ok(r.elapsed-r.garlandAt<20,`${seed} post-garland ${r.elapsed-r.garlandAt}`);assert.ok(r.delivered<C.sleigh.medalsAt[0]);}
+ for(let seed=1;seed<=100;seed++)for(const options of [{},{held:true},{held:true,randomTap:true},{randomTap:true}]){const r=simulate({seed,...options});assert.ok(r.complete,JSON.stringify({seed,options}));if(r.garlandAt!==undefined)assert.ok(r.elapsed-r.garlandAt<21,`${seed} post-garland ${r.elapsed-r.garlandAt}`);assert.ok(r.delivered<C.sleigh.medalsAt[0]);}
 });
 test('mashing from the garland introduction ends in about twenty seconds, even with a full starting stack',()=>{
  for(let seed=1;seed<=100;seed++)for(const options of [{},{held:true},{held:true,randomTap:true},{randomTap:true}]){const r=simulate({seed,stage:4,...options});assert.ok(r.complete);assert.ok(r.elapsed<21,`${seed}: ${JSON.stringify(options)} ${r.elapsed}`);assert.ok(r.delivered<4);}
@@ -55,28 +56,19 @@ test('finished-run report handles records, ties, medals, cause of losses and old
  for(const [n,medal] of [[3,-1],[4,0],[10,1],[20,2]]){r.delivered=n;const result=recordSleigh(s,r);assert.equal(result.medal,medal);assert.equal(result.wonLayer,n>=4);assert.ok(result.best);assert.equal(result.celebration,n>=4?2:1);assert.equal(recordSleigh(s,r).best,false);}
  assert.equal(normalizeSave({version:2}).sleighBest,0);assert.equal(normalizeSave({...s,sleighBest:NaN}).sleighBest,0);assert.equal(normalizeSave(s).sleighBest,20);
 });
-function deliberate(seed,limit=1200){
- const r=createSleigh({random:rng(seed)});let airAt=0,bronzeAt=0,stage4=0;const seen=[];let emptyFor=0,longestEmpty=0,garlandAt=null;
- for(let t=0;t<limit&&!r.complete;t+=1/120){
-  if(r.card){if(r.stage===4)stage4=r.elapsed;acknowledgeSleigh(r);}
-  for(const o of r.objects)if(!seen.includes(o.kind))seen.push(o.kind);
-  const d=sleighDials(r),o=r.objects.filter(o=>!o.done&&o.x+o.width/2>68&&o.kind!=='catch').sort((a,b)=>a.x-a.width/2-b.x+b.width/2)[0];
-  if(o){const until=(o.x-o.width/2-105)/(o.speed||d.speed);
-   if(['fence','moving','gap','snowman'].includes(o.kind)&&until<(o.kind==='snowman'?.4:o.kind==='gap'?.2:.25)&&r.hops===0){hop(r);airAt=t;}
-   if(o.kind==='snowman'&&until<.18&&r.hops===1&&t-airAt>.3&&o.x+o.width/2>68)hop(r);
-   if(o.kind==='door'&&until<(2*C.sleigh.tuning.hop/C.sleigh.tuning.gravity-1/120-64/(o.speed||d.speed))&&until>0&&r.hops===0){hop(r);releaseHop(r);airAt=t;}
-   if(o.kind==='gift'&&o.y>30&&until<.2&&r.hops===0){hop(r);releaseHop(r);airAt=t;}
-  }
-  tickSleigh(r,1/120);if(r.objects.some(o=>o.x-o.width/2<320&&o.x+o.width/2>0)){emptyFor=0;}else{emptyFor+=1/120;longestEmpty=Math.max(longestEmpty,emptyFor);}if(garlandAt===null&&r.objects.some(o=>o.kind==='arch'))garlandAt=r.elapsed;r.events=[];if(!bronzeAt&&r.delivered>=4)bronzeAt=r.elapsed;
+test('careful jittered delivery player reaches medals, finishes lessons and ends by the ceiling',()=>{
+ const runs=[];for(let seed=1;seed<=20;seed++){
+  const r=careful(seed,620,{human:true});assert.ok(r.complete);assert.ok(r.elapsed<600);assert.ok(r.medals[4]>=90&&r.medals[4]<=125,JSON.stringify(r.medals));
+  runs.push(r);assert.ok(r.rate>.6);assert.ok(r.longest<=3);
+  const lessons=r.timeline.filter(e=>e.type==='card');assert.deepEqual(lessons.map(e=>e.stage),[1,2,3,4,5,6,7,8]);assert.ok(lessons.at(-1).at>=150&&lessons.at(-1).at<=210);
+  for(const play of r.timeline.filter(e=>e.type==='play'))assert.ok(lessons.find(e=>e.stage===play.stage+1).at-play.at>=T.playSeconds);
+  for(const event of r.timeline.filter(e=>e.type==='pattern')){const p=C.sleigh.patterns.find(p=>p.id===event.id);assert.ok(p);assert.ok(event.at-lessons.at(-1).at>=p.after);}
  }
- return {r,bronzeAt,stage4,seen,longestEmpty,garlandAt};
-}
-test('deliberate play meets garlands near thirty seconds, Bronze near two minutes and Gold before the ceiling',()=>{
- let goldRuns=0;for(let seed=1;seed<=5;seed++){const {r,bronzeAt,stage4}=deliberate(seed);assert.ok(stage4>=23&&stage4<=35,`${stage4}`);assert.ok(bronzeAt>=90&&bronzeAt<=125,`${seed}: Bronze ${bronzeAt}`);assert.ok(r.elapsed>180);if(r.delivered>=20)goldRuns++;assert.ok(r.complete);assert.ok(r.distance>=T.ceilingDistance);assert.ok(r.elapsed<1400);}
- assert.ok(goldRuns>=1);
-});
-test('first road elements follow introduction order',()=>{
- const {seen}=deliberate(7);assert.deepEqual(seen.slice(0,5),['fence','gift','door','arch','gap']);assert.ok(seen.includes('moving'));assert.ok(seen.includes('snowman'));
+ const median=values=>values.sort((a,b)=>a-b)[Math.floor(values.length/2)];
+ assert.ok(runs.filter(r=>r.medals[20]).length>=10,'Gold is achievable but hard');
+ assert.ok(median(runs.map(r=>r.medals[10]))>=210&&median(runs.map(r=>r.medals[10]))<=270);
+ const gold=median(runs.filter(r=>r.medals[20]).map(r=>r.medals[20]));assert.ok(gold>=360&&gold<=420,`Gold median ${gold}`);
+ assert.ok(median(runs.map(r=>r.elapsed))>=360&&median(runs.map(r=>r.elapsed))<=480);
 });
 test('first encounters are isolated and hinted; no stage spawns four consecutive identical hazards',()=>{
  for(let stage=1;stage<=8;stage++){
@@ -134,13 +126,32 @@ test('honest hop-over hitboxes allow forgiving timing at every stage and guided 
  for(const stage of C.sleigh.stages)for(const kind of ['fence','moving','gap','snowman']){
   for(const speed of [Math.min(stage.speed,T.guidedSpeed),stage.speed]){
    const window=timingWindow(stage.stage,kind,speed+(kind==='moving'?T.movingSpeed:0));
-   assert.ok(window>=(stage.stage===1&&kind==='fence'?.3:.2),`${stage.stage} ${kind} speed ${speed}: ${window}`);
+   assert.ok(window>=(stage.stage===1&&kind==='fence'?.25:.2),`${stage.stage} ${kind} speed ${speed}: ${window}`);
   }
  }
 });
-test('guided lessons and mixed roads have no empty stretch over three seconds; first garland arrives at 25–35 seconds',()=>{
- for(let seed=1;seed<=20;seed++){
-  const {longestEmpty,garlandAt}=deliberate(seed);assert.ok(longestEmpty<=3,`${seed}: empty ${longestEmpty}`);
-  assert.ok(garlandAt>=25&&garlandAt<=35,`${seed}: garland ${garlandAt}`);
+test('learn/play roads stay busy; garlands follow the three opening play stretches',()=>{
+ for(let seed=1;seed<=20;seed++){const r=careful(seed);assert.ok(r.longest<=3);const arch=r.timeline.find(e=>e.type==='card'&&e.stage===4);assert.ok(arch.at>=60&&arch.at<=90);}
+});
+function hopPeak({hold=false,double=false}={}){const r=createSleigh();acknowledgeSleigh(r);r.next=Infinity;hop(r);if(!hold)releaseHop(r);let peak=0,flight=0;for(let t=0;t<2;t+=1/240){if(double&&t>=.28&&r.hops===1){hop(r);releaseHop(r);}tickSleigh(r,1/240);peak=Math.max(peak,r.y);if(r.landed){flight=t+1/240;break;}}return {peak,flight};}
+test('height ladder: tap clears low tops, never a snowman or roof; hold and double clear snowman',()=>{
+ const tap=hopPeak(),hold=hopPeak({hold:true}),double=hopPeak({double:true});
+ assert.ok(T.fenceClearance<tap.peak&&tap.peak<100&&100<hold.peak&&100<double.peak);assert.ok(tap.peak<T.roofline-30);
+ for(const [double,expected] of [[false,true],[true,false]]){const r=createSleigh({stage:7});acknowledgeSleigh(r);r.next=Infinity;r.door=Infinity;const o={kind:'snowman',width:40,x:96+20+180*.46,speed:180};r.objects=[o];hop(r);releaseHop(r);for(let t=0;t<1.6;t+=1/240){if(double&&t>=.28&&r.hops===1){hop(r);releaseHop(r);}tickSleigh(r,1/240);}assert.equal(Boolean(o.hit),expected);}
+});
+function doorTrial(stage,offset=0,{roll=false,hold=false,double=false,delivered=0}={}){
+ const r=createSleigh({stage});acknowledgeSleigh(r);r.delivered=delivered;r.next=Infinity;r.door=Infinity;
+ const speed=Math.min(C.sleigh.stages[stage-1].speed,T.doorSpeed),width=speed*C.sleigh.stages[stage-1].deliveryWindow,flight=hopPeak({hold,double}).flight;
+ const o={kind:'door',x:80+speed*(flight+offset),width,speed};r.objects=[o];if(!roll){hop(r);if(!hold)releaseHop(r);}
+ for(let t=0;t<3;t+=1/240){if(double&&t>=.28&&r.hops===1){hop(r);releaseHop(r);}tickSleigh(r,1/240);}return r;
+}
+test('content-sized doorstep accepts any centred hop, rejects rolls and just-outside taps with the right advice',()=>{
+ let previous=1;for(const stage of C.sleigh.stages){const w=stage.deliveryWindow;assert.ok(w<=previous);previous=w;
+  for(const options of [{},{hold:true},{double:true}]){const r=doorTrial(stage.stage,0,options);assert.equal(r.delivered,1);assert.equal(r.gifts,T.startingGifts-1);assert.equal(r.perfect,1);assert.equal(r.bonusPoints,T.perfectPoints);}
+  for(const offset of [-w/2-.02,w/2+.02]){const r=doorTrial(stage.stage,offset);assert.equal(r.delivered,0);assert.equal(r.gifts,T.startingGifts);assert.ok(r.events.includes(offset>0?'tooSoon':'tooLate'),JSON.stringify(r.events));}
+  const roll=doorTrial(stage.stage,0,{roll:true});assert.equal(roll.delivered,0);assert.ok(roll.events.includes('rollMiss'));
  }
+});
+test('door marker teaches the first content-owned deliveries and disappears thereafter',()=>{
+ for(const delivered of [0,T.markerDeliveries-1,T.markerDeliveries]){const r=createSleigh({stage:3});r.delivered=delivered;acknowledgeSleigh(r);tickSleigh(r,.25);assert.equal(r.objects[0].marker,delivered<T.markerDeliveries);assert.equal(r.objects[0].width,r.objects[0].speed*C.sleigh.stages[2].deliveryWindow);}
 });

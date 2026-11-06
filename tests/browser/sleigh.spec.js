@@ -21,7 +21,7 @@ for(const viewport of [{width:320,height:568},{width:390,height:844}])test(`port
  const guide=await page.locator('.sleigh-guide').boundingBox();expect(guide.y+guide.height).toBeLessThanOrEqual(viewport.height);await page.screenshot({scale:'css',path:`docs/review/sleigh-road-sheet-${viewport.width}x${viewport.height}.png`});
  for(const stage of ['4','7']){await enter(page,stage);
  if(stage==='7'){
-  const mixed=()=>page.evaluate(()=>{const r=globalThis.__sleighRun;return r?.objects.some(o=>o.kind==='arch'&&o.x+o.width/2>80)&&r.objects.some(o=>o.kind==='gap'&&o.x-o.width/2<260);});
+  const mixed=()=>page.evaluate(()=>{const r=globalThis.__sleighRun;return r?.objects.some(o=>o.kind==='snowman'&&o.x-o.width/2<260);});
   for(let step=0;step<200&&!await mixed();step++)await page.clock.runFor(25);
   expect(await mixed()).toBe(true);
  }else await page.clock.runFor(2400);
@@ -68,4 +68,17 @@ test('safe practice displays each real picture and saves completion only after t
 test('results explain which hazard cost the most gifts',async({page})=>{
  await seed(page);await page.clock.install();await page.route('**/game/sleigh.js',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('hits:{},','hits:{arch:3,fence:1},').replace('gifts:T.startingGifts','gifts:0')});});
  await enter(page);await cards(page,8);await expect(page.locator('.sleigh-cause')).toHaveText('Garlands knocked off 3 gifts. Stay down under them next time.');
+});
+test('a real pointer tap lands on the taught gold step, shows perfect feedback and fades the marker',async({page})=>{
+ await seed(page);await page.clock.install({time:new Date('2026-11-06T12:00:00Z')});await page.clock.pauseAt(new Date('2026-11-06T12:01:00Z'));
+ await page.route('**/game/sleigh.js',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('return {stage,practice,random,','return globalThis.__sleighRun={stage,practice,random,')});});
+ await enter(page,'3');
+ await page.clock.runFor(250);expect(await page.evaluate(()=>globalThis.__sleighRun.objects.find(o=>o.kind==='door')?.marker)).toBe(true);
+ await page.evaluate(()=>{const r=globalThis.__sleighRun;r.next=99;r.door=Infinity;r.objects=[{kind:'door',x:80+180*(2*315/650-1/120),width:54,speed:180,marker:true}];});
+ await page.locator('#sleigh-canvas').dispatchEvent('pointerdown');await page.locator('#sleigh-canvas').dispatchEvent('pointerup');await page.clock.runFor(1050);
+ await expect(page.locator('#sleigh-score')).toHaveText('1 gifts delivered');await expect(page.locator('#sleigh-message')).toContainText('Perfect delivery!');
+ expect(await page.evaluate(()=>globalThis.__sleighRun.bonusPoints)).toBe(50);
+ await page.screenshot({scale:'css',path:`docs/review/sleigh-perfect-${test.info().project.name}.png`});
+ await page.evaluate(()=>{const r=globalThis.__sleighRun;r.delivered=4;r.giftAfterDoor=false;r.objects=[];r.seen.door=0;r.next=0;});await page.clock.runFor(50);
+ expect(await page.evaluate(()=>globalThis.__sleighRun.objects.find(o=>o.kind==='door')?.marker)).toBe(false);
 });
