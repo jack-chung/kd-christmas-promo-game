@@ -146,19 +146,29 @@ C.sleigh={
  controls:'Tap to hop · Hold for height · Tap again for a double hop',keyboard:'Space / ↑ to hop · Escape to pause',stack:'{count} / {max} gifts',record:'{count} gifts delivered',best:'Best: {count} gifts delivered',distance:'{count} m travelled',progress:'Tissue: {count} / {goal} delivered',stage:'Street {stage}',reviewStage:'Start at stage',continue:'Let’s go →',
  guide:'Road guide',guideIntro:'Look at the shape. Choose your move.',guideClose:'Back to the road',guideSetupClose:'Back to setup',guideCart:'Pip and a full cart fit underneath.',guideTitle:'Pip’s road guide',
  results:'Special delivery!',over:'Oh, sugarplums! The cart needs a rest.',near:'Just {count} more deliveries to win Tissue. Try again!',layer:'Tissue won!',again:'Another delivery round →',medals:['Bronze','Silver','Gold'],medal:'{medal} delivery medal',newBest:'New best!',pennant:'Tower best: {count} high',road:'Tuneville delivery road. Pip rides the gift cart.',
- objects:{fence:{name:'Fence',action:'Hop over!',hint:'Hop!',hit:'Fence! Hop over it.',result:'Fences knocked off {count} gifts. Hop over them next time.'},arch:{name:'Garland',action:'Stay down!',hint:'Stay down!',hit:'Garland! Stay down under it.',result:'Garlands knocked off {count} gifts. Stay down under them next time.'},gift:{name:'Loose gift',action:'Grab it!',hint:'Grab it!'},door:{name:'Delivery door',action:'Land, then let Pip toss!',hint:'Land on the mat!'},gap:{name:'Pothole',action:'Hold for a big hop!',hint:'Hold to hop!',hit:'Pothole! Hold for a big hop.',result:'Potholes knocked off {count} gifts. Hold for a big hop next time.'},moving:{name:'Toboggan',action:'Hop over!',hint:'Hop!',hit:'Toboggan! Hop over it.',result:'Toboggans knocked off {count} gifts. Hop over them next time.'},snowman:{name:'Snowman',action:'Hold + double hop!',hint:'Double hop!',hit:'Snowman! Hold and double hop.',result:'Snowmen knocked off {count} gifts. Hold and double hop next time.'}},
- messages:{hop:'Boing!',catch:'Caught it!',pickup:'One more gift!',hit:'Clear road — hop to catch it back!',lost:'Off it goes!',deliver:'Great gumdrops! +1 delivered',land:'',crash:'Oh, sugarplums!'},
- tuning:{startingGifts:6,maxGifts:8,gravity:1050,hop:390,doubleHop:340,holdLift:650,holdTime:.24,catchTime:1.1,catchHeight:142,catchBounce:10,catchDrift:32,catchReach:12,groundCatchSettle:.26,pickupReach:27,fenceClearance:32,archUnderside:112,cartHeight:24,pipHeight:66,giftRow:18,gapWidth:100,movingSpeed:12,doorEvery:21,doorWidth:78,ceilingDistance:150000,ceilingWarning:.08,ceilingSpacing:.01,guidedWarning:2.1,guidedSpeed:100,guidedGarlandSpeed:20,garlandWidth:140,guidedCount:2,lessonGap:[13,17],mixedLessonGap:.2,catchRecovery:.6},
+ objects:{fence:{name:'Fence',action:'Hop over!',hint:'Hop!',hit:'Fence! Hop over it.',result:'Fences knocked off {count} gifts. Hop over them next time.'},arch:{name:'Garland',action:'Stay down!',hint:'Stay down!',hit:'Garland! Stay down under it.',result:'Garlands knocked off {count} gifts. Stay down under them next time.'},gift:{name:'Loose gift',action:'Grab it!',hint:'Grab it!'},door:{name:'Delivery door',action:'Hop onto the gold step!',hint:'Hop onto the step!'},gap:{name:'Pothole',action:'Hold for a big hop!',hint:'Hold to hop!',hit:'Pothole! Hold for a big hop.',result:'Potholes knocked off {count} gifts. Hold for a big hop next time.'},moving:{name:'Toboggan',action:'Hop over!',hint:'Hop!',hit:'Toboggan! Hop over it.',result:'Toboggans knocked off {count} gifts. Hop over them next time.'},snowman:{name:'Snowman',action:'Hold + double hop!',hint:'Double hop!',hit:'Snowman! Hold and double hop.',result:'Snowmen knocked off {count} gifts. Hold and double hop next time.'}},
+ messages:{hop:'Boing!',catch:'Caught it!',pickup:'One more gift!',hit:'Clear road — hop to catch it back!',lost:'Off it goes!',deliver:'Great gumdrops! +1 delivered',tooSoon:'Too soon!',tooLate:'Too late!',rollMiss:'Hop onto the step!',perfect:'Perfect delivery! +50 points',pattern:'',land:'',crash:'Oh, sugarplums!'},
+ tuning:{startingGifts:6,maxGifts:8,gravity:1150,hop:370,doubleHop:450,holdLift:1600,holdDelay:.14,holdTime:.34,catchTime:1.1,catchHeight:142,catchBounce:10,catchDrift:32,catchReach:12,groundCatchSettle:.26,pickupReach:27,fenceClearance:32,movingClearance:20,archUnderside:112,cartHeight:24,pipHeight:66,giftRow:18,gapWidth:100,movingSpeed:12,doorSpeed:220,doorEvery:22,lateDoorEvery:15,doorWidth:60,markerDeliveries:4,perfectFraction:.34,perfectPoints:50,roofline:125,cartHalfWidth:22,playSeconds:18,lateDamageAt:420,lateDamage:3,speedRise:.7,spacingFall:.0008,patternTightenAfter:150,patternTightenRate:.001,patternEvery:10,ceilingSeconds:570,warningFall:.0016,ceilingDistance:200000,ceilingWarning:.08,ceilingSpacing:.01,guidedWarning:1.12,guidedSpeed:180,guidedGarlandSpeed:180,garlandWidth:285,guidedCount:2,lessonGap:[.2,.45],mixedLessonGap:.2,catchRecovery:.15},
+ music:{loading:'Getting Pip’s band ready…',failed:'The band couldn’t load. You can still play with sound off.',title:'Go, Tell It on the Mountain',bpm:124,maxBpm:144,stageBpm:2,level:.48,duckLevel:.1},
  practiceSteps:['fence','arch','gift','door'],medalsAt:[4,10,20],
+ patterns:[
+  {id:'hop-down',name:'Hop, then stay down!',after:0,kinds:['fence','arch'],gap:1.25},
+  {id:'big-double',name:'Big hop, double hop!',after:25,kinds:['gap','snowman'],gap:1.4},
+  {id:'pair',name:'Two toboggans!',after:50,kinds:['moving','moving'],gap:1.05},
+  {id:'high-gift',name:'Reach for a gift!',after:75,kinds:['gap','gift'],gap:.12},
+  {id:'door-trial',name:'Special delivery!',after:100,kinds:['fence','door','arch'],gap:1.5},
+  {id:'final-mix',name:'Quick choices!',after:150,kinds:['moving','arch','gap','snowman'],gap:1.05}
+ ],
+ faster:'Faster!',hopHere:'Hop here',bonusTotal:'Perfect landings: {count} · {points} bonus points',
  stages:[
-  {stage:1,kind:'fence',clears:3,speed:112,warning:2.12,spacing:[2.3,3.4],rule:'Hop over the fence.'},
-  {stage:2,kind:'gift',clears:2,speed:116,warning:2.05,spacing:[2.4,3.5],rule:'Touch the sparkling gift to grab it.'},
-  {stage:3,kind:'door',clears:2,speed:120,warning:1.98,spacing:[2.4,3.5],rule:'Land on the gold mat and let Pip toss the gift.'},
-  {stage:4,kind:'arch',clears:3,speed:104,warning:2.1,spacing:[2.2,3.4],rule:'Stay down — don’t hop under the garland!'},
-  {stage:5,kind:'gap',clears:3,speed:120,warning:1.8,spacing:[1.9,2.8],rule:'Hold for a big hop over the pothole.'},
-  {stage:6,kind:'moving',clears:3,speed:132,warning:1.65,spacing:[1.7,2.6],rule:'Hop over toboggans; double hop over snowmen.'},
-  {stage:7,kind:'mixed',clears:8,speed:148,warning:1.5,spacing:[1.45,2.2],rule:'Watch each shape and choose your move.'},
-  {stage:8,kind:'speed',clears:0,speed:164,warning:1.35,spacing:[1.3,1.9],rule:'You know the road — keep watching ahead!'}
+  {stage:1,kind:'fence',clears:2,speed:190,warning:1.12,deliveryWindow:.30,spacing:[1.6,2.2],rule:'Hop over the fence.'},
+  {stage:2,kind:'gift',clears:2,speed:196,warning:1.08,deliveryWindow:.30,spacing:[1.6,2.2],rule:'Touch the sparkling gift to grab it.'},
+  {stage:3,kind:'door',clears:2,speed:204,warning:1.04,deliveryWindow:.30,spacing:[1.6,2.2],rule:'Hop onto the gold step. Tap at the take-off sparkles!'},
+  {stage:4,kind:'arch',clears:2,speed:210,warning:1.02,deliveryWindow:.28,spacing:[1.5,1.8],rule:'Stay down — don’t hop under the garland!'},
+  {stage:5,kind:'gap',clears:2,speed:220,warning:.97,deliveryWindow:.26,spacing:[1.5,2.1],rule:'Hold for a big hop over the pothole.'},
+  {stage:6,kind:'moving',clears:2,speed:232,warning:.92,deliveryWindow:.24,spacing:[1.5,2],rule:'Hop over the runaway toboggan.'},
+  {stage:7,kind:'snowman',clears:2,speed:248,warning:.86,deliveryWindow:.22,spacing:[1.5,1.9],rule:'Double hop over the snowman.'},
+  {stage:8,kind:'speed',clears:0,speed:264,warning:.81,deliveryWindow:.18,spacing:[1.4,1.8],rule:'You know the road — watch for combinations!'}
  ]
 };
 C.episodes.find(ep=>ep.game==='sleigh').ready=true;

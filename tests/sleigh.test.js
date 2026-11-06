@@ -112,7 +112,7 @@ test('toboggans move relative to the road while keeping the full guided warning'
 });
 
 // Sweep actual collisions in 5 ms input increments, including the visible cart's
-// full 50-unit footprint. Widths are the road sprites, not narrowed test hitboxes.
+// low-obstacle landing forgiveness. Widths are the full visible road sprites.
 function timingWindow(stage,kind,speed){
  const width={fence:26,moving:48,gap:T.gapWidth,snowman:40}[kind],good=[];
  for(let lead=0;lead<=1.2;lead+=.005){const r=createSleigh({stage});acknowledgeSleigh(r);r.next=Infinity;r.door=Infinity;
@@ -134,9 +134,17 @@ test('learn/play roads stay busy; garlands follow the three opening play stretch
  for(let seed=1;seed<=20;seed++){const r=careful(seed);assert.ok(r.longest<=3);const arch=r.timeline.find(e=>e.type==='card'&&e.stage===4);assert.ok(arch.at>=60&&arch.at<=90);}
 });
 function hopPeak({hold=false,double=false}={}){const r=createSleigh();acknowledgeSleigh(r);r.next=Infinity;hop(r);if(!hold)releaseHop(r);let peak=0,flight=0;for(let t=0;t<2;t+=1/240){if(double&&t>=.28&&r.hops===1){hop(r);releaseHop(r);}tickSleigh(r,1/240);peak=Math.max(peak,r.y);if(r.landed){flight=t+1/240;break;}}return {peak,flight};}
+test('ordinary quick presses stay low and land together; extra lift requires a deliberate hold',()=>{
+ const results=[];
+ for(const duration of [0,.05,.1,.13]){const r=createSleigh();acknowledgeSleigh(r);r.next=Infinity;hop(r);let peak=0,landed=0;
+  for(let t=0;t<1;t+=1/240){if(t>=duration)releaseHop(r);tickSleigh(r,1/240);peak=Math.max(peak,r.y);if(r.landed){landed=t+1/240;break;}}
+  results.push({peak,landed});assert.ok(peak<60);assert.ok(landed<.67);
+ }
+ for(const result of results)assert.deepEqual(result,results[0]);
+});
 test('height ladder: tap clears low tops, never a snowman or roof; hold and double clear snowman',()=>{
  const tap=hopPeak(),hold=hopPeak({hold:true}),double=hopPeak({double:true});
- assert.ok(T.fenceClearance<tap.peak&&tap.peak<100&&100<hold.peak&&100<double.peak);assert.ok(tap.peak<T.roofline-30);
+ assert.ok(T.fenceClearance<tap.peak&&tap.peak<100&&100<hold.peak&&100<double.peak);assert.ok(tap.peak<T.roofline-30);assert.ok(tap.peak<60,`Tap peak ${tap.peak}`);assert.ok(tap.flight<=.67,`Tap airtime ${tap.flight}`);
  for(const [double,expected] of [[false,true],[true,false]]){const r=createSleigh({stage:7});acknowledgeSleigh(r);r.next=Infinity;r.door=Infinity;const o={kind:'snowman',width:40,x:96+20+180*.46,speed:180};r.objects=[o];hop(r);releaseHop(r);for(let t=0;t<1.6;t+=1/240){if(double&&t>=.28&&r.hops===1){hop(r);releaseHop(r);}tickSleigh(r,1/240);}assert.equal(Boolean(o.hit),expected);}
 });
 function doorTrial(stage,offset=0,{roll=false,hold=false,double=false,delivered=0}={}){

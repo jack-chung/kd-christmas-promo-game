@@ -74,8 +74,8 @@ test('a real pointer tap lands on the taught gold step, shows perfect feedback a
  await page.route('**/game/sleigh.js',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('return {stage,practice,random,','return globalThis.__sleighRun={stage,practice,random,')});});
  await enter(page,'3');
  await page.clock.runFor(250);expect(await page.evaluate(()=>globalThis.__sleighRun.objects.find(o=>o.kind==='door')?.marker)).toBe(true);
- await page.evaluate(()=>{const r=globalThis.__sleighRun;r.next=99;r.door=Infinity;r.objects=[{kind:'door',x:80+180*(2*315/650-1/120),width:54,speed:180,marker:true}];});
- await page.locator('#sleigh-canvas').dispatchEvent('pointerdown');await page.locator('#sleigh-canvas').dispatchEvent('pointerup');await page.clock.runFor(1050);
+ await page.evaluate(()=>{const r=globalThis.__sleighRun;r.next=99;r.door=Infinity;r.objects=[{kind:'door',x:80+180*(2*370/1150-1/120),width:54,speed:180,marker:true}];});
+ await page.locator('#sleigh-canvas').dispatchEvent('pointerdown');await page.clock.runFor(100);await page.locator('#sleigh-canvas').dispatchEvent('pointerup');await page.clock.runFor(700);
  await expect(page.locator('#sleigh-score')).toHaveText('1 gifts delivered');await expect(page.locator('#sleigh-message')).toContainText('Perfect delivery!');
  expect(await page.evaluate(()=>globalThis.__sleighRun.bonusPoints)).toBe(50);
  await page.screenshot({scale:'css',path:`docs/review/sleigh-perfect-${test.info().project.name}.png`});

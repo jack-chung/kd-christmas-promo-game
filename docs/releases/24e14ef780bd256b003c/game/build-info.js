@@ -1,2 +1,2 @@
-export const BUILD_ID="05c7f52d731f5051e411";
+export const BUILD_ID="24e14ef780bd256b003c";
 export const SITE_ROOT=new URL('../../../',import.meta.url);

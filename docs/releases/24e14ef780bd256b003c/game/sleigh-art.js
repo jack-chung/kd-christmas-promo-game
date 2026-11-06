@@ -14,11 +14,11 @@ function shapes(kind){
  if(kind==='snowman')return `<path d="M43 157l-3 -10v-24l5 -9 6 -4-4 -6V82l5 -7v-9l7 -6h7l7 6v9l7 7v22l-4 6 6 4 4 9v24l-4 10z" fill="#d7edf5" stroke="${ink}" stroke-width="3"/>`+rect(51,103,25,6,danger)+rect(69,108,5,14,danger)+rect(57,81,3,4,ink)+rect(68,81,3,4,ink)+`<path d="M61 89l-11 4 11 3z" fill="#e88b4d"/>`+rect(62,124,4,4,ink)+rect(62,140,4,4,ink)+`<path d="M44 120l-12 -10m49 10 11 -10" stroke="#936b4f" stroke-width="4"/>`;
  return '';
 }
-const crops={fence:'38 117 44 48',arch:'-20 15 160 150',gift:'31 117 58 50',door:'1 27 118 140',gap:'2 144 116 42',moving:'12 128 83 38',snowman:'27 54 70 110'};
+const crops={fence:'38 117 44 48',arch:'-85 15 290 150',gift:'31 117 58 50',door:'1 27 118 140',gap:'2 144 116 42',moving:'12 128 83 38',snowman:'27 54 70 110'};
 export function roadObject(kind,{card=false}={}){
  let body=shapes(kind);
  if(kind==='arch')body=`<g transform="translate(60 0) scale(${C.sleigh.tuning.garlandWidth/64} 1) translate(-60 0)">${body}</g>`;
  if(card&&kind==='arch')body+=rect(42,145,36,12,'#a2a49d')+[0,1,2,3,4,5,6,7].map(i=>present(43+(i%2)*17,128-Math.floor(i/2)*18,16,i)).join('')+rect(45,157,6,6,ink)+rect(70,157,6,6,ink);
- return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${card?crops[kind]:kind==='arch'?'-72 0 264 180':'0 0 120 180'}" role="img" aria-label="${e(C.sleigh.objects[kind].name)}" shape-rendering="crispEdges">${body}</svg>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${card?crops[kind]:kind==='arch'?`${60-(C.sleigh.tuning.garlandWidth+124)/2} 0 ${C.sleigh.tuning.garlandWidth+124} 180`:'0 0 120 180'}" role="img" aria-label="${e(C.sleigh.objects[kind].name)}" shape-rendering="crispEdges">${body}</svg>`;
 }
 export function roadGuide({close=C.sleigh.guideClose}={}){const S=C.sleigh;return `<section class="sleigh-guide" aria-labelledby="road-guide-title"><h2 id="road-guide-title">${e(S.guideTitle)}</h2><p>${e(S.guideIntro)}</p><div class="sleigh-guide-grid">${Object.entries(S.objects).map(([kind,o])=>`<figure data-road-kind="${kind}">${roadObject(kind,{card:true})}<figcaption><strong>${e(o.name)}</strong><span>${e(o.action)}</span></figcaption></figure>`).join('')}</div><p class="subtle">${e(S.guideCart)}</p><button id="sleigh-guide-close" data-action="sleigh-guide-close" class="primary full">${e(close)}</button></section>`;}

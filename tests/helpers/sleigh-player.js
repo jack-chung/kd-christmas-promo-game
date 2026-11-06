@@ -10,7 +10,7 @@ export function deliberate(seed=1,limit=620,{human=false}={}){
    if(o.kind==='door'){
     if(!seen.has(o)){seen.add(o);doors++;o.jitter=(random()-.5)*.2;}
     if(r.hops===0&&!o.tapped&&(o.x-80)/speed<=2*C.sleigh.tuning.hop/C.sleigh.tuning.gravity-1/120+o.jitter){o.tapped=true;hop(r);releaseHop(r);}
-   }else if(['fence','moving','gap','snowman'].includes(o.kind)&&(!human||t-o.observedAt>=.25+(o.reactionJitter||0))&&r.hops===0&&until<(o.kind==='snowman'?.46:o.kind==='gap'?.22:.27)+(o.reactionJitter||0)){hop(r);airAt=t;if(o.kind==='fence'||o.kind==='moving')releaseHop(r);}
+   }else if(['fence','moving','gap','snowman'].includes(o.kind)&&(!human||t-o.observedAt>=.25+(o.reactionJitter||0))&&r.hops===0&&until<(o.kind==='snowman'?.46:o.kind==='gap'?.22:C.sleigh.tuning.hop/C.sleigh.tuning.gravity-(o.width/2+16)/speed)+(o.reactionJitter||0)){hop(r);airAt=t;if(o.kind==='fence'||o.kind==='moving')releaseHop(r);}
    if(o.kind==='snowman'&&r.hops===1&&t-airAt>.28)hop(r);
    if(o.kind==='gift'&&o.y>30&&r.hops===0&&until<.2){hop(r);airAt=t;releaseHop(r);}
   }
