@@ -10,13 +10,14 @@ function sprite(markup){const img=new Image();img.src='data:image/svg+xml;charse
 export function activateSleigh(root,r,{music,finish,home,towerBest=0}){
  const $=s=>root.querySelector(s),canvas=$('#sleigh-canvas'),ctx=canvas.getContext('2d'),cues=new GameFeedback(music),pip=sprite(character('note')),town=sprite(landscape()),houses=[0,1,2,3].map(i=>sprite(house(i))),objects=Object.fromEntries(Object.keys(S.objects).map(kind=>[kind,sprite(roadObject(kind))]));
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
- let frame,last=performance.now(),paused=false,shown=0,flash=0,squash=0,rumble=0,toss=0,pop=0,disposed=false;
+ let frame,last=performance.now(),paused=false,shown=0,flash=0,squash=0,toss=0,pop=0,disposed=false,soundtrack=null;
  music.load();
- function overlay(isPause=false){releaseHop(r);const c=S.stages[r.stage-1],kind=r.practice?S.practiceSteps[r.practicePassed]:c.kind;shown=`${r.stage}:${r.practicePassed}`;
+ import('./sleigh-music.js').then(({SleighMusic})=>{if(!disposed){soundtrack=new SleighMusic(music);if(paused||r.card)soundtrack.suspend();}}).catch(()=>{});
+ function overlay(isPause=false){soundtrack?.suspend();releaseHop(r);const c=S.stages[r.stage-1],kind=r.practice?S.practiceSteps[r.practicePassed]:c.kind;shown=`${r.stage}:${r.practicePassed}`;
  const kinds=kind==='mixed'||kind==='speed'?['fence','arch','gap']:kind==='moving'?['moving','snowman']:[kind];
  $('#sleigh-overlay').innerHTML=`<div class="pause-backdrop"><section class="pause-card" role="dialog" aria-modal="true" aria-labelledby="sleigh-card-title"><h2 id="sleigh-card-title">${e(isPause?C.app.paused:r.practice?S.practice:S.title)}</h2>${isPause?'':`<div class="sleigh-rule-picture">${kinds.map(k=>roadObject(k,{card:true})).join('')}</div><p>${e(r.practice?S.objects[kind].action:c.rule)}</p>${r.practice?`<p>${e(S.practiceIntro)}</p>`:''}`}<button id="sleigh-continue" class="primary full">${e(isPause?C.app.resume:S.continue)}</button>${isPause?`<button id="sleigh-guide" class="secondary full">${e(S.guide)}</button><button data-action="sound" class="secondary full" aria-pressed="${music.enabled()}">${e(music.enabled()?C.app.soundOn:C.app.soundOff)}</button><button id="sleigh-home" class="secondary full">${e(C.app.home)}</button>`:''}</section></div>`;$('#sleigh-continue').focus();
  }
- function guide(){paused=true;music.hush();releaseHop(r);$('#sleigh-overlay').innerHTML=`<div class="pause-backdrop"><div class="pause-card road-guide-card" role="dialog" aria-modal="true">${roadGuide()}</div></div>`;$('#sleigh-guide-close').focus();}
+ function guide(){paused=true;soundtrack?.suspend();music.hush();releaseHop(r);$('#sleigh-overlay').innerHTML=`<div class="pause-backdrop"><div class="pause-card road-guide-card" role="dialog" aria-modal="true">${roadGuide()}</div></div>`;$('#sleigh-guide-close').focus();}
  function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h));}
  function box(x,y,size=20,index=0){rect(x,y,size,size,'#29283d');rect(x+2,y+2,size-4,size-4,['#d64968','#5676b8','#3d9e97','#b96dba','#e88b4d','#75a54c'][index%6]);rect(x+size*.43,y,4,size,'#f4c766');rect(x,y+size*.42,size,4,'#f4c766');}
  function draw(){
@@ -29,7 +30,7 @@ export function activateSleigh(root,r,{music,finish,home,towerBest=0}){
  rect(170,82,144,30,street.color);ctx.font='bold 11px monospace';ctx.fillStyle='#29283d';ctx.fillText(street.name,176,101);
  for(const o of r.objects){
  const img=objects[o.kind==='catch'?'gift':o.kind];
- const w=o.kind==='arch'?264:120;
+ const w=o.kind==='arch'?S.tuning.garlandWidth+124:120;
  if(img?.complete&&img.naturalWidth)ctx.drawImage(img,o.x-w/2,ground-160-(o.kind==='gift'||o.kind==='catch'?o.y:0),w,180);
  if(o.hint){const label=S.objects[o.kind].hint;ctx.font='bold 12px monospace';const w=ctx.measureText(label).width+12,x=Math.max(2,Math.min(318-w,o.x-w/2));rect(x,ground-174,w,20,'#fff3d6');ctx.fillStyle='#29283d';ctx.fillText(label,x+6,ground-160);}
  }
@@ -47,16 +48,16 @@ export function activateSleigh(root,r,{music,finish,home,towerBest=0}){
  function paint(){const f=(s,v)=>{const el=$(s);if(el.textContent!==v)el.textContent=v;};f('#sleigh-score',fmt(S.record,{count:r.delivered}));f('#sleigh-stack',fmt(S.stack,{count:r.gifts,max:S.tuning.maxGifts}));f('#sleigh-progress',r.practice?S.practiceIntro:fmt(S.progress,{count:r.delivered,goal:S.medalsAt[0]}));$('#sleigh-bronze').value=r.delivered;draw();}
  function down(event){if(event.target.closest('button')||paused||r.card)return;event.preventDefault();music.unlock();cues.effect(hop(r)?'boing':'pop',.6);}
  function up(){releaseHop(r);}
- function pause(){if(paused||disposed)return;paused=true;music.hush();overlay(true);}
+ function pause(){if(paused||disposed)return;paused=true;soundtrack?.suspend();music.hush();overlay(true);}
  function key(event){if(event.code==='Space'||event.code==='ArrowUp'){event.preventDefault();if(!event.repeat)down(event);}else if(event.key==='Escape')pause();}
  function keyup(event){if(['Space','ArrowUp'].includes(event.code))up();}
- function click(event){if(event.target.closest('#sleigh-continue')){music.unlock();acknowledgeSleigh(r);paused=false;last=performance.now();$('#sleigh-overlay').innerHTML='';cues.effect('pop',.4);}else if(event.target.closest('#sleigh-guide'))guide();else if(event.target.closest('#sleigh-guide-close'))overlay(true);else if(event.target.closest('#sleigh-pause'))pause();else if(event.target.closest('#sleigh-home'))home();}
+ function click(event){if(event.target.closest('#sleigh-continue')){music.unlock();soundtrack?.resume();acknowledgeSleigh(r);paused=false;last=performance.now();$('#sleigh-overlay').innerHTML='';cues.effect('pop',.4);}else if(event.target.closest('#sleigh-guide'))guide();else if(event.target.closest('#sleigh-guide-close'))overlay(true);else if(event.target.closest('#sleigh-pause'))pause();else if(event.target.closest('#sleigh-home'))home();}
  function hidden(){if(document.hidden)pause();}
  function context(event){event.preventDefault();}
- function tick(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(!paused&&!r.card){tickSleigh(r,dt);flash=Math.max(0,flash-dt);squash=Math.max(0,squash-dt*5);rumble+=dt;toss=Math.max(0,toss-dt);pop=Math.max(0,pop-dt*4);
+ function tick(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(!paused&&!r.card){tickSleigh(r,dt);flash=Math.max(0,flash-dt);squash=Math.max(0,squash-dt*5);toss=Math.max(0,toss-dt);pop=Math.max(0,pop-dt*4);
  for(const event of r.events.splice(0)){const line=event==='hit'?(r.practice?S.practiceRetry:S.objects[r.lastHit].hit+(r.lastHit==='arch'?'':' '+S.messages.hit)):S.messages[event];if(line)$('#sleigh-message').textContent=line;if(['catch','pickup'].includes(event)){cues.effect('pop',.65);pop=reduced?0:1;}if(event==='hit')cues.oops();if(event==='deliver'){flash=1.5;toss=reduced?0:.65;cues.combo();}if(event==='land')squash=1;if(event==='crash')cues.wrong();}
- if(rumble>.3){rumble=0;cues.effect('oops',.035);}if(r.card&&shown!==`${r.stage}:${r.practicePassed}`)overlay();
- }paint();if(r.complete){if(r.practice){finish(r);return;}if(!r.crashAt)r.crashAt=now;if(now-r.crashAt>650){finish(r);return;}}frame=requestAnimationFrame(tick);}
+ if(r.card&&shown!==`${r.stage}:${r.practicePassed}`)overlay();
+ }soundtrack?.update(r.stage,paused||r.card||r.complete);paint();if(r.complete){if(r.practice){finish(r);return;}if(!r.crashAt)r.crashAt=now;if(now-r.crashAt>650){finish(r);return;}}frame=requestAnimationFrame(tick);}
  root.addEventListener('pointerdown',down);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);root.addEventListener('click',click);root.addEventListener('contextmenu',context);document.addEventListener('keydown',key);document.addEventListener('keyup',keyup);document.addEventListener('visibilitychange',hidden);overlay();paint();frame=requestAnimationFrame(tick);
- return ()=>{disposed=true;cancelAnimationFrame(frame);music.hush();root.removeEventListener('pointerdown',down);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);root.removeEventListener('click',click);root.removeEventListener('contextmenu',context);document.removeEventListener('keydown',key);document.removeEventListener('keyup',keyup);document.removeEventListener('visibilitychange',hidden);};
+ return ()=>{disposed=true;soundtrack?.dispose();cancelAnimationFrame(frame);music.hush();root.removeEventListener('pointerdown',down);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);root.removeEventListener('click',click);root.removeEventListener('contextmenu',context);document.removeEventListener('keydown',key);document.removeEventListener('keyup',keyup);document.removeEventListener('visibilitychange',hidden);};
 }

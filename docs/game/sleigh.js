@@ -4,7 +4,7 @@ export const sleighHazards=['fence','arch','gap','moving','snowman'];
 export const stackHeight=gifts=>Math.max(T.pipHeight,T.cartHeight+Math.ceil(gifts/2)*T.giftRow);
 export function sleighDials(r){
  const base=S.stages[r.stage-1],extra=r.stage===8?Math.max(0,r.elapsed-r.stageAt):0,ceiling=r.distance>=T.ceilingDistance;
- const warning=ceiling?T.ceilingWarning:Math.max(.12,base.warning-extra*.002);
+ const warning=ceiling?T.ceilingWarning:Math.max(.12,base.warning-extra*T.warningFall);
  return {...base,speed:Math.min(base.speed+extra*.45,228/warning-T.movingSpeed),warning,ceiling};
 }
 export function createSleigh({stage=1,practice=false,random=Math.random}={}){
@@ -39,9 +39,10 @@ const lessonRest=r=>r.stage<=2?T.lessonGap[0]+r.random()*(T.lessonGap[1]-T.lesso
 function lessonKind(r){return r.practice?S.practiceSteps[r.practicePassed]:S.stages[r.stage-1].kind;}
 function guided(r,kind){return (r.seen[kind]||0)<T.guidedCount;}
 function spawn(r,kind){
- const d=sleighDials(r),teach=!d.ceiling&&guided(r,kind),speed=(teach?Math.min(d.speed,kind==='arch'?T.guidedGarlandSpeed:T.guidedSpeed):d.speed)+(kind==='moving'?T.movingSpeed:0);
- const warning=teach?T.guidedWarning:d.warning,width=kind==='gap'?T.gapWidth:kind==='door'?T.doorWidth:kind==='arch'?T.garlandWidth:kind==='snowman'?40:kind==='moving'?48:26;
- r.objects.push({kind,x:80+speed*warning+width/2+12,y:kind==='gift'?(!r.practice&&r.serial%2?48:12):0,width,speed,hint:teach});
+ const d=sleighDials(r),teach=!d.ceiling&&guided(r,kind);let speed=(teach?Math.min(d.speed,kind==='arch'?T.guidedGarlandSpeed:T.guidedSpeed):d.speed)+(kind==='moving'?T.movingSpeed:0);
+ if(kind==='door')speed=Math.min(speed,T.doorSpeed);
+ const warning=kind==='door'?Math.max(.95,teach?T.guidedWarning:d.warning):teach?T.guidedWarning:d.warning,width=kind==='gap'?T.gapWidth:kind==='door'?T.doorWidth:kind==='arch'?T.garlandWidth:kind==='snowman'?40:kind==='moving'?48:26;
+ r.objects.push({kind,x:Math.min(320+width/2,105+speed*warning+width/2),y:kind==='gift'?(!r.practice&&r.serial%2?48:12):0,width,speed,hint:teach});
  r.seen[kind]=(r.seen[kind]||0)+1;r.lastKinds.push(kind);r.lastKinds=r.lastKinds.slice(-3);
 }
 function successful(r,o){
@@ -60,7 +61,8 @@ function choose(r,d){
  // familiar shapes and gifts; never a fourth consecutive hazard of one type.
  if(r.stage===6&&guided(r,'snowman'))return r.serial%2?'moving':'snowman';
  if(S.objects[lesson]&&guided(r,lesson))return lesson;
- const pool=r.stage===4?['arch','arch','fence','rest','rest']:['fence','gift','gift',...(r.stage>=4?['arch', 'gift']:[]),...(r.stage>=5?['gap']:[]),...(r.stage>=6?['moving','snowman']:[])];
+ if(r.stage===4)return r.lastKinds.every(k=>k==='arch')&&r.lastKinds.length===3?'fence':'arch';
+ const pool=['fence','gift','gift',...(r.stage>=4?['arch', 'gift']:[]),...(r.stage>=5?['gap']:[]),...(r.stage>=6?['moving','snowman']:[])];
  const eligible=pool.filter(k=>!(r.lastKinds.length===3&&r.lastKinds.every(last=>last===k)&&sleighHazards.includes(k)));
  return eligible[Math.floor(r.random()*eligible.length)];
 }
@@ -81,7 +83,7 @@ function step(r,dt){
   if(!r.objects.includes(o))continue;
   o.x-=(o.kind==='catch'?T.catchDrift:o.speed||d.speed)*dt;
   if(o.kind==='catch'){o.ttl-=dt;o.y=o.launchY+(o.groundCatch?0:T.catchBounce*Math.sin(Math.max(0,T.catchTime-o.ttl)*Math.PI/T.catchTime));if(o.ttl<=0){o.done=true;r.events.push('lost');}}
-  const overlap=o.x-o.width/2<92&&o.x+o.width/2>68;
+  const overlap=o.x-o.width/2<105&&o.x+o.width/2>55;
   if(!o.done&&overlap){
    const groundReady=!o.groundCatch||(r.groundedFor>=T.groundCatchSettle&&Math.abs(o.x-80)<6);
    if(groundReady&&(o.kind==='catch'||o.kind==='gift')&&Math.abs(r.y+14-o.y)<(o.kind==='catch'?T.catchReach:T.pickupReach)){r.gifts=Math.min(T.maxGifts,r.gifts+1);o.done=true;r.events.push(o.kind==='catch'?'catch':'pickup');if(o.kind==='gift')successful(r,o);}
@@ -89,7 +91,7 @@ function step(r,dt){
    const collision=(['fence','moving'].includes(o.kind)&&r.y<T.fenceClearance)||(o.kind==='snowman'&&r.y<100)||(o.kind==='arch'&&r.y+stackHeight(r.gifts)>T.archUnderside)||(o.kind==='gap'&&r.y<8);
    if(collision&&!r.relief){o.hit=true;o.done=o.kind!=='arch';hitSleigh(r,o.kind,o.kind==='arch'?o:null);}
   }
-  if(o.x+o.width/2<55&&!o.passed){o.passed=true;if(!o.done&&!o.hit&&sleighHazards.includes(o.kind))successful(r,o);}
+  if(o.x+o.width/2<50&&!o.passed){o.passed=true;if(!o.done&&!o.hit&&sleighHazards.includes(o.kind))successful(r,o);}
  }
  const remaining=r.objects.filter(o=>!o.done&&o.x+o.width/2>0);
  if(isolated&&r.objects.length&&!remaining.length&&!r.card)r.next=Math.max(r.next,lessonRest(r));

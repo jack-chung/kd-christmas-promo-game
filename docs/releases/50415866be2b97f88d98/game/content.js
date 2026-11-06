@@ -142,21 +142,24 @@ C.update={interval:300000,note:'New things just arrived in Tuneville!'};
 
 C.sleigh={
  title:'Pip’s Sleigh-Cart Run',eyebrow:'THE LAST MILE OF THE GIFT',intro:'Pip has a cart full of kindness. Hop through Tuneville, protect the stack and deliver at glowing doors.',
- goal:'Win the Tissue: deliver {count} gifts',start:'Let’s deliver →',practice:'Try the practice',practiceIntro:'Tap to hop over three fences. Then collect a gift. Keep trying — practice is safe!',practiceDone:'Ready for the delivery round!',practiceRetry:'Try that fence again. Tap to hop!',
+ goal:'Win the Tissue: deliver {count} gifts',start:'Let’s deliver →',practice:'Try the practice',practiceIntro:'Try each action. Keep trying — practice is safe!',practiceDone:'You know the road. Ready to deliver!',practiceRetry:'Try again — practice is safe!',
  controls:'Tap to hop · Hold for height · Tap again for a double hop',keyboard:'Space / ↑ to hop · Escape to pause',stack:'{count} / {max} gifts',record:'{count} gifts delivered',best:'Best: {count} gifts delivered',distance:'{count} m travelled',progress:'Tissue: {count} / {goal} delivered',stage:'Street {stage}',reviewStage:'Start at stage',continue:'Let’s go →',
+ guide:'Road guide',guideIntro:'Look at the shape. Choose your move.',guideClose:'Back to the road',guideSetupClose:'Back to setup',guideCart:'Pip and a full cart fit underneath.',guideTitle:'Pip’s road guide',
  results:'Special delivery!',over:'Oh, sugarplums! The cart needs a rest.',near:'Just {count} more deliveries to win Tissue. Try again!',layer:'Tissue won!',again:'Another delivery round →',medals:['Bronze','Silver','Gold'],medal:'{medal} delivery medal',newBest:'New best!',pennant:'Tower best: {count} high',road:'Tuneville delivery road. Pip rides the gift cart.',
- messages:{hop:'Boing!',catch:'Caught it!',pickup:'One more gift!',hit:'Hop to catch it back!',lost:'Off it goes!',deliver:'Great gumdrops! +1 delivered',land:'',crash:'Oh, sugarplums!'},
- tuning:{startingGifts:6,maxGifts:8,gravity:1050,hop:310,doubleHop:340,holdLift:650,holdTime:.24,catchTime:1.1,doorFirst:22,doorEvery:24,doorWidth:78,ceilingDistance:150000,ceilingWarning:.08,ceilingSpacing:.09},
- medalsAt:[4,10,20],
+ objects:{fence:{name:'Fence',action:'Hop over!',hint:'Hop!',hit:'Fence! Hop over it.',result:'Fences knocked off {count} gifts. Hop over them next time.'},arch:{name:'Garland',action:'Stay down!',hint:'Stay down!',hit:'Garland! Stay down under it.',result:'Garlands knocked off {count} gifts. Stay down under them next time.'},gift:{name:'Loose gift',action:'Grab it!',hint:'Grab it!'},door:{name:'Delivery door',action:'Land, then let Pip toss!',hint:'Land on the mat!'},gap:{name:'Pothole',action:'Hold for a big hop!',hint:'Hold to hop!',hit:'Pothole! Hold for a big hop.',result:'Potholes knocked off {count} gifts. Hold for a big hop next time.'},moving:{name:'Toboggan',action:'Hop over!',hint:'Hop!',hit:'Toboggan! Hop over it.',result:'Toboggans knocked off {count} gifts. Hop over them next time.'},snowman:{name:'Snowman',action:'Hold + double hop!',hint:'Double hop!',hit:'Snowman! Hold and double hop.',result:'Snowmen knocked off {count} gifts. Hold and double hop next time.'}},
+ messages:{hop:'Boing!',catch:'Caught it!',pickup:'One more gift!',hit:'Clear road — hop to catch it back!',lost:'Off it goes!',deliver:'Great gumdrops! +1 delivered',land:'',crash:'Oh, sugarplums!'},
+ tuning:{startingGifts:6,maxGifts:8,gravity:1150,hop:520,doubleHop:340,holdLift:650,holdTime:.24,catchTime:1.1,catchHeight:142,catchBounce:10,catchDrift:32,catchReach:12,groundCatchSettle:.26,pickupReach:27,fenceClearance:32,archUnderside:112,cartHeight:24,pipHeight:66,giftRow:18,gapWidth:100,movingSpeed:12,doorSpeed:220,doorEvery:33,doorWidth:78,warningFall:.0006,ceilingDistance:300000,ceilingWarning:.08,ceilingSpacing:.01,guidedWarning:1.12,guidedSpeed:180,guidedGarlandSpeed:180,garlandWidth:260,guidedCount:2,lessonGap:[.2,.45],mixedLessonGap:.2,catchRecovery:.15},
+ music:{loading:'Getting Pip’s band ready…',failed:'The band couldn’t load. You can still play with sound off.',title:'Go, Tell It on the Mountain',bpm:124,maxBpm:144,stageBpm:2,level:.48,duckLevel:.1},
+ practiceSteps:['fence','arch','gift','door'],medalsAt:[4,10,20],
  stages:[
-  {stage:1,at:0,speed:112,warning:2.12,spacing:[1.25,1.9],icon:'▥ ↑',rule:'Tap to hop over fences. Hold to go higher. Tap again for a double hop.'},
-  {stage:2,at:3,speed:116,warning:2.05,spacing:[1.2,1.8],icon:'▣ +1',rule:'Collect loose gifts. Some need a hop. Your cart holds eight.'},
-  {stage:3,at:6,speed:120,warning:1.98,spacing:[1.25,1.9],icon:'▣ → ▱',rule:'Land on a glowing doormat to deliver. Each delivery uses the top gift. Skipping a door is fine.'},
-  {stage:4,at:9,speed:124,warning:1.9,spacing:[.65,.9],icon:'⌒ →',rule:'Stay on the road under garlands. Don’t hop!'},
-  {stage:5,at:30,speed:132,warning:1.78,spacing:[1.1,1.7],icon:'▰ ↑↑',rule:'Wide gingerbread pothole! Hold for height or double hop across.'},
-  {stage:6,at:55,speed:142,warning:1.65,spacing:[1.05,1.6],icon:'▰ ↔',rule:'Runaway toboggans move toward you. Watch their approach and hop.'},
-  {stage:7,at:80,speed:154,warning:1.52,spacing:[.95,1.5],icon:'▥ ⌒',rule:'Watch each obstacle. Fences, garlands and gaps arrive in mixed patterns.'},
-  {stage:8,at:110,speed:164,warning:1.42,spacing:[.9,1.4],icon:'→ →',rule:'You know the road. The cart keeps getting faster!'}
+  {stage:1,kind:'fence',clears:6,speed:190,warning:1.12,spacing:[1.6,2.2],rule:'Hop over the fence.'},
+  {stage:2,kind:'gift',clears:4,speed:196,warning:1.08,spacing:[1.6,2.2],rule:'Touch the sparkling gift to grab it.'},
+  {stage:3,kind:'door',clears:2,speed:204,warning:1.04,spacing:[1.6,2.2],rule:'Land on the gold mat and let Pip toss the gift.'},
+  {stage:4,kind:'arch',clears:3,speed:210,warning:1.02,spacing:[1.5,1.8],rule:'Stay down — don’t hop under the garland!'},
+  {stage:5,kind:'gap',clears:3,speed:220,warning:.97,spacing:[1.5,2.1],rule:'Hold for a big hop over the pothole.'},
+  {stage:6,kind:'moving',clears:3,speed:232,warning:.92,spacing:[1.5,2],rule:'Hop over toboggans; double hop over snowmen.'},
+  {stage:7,kind:'mixed',clears:8,speed:248,warning:.86,spacing:[1.5,1.9],rule:'Watch each shape and choose your move.'},
+  {stage:8,kind:'speed',clears:0,speed:264,warning:.81,spacing:[1.4,1.8],rule:'You know the road — keep watching ahead!'}
  ]
 };
 C.episodes.find(ep=>ep.game==='sleigh').ready=true;

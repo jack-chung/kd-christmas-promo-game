@@ -56,23 +56,23 @@ test('finished-run report handles records, ties, medals, cause of losses and old
  assert.equal(normalizeSave({version:2}).sleighBest,0);assert.equal(normalizeSave({...s,sleighBest:NaN}).sleighBest,0);assert.equal(normalizeSave(s).sleighBest,20);
 });
 function deliberate(seed,limit=1200){
- const r=createSleigh({random:rng(seed)});let airAt=0,bronzeAt=0,stage4=0;const seen=[];
+ const r=createSleigh({random:rng(seed)});let airAt=0,bronzeAt=0,stage4=0;const seen=[];let emptyFor=0,longestEmpty=0,garlandAt=null;
  for(let t=0;t<limit&&!r.complete;t+=1/120){
   if(r.card){if(r.stage===4)stage4=r.elapsed;acknowledgeSleigh(r);}
   for(const o of r.objects)if(!seen.includes(o.kind))seen.push(o.kind);
   const d=sleighDials(r),o=r.objects.filter(o=>!o.done&&o.x+o.width/2>68&&o.kind!=='catch').sort((a,b)=>a.x-a.width/2-b.x+b.width/2)[0];
-  if(o){const until=(o.x-o.width/2-92)/(o.speed||d.speed);
-   if(['fence','moving','gap','snowman'].includes(o.kind)&&until<(o.kind==='snowman'?.4:o.kind==='gap'?.13:.2)&&r.hops===0){hop(r);airAt=t;}
-   if(['gap','snowman'].includes(o.kind)&&r.hops===1&&t-airAt>.5&&o.x+o.width/2>68)hop(r);
-   if(o.kind==='door'&&until<.65&&until>0&&r.hops===0){hop(r);releaseHop(r);airAt=t;}
+  if(o){const until=(o.x-o.width/2-105)/(o.speed||d.speed);
+   if(['fence','moving','gap','snowman'].includes(o.kind)&&until<(o.kind==='snowman'?.4:o.kind==='gap'?.2:.25)&&r.hops===0){hop(r);airAt=t;}
+   if(o.kind==='snowman'&&until<.18&&r.hops===1&&t-airAt>.3&&o.x+o.width/2>68)hop(r);
+   if(o.kind==='door'&&until<(2*C.sleigh.tuning.hop/C.sleigh.tuning.gravity-1/120-64/(o.speed||d.speed))&&until>0&&r.hops===0){hop(r);releaseHop(r);airAt=t;}
    if(o.kind==='gift'&&o.y>30&&until<.2&&r.hops===0){hop(r);releaseHop(r);airAt=t;}
   }
-  tickSleigh(r,1/120);r.events=[];if(!bronzeAt&&r.delivered>=4)bronzeAt=r.elapsed;
+  tickSleigh(r,1/120);if(r.objects.some(o=>o.x-o.width/2<320&&o.x+o.width/2>0)){emptyFor=0;}else{emptyFor+=1/120;longestEmpty=Math.max(longestEmpty,emptyFor);}if(garlandAt===null&&r.objects.some(o=>o.kind==='arch'))garlandAt=r.elapsed;r.events=[];if(!bronzeAt&&r.delivered>=4)bronzeAt=r.elapsed;
  }
- return {r,bronzeAt,stage4,seen};
+ return {r,bronzeAt,stage4,seen,longestEmpty,garlandAt};
 }
-test('deliberate play meets garlands at 60–90 seconds, Bronze near two minutes and Gold before the ceiling',()=>{
- let goldRuns=0;for(let seed=1;seed<=5;seed++){const {r,bronzeAt,stage4}=deliberate(seed);assert.ok(stage4>=60&&stage4<=90,`${stage4}`);assert.ok(bronzeAt>=90&&bronzeAt<=125,`${seed}: Bronze ${bronzeAt}`);assert.ok(r.elapsed>180);if(r.delivered>=20)goldRuns++;assert.ok(r.complete);assert.ok(r.distance>=T.ceilingDistance);assert.ok(r.elapsed<1000);}
+test('deliberate play meets garlands near thirty seconds, Bronze near two minutes and Gold before the ceiling',()=>{
+ let goldRuns=0;for(let seed=1;seed<=5;seed++){const {r,bronzeAt,stage4}=deliberate(seed);assert.ok(stage4>=23&&stage4<=35,`${stage4}`);assert.ok(bronzeAt>=90&&bronzeAt<=125,`${seed}: Bronze ${bronzeAt}`);assert.ok(r.elapsed>180);if(r.delivered>=20)goldRuns++;assert.ok(r.complete);assert.ok(r.distance>=T.ceilingDistance);assert.ok(r.elapsed<1400);}
  assert.ok(goldRuns>=1);
 });
 test('first road elements follow introduction order',()=>{
@@ -84,7 +84,7 @@ test('first encounters are isolated and hinted; no stage spawns four consecutive
   for(let t=0;t<200;t+=1/120){if(r.card)acknowledgeSleigh(r);r.gifts=8;r.relief=0; // Observe generators independently of the player's collisions.
    if(r.events.includes('road-break')){last='';count=0;}r.events=[];
    for(const o of r.objects)if(!seen.has(o)){seen.add(o);spawns++;if(sleighHazards.includes(o.kind)){count=o.kind===last?count+1:1;last=o.kind;assert.ok(count<=3,`${stage}: ${o.kind}`);}else{count=0;last='';}
-    if(o.hint){assert.equal(r.objects.length,1);assert.ok((o.x-o.width/2-92)/(o.speed||1)>=T.guidedWarning-.02);}
+    if(o.hint){assert.equal(r.objects.length,1);assert.ok((o.x-o.width/2-105)/(o.speed||1)>=Math.min(T.guidedWarning,(320-105)/(o.speed||1))-.02);}
    }
    // Remove objects as successful passes without triggering stage promotion.
    for(const o of r.objects){if(o.x<160)o.done=true;}tickSleigh(r,1/120);
@@ -117,4 +117,30 @@ test('garland recovery stays safe underneath; repeated fresh hops can hit a ling
 test('toboggans move relative to the road while keeping the full guided warning',()=>{
  const r=createSleigh({stage:6});acknowledgeSleigh(r);for(let t=0;t<1.02;t+=1/120)tickSleigh(r,1/120);
  const o=r.objects.find(o=>o.kind==='moving');assert.ok(o);assert.equal(o.speed,T.guidedSpeed+T.movingSpeed);const before=o.x;tickSleigh(r,.1);assert.ok(Math.abs(before-o.x-o.speed*.1)<1e-6);
+});
+
+// Sweep actual collisions in 5 ms input increments, including the visible cart's
+// full 50-unit footprint. Widths are the road sprites, not narrowed test hitboxes.
+function timingWindow(stage,kind,speed){
+ const width={fence:26,moving:48,gap:T.gapWidth,snowman:40}[kind],good=[];
+ for(let lead=0;lead<=1.2;lead+=.005){const r=createSleigh({stage});acknowledgeSleigh(r);r.next=Infinity;r.door=Infinity;
+  const o={kind,x:105+width/2+speed*lead,width,speed};r.objects=[o];hop(r);if(['fence','moving'].includes(kind))releaseHop(r);
+  for(let t=0;t<2&&!o.passed&&!o.hit;t+=1/240){if(kind==='snowman'&&t>=.3&&r.hops===1)hop(r);tickSleigh(r,1/240);}
+  if(!o.hit&&o.passed)good.push(lead);
+ }
+ return good.length?good.at(-1)-good[0]:0;
+}
+test('honest hop-over hitboxes allow forgiving timing at every stage and guided introduction',()=>{
+ for(const stage of C.sleigh.stages)for(const kind of ['fence','moving','gap','snowman']){
+  for(const speed of [Math.min(stage.speed,T.guidedSpeed),stage.speed]){
+   const window=timingWindow(stage.stage,kind,speed+(kind==='moving'?T.movingSpeed:0));
+   assert.ok(window>=(stage.stage===1&&kind==='fence'?.3:.2),`${stage.stage} ${kind} speed ${speed}: ${window}`);
+  }
+ }
+});
+test('guided lessons and mixed roads have no empty stretch over three seconds; first garland arrives at 25–35 seconds',()=>{
+ for(let seed=1;seed<=20;seed++){
+  const {longestEmpty,garlandAt}=deliberate(seed);assert.ok(longestEmpty<=3,`${seed}: empty ${longestEmpty}`);
+  assert.ok(garlandAt>=25&&garlandAt<=35,`${seed}: garland ${garlandAt}`);
+ }
 });

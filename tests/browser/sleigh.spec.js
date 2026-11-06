@@ -1,4 +1,6 @@
 import {test,expect} from '@playwright/test';
+// Fault injection at the engine boundary must bypass service-worker responses.
+test.use({serviceWorkers:'block'});
 const profile={adjective:0,noun:0,number:10,avatar:'wrapper'};
 async function seed(page,extra={}){await page.addInitScript(({profile,extra})=>{localStorage.setItem('tuneville-gift-v1',JSON.stringify({version:2,profile,sleighPractice:true,...extra}));},{profile,extra});}
 async function enter(page,stage='1'){await page.goto('/?review=1#sleigh');await page.locator('#sleigh-stage-select').selectOption(stage);await page.locator('[data-action="sleigh-start"]').click();await page.locator('#sleigh-continue').click();}
@@ -13,9 +15,16 @@ test('phone tap, hold, keyboard, stage cards and pause freeze the road',async({p
 });
 for(const viewport of [{width:320,height:568},{width:390,height:844}])test(`portrait road fits ${viewport.width} × ${viewport.height}`,async({page})=>{
  await seed(page,{towerBest:25});await page.setViewportSize(viewport);await page.clock.install();
+ // A stage-7 road reached through earlier lessons already knows every shape.
+ await page.route('**/game/sleigh.js',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('return {stage,practice,random,',"if(stage===7){let i=0;random=()=>[.42,.5,.7,.5][i++%4];}return globalThis.__sleighRun={stage,practice,random,").replace('seen:{},',"seen:stage===7?{fence:2,gift:2,door:2,arch:2,gap:2,moving:2,snowman:2}:{},")});});
  await page.goto('/?review=1#sleigh');await page.locator('[data-action="sleigh-guide"]').click();await expect(page.locator('.sleigh-guide-grid figure')).toHaveCount(7);
  const guide=await page.locator('.sleigh-guide').boundingBox();expect(guide.y+guide.height).toBeLessThanOrEqual(viewport.height);await page.screenshot({scale:'css',path:`docs/review/sleigh-road-sheet-${viewport.width}x${viewport.height}.png`});
- for(const stage of ['4','7']){await enter(page,stage);await page.clock.runFor(2400);
+ for(const stage of ['4','7']){await enter(page,stage);
+ if(stage==='7'){
+  const mixed=()=>page.evaluate(()=>{const r=globalThis.__sleighRun;return r?.objects.some(o=>o.kind==='arch'&&o.x+o.width/2>80)&&r.objects.some(o=>o.kind==='gap'&&o.x-o.width/2<260);});
+  for(let step=0;step<200&&!await mixed();step++)await page.clock.runFor(25);
+  expect(await mixed()).toBe(true);
+ }else await page.clock.runFor(2400);
  const geometry=await page.evaluate(()=>({height:document.documentElement.scrollHeight,width:document.documentElement.scrollWidth,road:document.querySelector('#sleigh-canvas').getBoundingClientRect().toJSON()}));expect(geometry.height).toBeLessThanOrEqual(viewport.height);expect(geometry.width).toBeLessThanOrEqual(viewport.width);expect(geometry.road.height).toBeGreaterThan(300);
  await page.screenshot({scale:'css',path:`docs/review/sleigh-stage-${stage}-${viewport.width}x${viewport.height}.png`});}
  await page.emulateMedia({reducedMotion:'reduce'});
@@ -40,7 +49,7 @@ test('all eight review cards teach their element before motion',async({page})=>{
   await page.goto('/?review=1#sleigh');await page.locator('#sleigh-stage-select').selectOption(String(stage));await page.locator('[data-action="sleigh-start"]').click();await expect(page.locator('.pause-card')).toBeVisible();await expect(page.locator('.sleigh-rule-picture svg').first()).toBeVisible();const before=await page.locator('#sleigh-score').textContent();await page.clock.runFor(3000);await expect(page.locator('#sleigh-score')).toHaveText(before);
  }
 });
-test('phone feedback starts on the gesture and mute prevents hop and wheel sounds',async({page})=>{
+test('phone feedback starts on the gesture and mute prevents hop and backing music',async({page})=>{
  await page.addInitScript(()=>{const Native=window.AudioContext||window.webkitAudioContext;window.cueStarts=0;window.AudioContext=class extends Native{constructor(...args){super(...args);window.sleighAudio=this;}createBufferSource(){const voice=super.createBufferSource(),start=voice.start;voice.start=function(...args){window.cueStarts++;return start.apply(this,args);};return voice;}};});
  await seed(page,{sound:true});await page.clock.install();await enter(page);await expect.poll(()=>page.evaluate(()=>window.sleighAudio?.state)).toBe('running');const before=await page.evaluate(()=>window.cueStarts);await page.locator('#sleigh-canvas').dispatchEvent('pointerdown');expect(await page.evaluate(()=>window.cueStarts)).toBeGreaterThan(before);await page.locator('#sleigh-canvas').dispatchEvent('pointerup');
  await page.locator('#sleigh-pause').click();await page.locator('[data-action="sound"]').filter({visible:true}).click();await page.locator('#sleigh-continue').click();const muted=await page.evaluate(()=>window.cueStarts);await page.locator('#sleigh-canvas').dispatchEvent('pointerdown');await page.locator('#sleigh-canvas').dispatchEvent('pointerup');await page.clock.runFor(500);expect(await page.evaluate(()=>window.cueStarts)).toBe(muted);
