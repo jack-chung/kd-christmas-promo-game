@@ -1,15 +1,18 @@
 import { C } from './content.js';
+import {freshCollection,normalizeCollection,settleCollection,unlockOutfit} from './treasure.js';
 export const SAVE_KEY = 'tuneville-gift-v1';
-export const freshSave = () => ({version:2,profile:null,layers:[],paper:'cranberry',sound:false,wrapBest:0,towerBest:0,sortingBest:0,sortingBests:{easy:0,tunie:0,rapper:0},sortingPractice:false,sleighPractice:false,sleighPlayed:false,sleighBest:0,papers:[],finale:false});
+export const freshSave = () => ({version:3,collection:freshCollection(),profile:null,layers:[],paper:'cranberry',sound:false,wrapBest:0,towerBest:0,sortingBest:0,sortingBests:{easy:0,tunie:0,rapper:0},sortingPractice:false,sleighPractice:false,sleighPlayed:false,sleighBest:0,papers:[],finale:false});
 export function validProfile(p) {
   return p && Number.isInteger(p.adjective) && p.adjective >= 0 && p.adjective < C.profile.adjectives.length && Number.isInteger(p.noun) && p.noun >= 0 && p.noun < C.profile.nouns.length && Number.isInteger(p.number) && p.number >= 10 && p.number <= 99 && C.profile.avatars.some(a => a.id === p.avatar);
 }
-export function newProfile(random = Math.random) { return {adjective:Math.floor(random()*C.profile.adjectives.length),noun:Math.floor(random()*C.profile.nouns.length),number:10+Math.floor(random()*90),avatar:'wrapper'}; }
+export function newProfile(random = Math.random) { return {adjective:Math.floor(random()*C.profile.adjectives.length),noun:Math.floor(random()*C.profile.nouns.length),number:10+Math.floor(random()*90),avatar:'helper-0'}; }
 export function nickname(p) { return validProfile(p) ? `${C.profile.adjectives[p.adjective]} ${C.profile.nouns[p.noun]} ${p.number}` : ''; }
 export function normalizeSave(raw) {
   const s=freshSave();
-  if (!raw || raw.version!==2) return s;
-  s.profile=validProfile(raw.profile)?raw.profile:null;
+  if (!raw || ![2,3].includes(raw.version)) return s;
+  const p=raw.profile&&{...raw.profile};if(p&&['wrapper','kid','note'].includes(p.avatar))p.avatar='helper-0';
+  s.profile=validProfile(p)?p:null;
+  s.collection=normalizeCollection(raw.collection);
   s.layers=Array.isArray(raw.layers)?[...new Set(raw.layers.filter(id=>C.episodes.some(ep=>ep.id===id&&ep.ready)))]:[];
   s.papers=Array.isArray(raw.papers)?[...new Set(raw.papers.filter(id=>C.sorting.papers.some(p=>p.id===id)))]:[];
   s.sortingPractice=raw.sortingPractice===true;
@@ -20,6 +23,11 @@ export function normalizeSave(raw) {
   // Older single records have no difficulty attribution. Start the new records fresh.
   for(const {id} of C.sorting.difficulties){const value=raw.sortingBests?.[id];if(Number.isFinite(value)&&value>=0)s.sortingBests[id]=Math.floor(value);}
   s.finale=raw.finale===true;
+  if(raw.version===2){
+    s.papers.forEach(id=>unlockOutfit(s,`sorting-${C.sorting.papers.findIndex(p=>p.id===id)}`));
+    if(raw.paper==='stars'||s.layers.includes(1))s.collection.stars+=3;
+  }
+  s.papers=[];s.paper='cranberry';settleCollection(s);
   return s;
 }
 export function loadSave(storage) { try {return {save:normalizeSave(JSON.parse(storage.getItem(SAVE_KEY))),ok:true};} catch {return {save:freshSave(),ok:false};} }

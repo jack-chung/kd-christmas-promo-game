@@ -27,7 +27,7 @@ const test=base.extend({host:async({},use)=>{
   else if(path==='/preview/build.json'){type='application/json';body=JSON.stringify(bundles[current].release);}
   else if(path==='/preview/'||path==='/preview/index.html'){
    // Simulate a CDN retaining the old root document despite a new deploy.
-   body=bundles[A].files['index.html'].toString().replace('src="boot.js"',`src="releases/${A}/boot.js"`);
+   body=bundles[A].files['index.html'].toString().replace('src="boot.js"',`src="releases/${A}/boot.js"`).replaceAll('href="game/',`href="releases/${A}/game/`);
   }else if(path.startsWith('/preview/releases/')){
    const [,id,file]=path.match(/\/releases\/([^/]+)\/(.*)/)||[];
    body=removed.has(id)?undefined:bundles[id]?.files[file];type=types[file?.split('.').at(-1)]||'text/plain';
@@ -45,6 +45,7 @@ const test=base.extend({host:async({},use)=>{
 async function enter(page,host){
  await page.goto(host.url+'?review=1&episode=1#hub');
  await page.locator('[data-action="profile"]').click({force:true});
+ await page.locator('[data-action="go:hub"]').last().click();
  await expect(page.locator('[data-build-id]')).toHaveText(A);
  await page.evaluate(async()=>{await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller)await new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true}));});
  await page.evaluate(()=>{const key='tuneville-gift-v1',s=JSON.parse(localStorage.getItem(key));s.layers=[1,2];s.paper='stars';localStorage.setItem(key,JSON.stringify(s));});
@@ -64,7 +65,7 @@ test('active worker: safe reload keeps save/query/hash and every asset belongs t
  await page.locator('[data-action="episode:2"]').first().click({force:true});await expect(page.locator('#music-loading')).toBeHidden();
  const urls=await page.evaluate(async id=>{const cache=await caches.open('tuneville-build-'+id);return (await cache.keys()).map(r=>r.url);},B);
  for(const path of manifest.files)expect(urls.some(url=>url.endsWith('/releases/'+B+'/'+path))).toBe(true);
- expect(host.requests.some(path=>path.startsWith('/preview/game/'))).toBe(false);
+ expect(host.requests.filter(path=>path.startsWith('/preview/game/'))).toEqual([]);
  // The new worker must also restore the immutable build offline.
  await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update();});
  await expect.poll(()=>page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();if(!navigator.serviceWorker.controller)return '';return new Promise(resolve=>{const channel=new MessageChannel();channel.port1.onmessage=e=>resolve(e.data);navigator.serviceWorker.controller.postMessage({type:'build-id'},[channel.port2]);});})).toBe(B);

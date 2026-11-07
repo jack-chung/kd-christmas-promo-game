@@ -21,7 +21,7 @@ for(const ep of C.episodes)test(`host boundary ${ep.label}, device dates cannot 
 });
 test('offline reload retains verified games and freezes future unlocks',async({page,context})=>{
   await page.route('**/*host-time=*',route=>route.fulfill({status:200,headers:{date:'Fri, 13 Nov 2026 05:00:00 GMT'},body:''}));
-  await page.goto('/');await page.locator('[data-action="profile"]').click();
+  await page.goto('/');await page.locator('[data-action="profile"]').click();await page.locator('[data-action="go:hub"]').last().click();
   await expect(page.locator('.adventures .adventure').first()).toContainText('Not played yet');
   await page.evaluate(async()=>{await navigator.serviceWorker.ready;});
   await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
@@ -31,7 +31,7 @@ test('offline reload retains verified games and freezes future unlocks',async({p
   await page.goto('/#tower');await expect(page.locator('main')).toHaveClass('screen screen-hub');
   await page.goto('/#finale');await expect(page.locator('#finale-form')).toHaveCount(0);
 });
-test('legacy Wrap and Tower zero-score completions keep their existing layer rules',async({page})=>{
+test('C-only Wrap and zero-height Tower earn basic boxes without layers',async({page})=>{
   await page.clock.install({time:new Date('2040-01-01')});
   await page.clock.pauseAt(new Date('2040-01-01T00:00:01Z'));
   await page.goto('/?review=1');await page.locator('[data-action="profile"]').click({force:true});
@@ -44,24 +44,23 @@ test('legacy Wrap and Tower zero-score completions keep their existing layer rul
     await expect(page.locator('main')).toHaveClass('screen screen-wrapGift');
     await page.locator('[data-action="wrap-next"]').evaluate(el=>el.click());
   }
-  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([1]);
-  await page.locator('[data-action="claim:wrap"]').click({force:true});
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([]);
+  await expect(page.locator('[data-action="go:boxes"]')).toBeVisible();
   await page.goto('/?review=1#hub');await expect(page.locator('.adventures .adventure').nth(0)).toContainText('Best: 0');
   for(let i=0;i<2;i++){
     await page.goto('/?review=1#tower');
     await page.locator('[data-action="tower-start"]').click({force:true});
     await page.clock.runFor(800);await page.locator('[data-action="tower-drop"]').click({force:true});await page.clock.runFor(2000);
     await expect(page.locator('.result-detail')).toHaveText('0 gifts · 0 points');
-    await page.locator('[data-action="claim:tower"]').click({force:true});
-    await expect(page.locator('.keepsake h2')).toHaveText('Placeholder: Present Tower keepsake');
-    expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([1,3]);
+    await expect(page.locator('[data-action="go:boxes"]')).toBeVisible();
+    expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([]);
     await page.goto('/?review=1#hub');await expect(page.locator('.adventures .adventure').nth(2)).toContainText('Best: 0');
   }
 });
 
 test('hub cards disable unavailable games, show distinct hosts and distinguish unplayed from bests',async({page})=>{
   await page.route('**/*host-time=*',route=>route.fulfill({status:200,headers:{date:'Fri, 13 Nov 2026 05:00:00 GMT'},body:''}));
-  await page.goto('/');await page.locator('[data-action="profile"]').click();
+  await page.goto('/');await page.locator('[data-action="profile"]').click();await page.locator('[data-action="go:hub"]').last().click();
   const cards=page.locator('.adventures .adventure');
   await expect(cards.nth(0)).toBeEnabled();await expect(cards.nth(0)).toContainText('Not played yet');
   await expect(cards.nth(2)).toContainText('Opens Nov 27');

@@ -8,9 +8,9 @@ async function enter(page,url='/?review=1'){
   await page.clock.pauseAt(new Date('2026-11-03T17:00:01Z'));
   await page.route('**/*host-time=*',route=>route.fulfill({status:200,headers:{date:'Tue, 03 Nov 2026 17:00:00 GMT'},body:''}));
   await page.goto(url);
-  await page.locator('input[value="kid"]').check({force:true});
+  await page.locator('input[value="helper-1"]').check({force:true});
   const name=await page.locator('#nickname').textContent();
-  await action(page,'profile').click({force:true});return name;
+  await action(page,'profile').click({force:true});await action(page,'go:hub').last().click({force:true});return name;
 }
 async function route(page,id){await page.goto(`/?review=1#${id}`);await expect(page.locator('main')).toHaveClass(new RegExp(`screen-${id}$`));}
 test.beforeEach(async({page})=>{
@@ -72,9 +72,9 @@ for(const difficulty of C.wrap.difficulty)test(`Wrap Station ${difficulty.id}: t
       }else await page.locator(`[data-lane="${notes[0].lane}"]`).click({force:true});
     }
     await page.clock.runFor(chart.duration-elapsed+difficulty.window+32);
-    await expect(page.locator('main')).toHaveClass('screen screen-wrapGift');await expect(page.locator('.grade-medal')).toHaveText('S');await action(page,'wrap-next').click({force:true});
+    await expect(page.locator('main')).toHaveClass('screen screen-wrapGift');await expect(page.locator('.grade-medal')).toContainText('Gold!');await action(page,'wrap-next').click({force:true});
   }
-  await expect(page.locator('main')).toHaveClass('screen screen-wrapResults');await expect(page.locator('.mini-grade')).toHaveText(['S','S','S']);
+  await expect(page.locator('main')).toHaveClass('screen screen-wrapResults');await expect(page.locator('.mini-grade')).toHaveText(['Gold! S','Gold! S','Gold! S']);
   await action(page,'claim:wrap').click({force:true});await expect(page.locator('main')).toHaveClass('screen screen-unwrap');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.layers).toEqual([1]);expect(saved.wrapBest).toBeGreaterThan(5000);
 });
@@ -102,7 +102,7 @@ test('wrong shapes miss, swipes do not score, empty taps break combos and unatte
   // A moving pointer across the playfield is not a tap target.
   const box=await page.locator('.rhythm-field').boundingBox();await page.mouse.move(box.x+10,box.y+100);await page.mouse.down();await page.mouse.move(box.x+box.width-10,box.y+100);await page.mouse.up();await expect(page.locator('#combo')).toHaveText('1× combo');
   await page.clock.runFor(350);await page.locator('[data-lane="0"]').click({force:true});await expect(page.locator('#combo')).toHaveText('0× combo');
-  await page.clock.runFor(48000);await expect(page.locator('.grade-medal')).toHaveText('C');
+  await page.clock.runFor(48000);await expect(page.locator('.grade-medal')).toHaveText('Keep practising');
 });
 
 test('review can reach every screen and preview rewards do not alter progression',async({page})=>{
@@ -114,7 +114,7 @@ test('review can reach every screen and preview rewards do not alter progression
     await page.locator('.review-strip [data-action="review-menu"]').click({force:true});
   }
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([]);
-  await action(page,'jump:unwrap').click({force:true});await action(page,'go:collection').click({force:true});await expect(page.locator('.empty-state')).toBeVisible();
+  await action(page,'jump:unwrap').click({force:true});await action(page,'go:collection').click({force:true});await expect(page.locator('.screen-collection h1')).toHaveText('Treasure Book');await expect(page.locator('.tunie-card.owned')).toHaveCount(3);
 });
 
 test('Tower drops, pause, high score persistence; gallery and mobile/tablet layouts',async({page})=>{
@@ -128,7 +128,7 @@ test('Tower drops, pause, high score persistence; gallery and mobile/tablet layo
     await page.clock.runFor(350);await action(page,'tower-drop').click({force:true});await page.clock.runFor(1500);
   }
   await expect(page.locator('.screen-towerResults')).toHaveCount(1);
-  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.towerBest).toBeGreaterThanOrEqual(1);expect(saved.layers).toEqual([3]);
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.towerBest).toBeGreaterThanOrEqual(1);expect(saved.layers).toEqual([]);
   await route(page,'tower');await page.reload();await expect(page.locator('.personal-best')).toContainText(String(saved.towerBest));
   await route(page,'hub');
   for(const size of [{width:320,height:740},{width:390,height:844},{width:768,height:1024}]){
@@ -202,5 +202,5 @@ test('audio assets load only inside Wrap; a failed bank leaves visual play and p
   await expect(action(page,'practice-guide')).toBeEnabled();
   await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(2700);await page.locator('[data-lane="0"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
-  await page.clock.runFor(50000);await expect(page.locator('.grade-medal')).toHaveText('C');
+  await page.clock.runFor(50000);await expect(page.locator('.grade-medal')).toHaveText('Keep practising');
 });

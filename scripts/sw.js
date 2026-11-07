@@ -28,7 +28,7 @@ self.addEventListener('fetch',event=>{
  }
  if(event.request.mode==='navigate'&&(url.pathname===base.pathname||url.pathname===new URL('index.html',base).pathname)){
   event.respondWith((async()=>{
-   try{return await fetch(event.request,{cache:'no-store'});}catch{const cached=await (await caches.open(CACHE)).match(new URL('index.html',release));if(!cached)throw Error('No offline build');return new Response((await cached.text()).replace('src="boot.js"','src="'+new URL('boot.js',release).href+'"'),{headers:{'Content-Type':'text/html'}});}
+   try{return await fetch(event.request,{cache:'no-store'});}catch{const cached=await (await caches.open(CACHE)).match(new URL('index.html',release));if(!cached)throw Error('No offline build');return new Response((await cached.text()).replace('src="boot.js"','src="'+new URL('boot.js',release).href+'"').replaceAll('href="game/','href="'+new URL('game/',release).href),{headers:{'Content-Type':'text/html'}});}
   })());
  }
 });
