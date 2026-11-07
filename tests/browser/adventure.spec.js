@@ -124,6 +124,9 @@ test('Tower drops, pause, high score persistence; gallery and mobile/tablet layo
   await expect(page.locator('#tower-height')).toHaveText('1 gifts high');
   // Follow the moving crane for a few attempts, then a miss ends the round.
   for(let i=0;i<12;i++){
+    // A tall fall can outlast the fixed landing delay in WebKit. Advance the
+    // paused test clock until the next drop is available, as a player waits.
+    for(let wait=0;wait<20&&await action(page,'tower-drop').count()&&!await action(page,'tower-drop').isEnabled();wait++)await page.clock.runFor(250);
     if(await action(page,'tower-drop').count()===0)break;
     await page.clock.runFor(350);await action(page,'tower-drop').click({force:true});await page.clock.runFor(1500);
   }
