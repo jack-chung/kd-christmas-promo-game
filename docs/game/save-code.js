@@ -24,3 +24,18 @@ export function decodeSave(code){
  raw.collection={cards:Object.fromEntries(T.cards.filter((_,i)=>d[6][i]).map(card=>[card.id,sources[d[6][T.cards.indexOf(card)]-1]])),stars:d[7],outfits:d[8].map(i=>T.outfits[i]?.id),equipped:Object.fromEntries(slots.map((slot,i)=>[slot,T.outfits[d[9][i]]?.id])),boxes:unpackBoxes(d[10]),sinceRare:d[11],welcome:d[12],friendCode:d[13],friends:d[14],newFriends:d[15],broughtBy:d[16],started:d[17],claims:d[18],finished:d[19],homePromptAt:d[20],restored:true};
  const save=normalizeSave(raw);if(!save.profile)throw Error('Invalid profile');return save;
 }
+
+export function restoreLink(code,address){
+ // Keep this host and its current base path, including a future hosting move.
+ const url=new URL(address);
+ url.search='';url.hash='restore='+code;
+ return url.href;
+}
+export function saveCodeFromInput(input){
+ const value=String(input).trim();
+ if(value.startsWith('TV1-'))return value;
+ const url=new URL(value);
+ if(!['https:','http:'].includes(url.protocol)||!url.hash.startsWith('#restore='))throw Error('Invalid restore link');
+ return decodeURIComponent(url.hash.slice(9));
+}
+export function decodeBackup(input){return decodeSave(saveCodeFromInput(input));}

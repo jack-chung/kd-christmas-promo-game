@@ -1,7 +1,7 @@
 import {finishRewards,wrapMedal,towerMedal,settleCollection,welcomePack,openBox,exchangeStars} from './treasure.js';
 import {helper} from './treasure-art.js';
-import {bookView,helperView,backupView,boxLink,cardView,homePrompt,browserWarning} from './treasure-ui.js';
-import {decodeSave} from './save-code.js';
+import {bookView,helperView,backupView,boxLink,cardView,homePrompt,browserWarning,restoreView} from './treasure-ui.js';
+import {decodeBackup} from './save-code.js';
 import {roadGuide} from './sleigh-art.js';
 import {celebration,activateResults} from './results-feedback.js';
 import {createSleigh,recordSleigh} from './sleigh.js';
@@ -45,8 +45,9 @@ function toast(message){const el=$('#toast');if(!el)return;clearTimeout(toastTim
 function feedback(message){const el=$('#feedback');if(el)el.textContent=message;}
 let sleigh=null,sleighResult=null;
 let sorting=null,sortingResult=null,sortingDifficulty='easy';
+let pendingRestore=null,pickingCards=false;
 let bookTab='cards',lastPull=null,welcomePulls=[];
-const routes=new Set(['helper','backup','boxes','welcome','sleigh','sleighPlay','sleighResults','sorting','sortingPlay','sortingResults','onboard','hub','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults','gift','unwrap','collection','finale','finalReveal','certificate','invitation','review']);
+const routes=new Set(['restore','helper','backup','boxes','welcome','sleigh','sleighPlay','sleighResults','sorting','sortingPlay','sortingResults','onboard','hub','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults','gift','unwrap','collection','finale','finalReveal','certificate','invitation','review']);
 const gated=new Set(['sleigh','sleighPlay','sleighResults','sorting','sortingPlay','sortingResults','wrap','wrapPractice','wrapOrder','wrapPlay','wrapGift','wrapResults','tower','towerPlay','towerResults']);
 
 let sessionStorage;try{sessionStorage=window.sessionStorage;}catch{}
@@ -67,7 +68,7 @@ function navigate(target,{demo=false}={}) {
   if(!routes.has(target))target='hub';
   dispose();dispose=()=>{};hush();
   preview=demo&&review;
-  if(!save.profile&&!['onboard','invitation','review'].includes(target)){target='onboard';preview=false;}
+  if(!save.profile&&!['restore','onboard','invitation','review'].includes(target)){target='onboard';preview=false;}
   if(target.startsWith('wrap')){episode=C.episodes.find(ep=>ep.game==='wrap');C=episodeContent(episode);}
   if(target.startsWith('sorting')){episode=C.episodes.find(ep=>ep.game==='sorting');C=episodeContent(episode);}
   if(target==='sortingPlay'&&!sorting)target='sorting';
@@ -86,6 +87,7 @@ function navigate(target,{demo=false}={}) {
   if(target==='towerResults'&&!towerResult&&!preview)target='tower';
   if(target==='helper'&&view!=='helper')profile={...save.profile};
   view=target;
+  if(target==='restore')clearRestoreHash();
   const hash=`#${target}`;if(location.hash!==hash)history.pushState(null,'',hash);
   render();queueMicrotask(()=>updates.consider());window.scrollTo(0,0);$('h1')?.focus({preventScroll:true});
 }
@@ -96,7 +98,7 @@ function render(){
     const message=$('#music-loading');
     if(message){message.textContent=music.state==='failed'?(view.startsWith('sleigh')?C.sleigh.music.failed:view.startsWith('sorting')?C.sorting.music.failed:C.wrap.musicFailed):'';message.hidden=music.state==='ready';}
   });
-  const scenes={helper:()=>helperView(save,profile),backup:()=>backupView(save),boxes:boxesView,welcome:welcomeView,sleigh:sleighView,sleighPlay:sleighPlayView,sleighResults:sleighResultsView,sorting:sortingView,sortingPlay:()=>sortingPlayView(sorting),sortingResults:sortingResultsView,onboard:onboardView,hub:hubView,wrap:wrapView,wrapPractice:practiceView,wrapOrder:orderView,wrapPlay:wrapPlayView,wrapGift:wrapGiftView,wrapResults:wrapResultsView,tower:towerView,towerPlay:towerPlayView,towerResults:towerResultsView,gift:giftView,unwrap:unwrapView,collection:collectionView,finale:finaleView,finalReveal:finalRevealView,certificate:certificateView,invitation:invitationView,review:reviewView};
+  const scenes={restore:()=>restoreView(pendingRestore,save),helper:()=>helperView(save,profile),backup:()=>backupView(save),boxes:boxesView,welcome:welcomeView,sleigh:sleighView,sleighPlay:sleighPlayView,sleighResults:sleighResultsView,sorting:sortingView,sortingPlay:()=>sortingPlayView(sorting),sortingResults:sortingResultsView,onboard:onboardView,hub:hubView,wrap:wrapView,wrapPractice:practiceView,wrapOrder:orderView,wrapPlay:wrapPlayView,wrapGift:wrapGiftView,wrapResults:wrapResultsView,tower:towerView,towerPlay:towerPlayView,towerResults:towerResultsView,gift:giftView,unwrap:unwrapView,collection:collectionView,finale:finaleView,finalReveal:finalRevealView,certificate:certificateView,invitation:invitationView,review:reviewView};
   document.body.dataset.scene=(view.startsWith('wrap')||view.startsWith('sorting'))?'workshop':'town';
   document.body.classList.toggle('rhythm-active',Boolean(view==='wrapPlay'||(view==='wrapPractice'&&practice.guided)||view==='sortingPlay'||view==='sleighPlay'));
   root.innerHTML=`<div class="scene-backdrop" aria-hidden="true">${scene(document.body.dataset.scene)}</div>${review?`<div class="review-strip">${esc(C.review.active)} <small data-build-id>${BUILD_ID}</small> ${button(C.hub.review,'review-menu','text-button')}</div>`:''}
@@ -124,10 +126,14 @@ let lastGateState='';
 function updateCountdown(){const state=C.episodes.map(ep=>episodeOpen(ep,review)).join()+dateOpen(C.finale.date,review);if(lastGateState&&state!==lastGateState){lastGateState=state;navigate('hub');return;}lastGateState=state;const el=$('#countdown');if(!el)return;const next=nextRelease(trusted.now());el.textContent=!trusted.online?C.hub.offline:next?fmt(C.hub.countdown,countdown(next.date,trusted.now())):C.hub.allOpen;}
 function giftView(){return `${heading(C.app.title,C.gift.title,C.gift.intro)}<div class="gift-stage">${gift()}<p class="gift-tag">${esc(C.hub.giftTag)}<small>${esc(C.hub.giftTime)}</small></p></div><ol class="layer-list">${C.episodes.map((ep,i)=>`<li class="${save.layers.includes(ep.id)?'collected':''}"><span class="layer-icon">${save.layers.includes(ep.id)?'✓':ep.id}</span><span><strong>${esc(C.gift.layers[i])}</strong><small>${esc(save.layers.includes(ep.id)?C.gift.earned:!ep.ready&&dateOpen(ep.date,review)?C.gift.notBuilt:fmt(C.gift.waiting,{date:ep.label}))}</small></span></li>`).join('')}<li><span class="layer-icon">✦</span><span><strong>${esc(C.gift.finale)}</strong><small>${esc(C.finale.locked)}</small></span></li></ol>${save.finale?nav(C.finale.showCertificate,'certificate','primary full'):dateOpen(C.finale.date,review)?nav(C.finale.title,'finale','primary full'):nav(C.gift.play,'hub','primary full')}`;}
 function unwrapView(){const card=C.treasure.cards.find(c=>c.id===C.treasure.hostIds[episode.id-1]);return `<div class="unwrap-scene" id="unwrap-scene">${gift()}</div>${heading(C.treasure.title,C.treasure.layerWon?fmt(C.treasure.layerWon,{layer:C.gift.layers[episode.id-1]}):'')}<div class="layer-host">${cardView(card,save,{reveal:true})}</div>${boxLink(save)}${nav(C.hub.collection,'collection','primary full')}${nav(C.app.home,'hub','secondary full')}`;}
-function collectionView(){return bookView(save,trusted.now(),review,bookTab);}
+function collectionView(){return bookView(save,trusted.now(),review,bookTab,pickingCards);}
 function welcomeView(){return `${heading(C.treasure.title,C.treasure.welcome,C.treasure.welcomeCopy)}<div class="card-grid welcome-cards">${welcomePulls.map(p=>cardView(C.treasure.cards.find(c=>c.id===p.id),save,{reveal:true})).join('')}</div>${nav(C.app.continue,'hub','primary full')}`;}
 function boxesView(){const T=C.treasure;return `${heading(T.title,T.boxTitle)}${lastPull?`<div class="layer-host box-reveal" data-tier="${lastPull.tier}">${cardView(T.cards.find(c=>c.id===lastPull.id),save,{reveal:true})}</div><p role="status">${esc(lastPull.duplicate?fmt(T.duplicate,{count:lastPull.stars}):T.newCard)}</p>${button(T.skip,'skip-reveal','text-button')}`:''}<p>${t(T.boxes,{count:save.collection.boxes.length})}</p>${save.collection.boxes.length?`<div class="reward-box">${gift({open:!!lastPull})}<p>${esc(T.boxNames[save.collection.boxes[0]])}</p></div>${button(T.open,'open-box','primary full')}`:''}${nav(T.next,'collection','secondary full')}`;}
 function medalBadge(g,mini=false){const m=wrapMedal([g]);return `<span class="${mini?'mini-grade':'grade-medal'} medal-${m}" aria-label="${esc(C.treasure.medals[m+1])}">${esc(C.treasure.medals[m+1])}${m>=0?` <small>${g}</small>`:''}</span>`;}
+function medalOutfits(game,medal){
+ const pieces=C.treasure.outfits.filter(o=>Array.from({length:medal+1},(_,i)=>`${game}-${i}`).includes(o.id));
+ return pieces.length?`<p class="outfit-reward">${esc(fmt(C.treasure.outfitReward,{names:pieces.map(o=>o.name).join(', ')}))}</p>`:'';
+}
 function rewardResult(game,medal,best,wonLayer=medal>=0){finishRewards(save,{game,medal,best,wonLayer});persist();navigator.storage?.persist?.().catch(()=>{});}
 
 function wrapView(){return `${heading(C.wrap.eyebrow,C.wrap.title,C.wrap.intro)}<p class="unlock-banner">${esc(C.treasure.wrapGoal)}</p><div class="cast-line">${character('kid')}${character('wrapper')}${character('king')}${character('singer')}</div><section class="instruction-card"><h2>${esc(C.wrap.tutorial)}</h2><ol>${C.wrap.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(C.wrap.tutorialEnd)}</p>${nav(C.wrap.practice,'wrapPractice','secondary full')}</section><fieldset class="difficulty"><legend>${esc(C.wrap.choose)}</legend>${C.wrap.difficulty.map(d=>`<label><input type="radio" name="difficulty" value="${d.id}" ${difficulty===d.id?'checked':''}><strong>${esc(d.label)}</strong><small>${esc(d.detail)}</small></label>`).join('')}</fieldset><p class="subtle">${esc(C.wrap.duration)}</p>${button(C.wrap.start,'wrap-start','primary full')}<p class="subtle"><a href="${new URL('./audio/credits.html',import.meta.url)}" target="_blank" rel="noopener">${esc(C.wrap.musicCredits)}</a></p>`;}
@@ -141,7 +147,7 @@ function newWrap(){const d=C.wrap.difficulty.find(d=>d.id===difficulty)||C.wrap.
 function orderView(){const customer=C.wrap.customers[run?.customer||0];return `${heading(fmt(C.wrap.customer,{current:(run?.customer||0)+1}),C.cast[customer.cast])}<div class="customer-scene">${character(customer.cast)}${customer.cast==='king'?`<div class="singers">${character('singer')}${character('singer')}</div>`:''}<blockquote>${esc(customer.order)}</blockquote>${customer.cast==='king'?`<p class="echo">${esc(C.wrap.singerEcho)}</p>`:''}</div><div class="move-legend">${C.wrap.actions.map(a=>`<span>${moveIcon(a.id)}${esc(a.label)}</span>`).join('')}</div><p class="subtle">${esc(C.app.mutedTip)}</p>${button(C.wrap.ready,'wrap-ready','primary full')}`;}
 function wrapPlayView(){const song=C.wrap.songs[run.customer];return `<div class="play-heading"><div>${eyebrow(C.wrap.title)}<h1 tabindex="-1">${t(C.wrap.round,{current:run.customer+1})}</h1></div>${button(C.app.pause,'pause','small-button')}</div><div class="scorebar"><span>${esc(C.app.score)} <strong id="wrap-score">${run.score}</strong></span><span id="combo">${t(C.wrap.combo,{count:run.combo})}</span><span id="song-time"></span></div><div class="rhythm-cast">${character('wrapper')}<p>${t(C.wrap.songLabel,{title:song.title})}</p>${character(C.wrap.customers[run.customer].cast)}</div>${laneField()}${laneButtons()}<div class="rhythm-feedback">${status()}<span id="beat-count"></span></div><div id="pause-layer"></div>`;}
 function wrapGiftView(){const result=preview?{grade:'A',ratio:.85,combo:20}:run.results.at(-1);const i=preview?0:run.customer;return `${heading(fmt(C.wrap.customer,{current:i+1}),C.wrap.giftDone)}${medalBadge(result.grade)}<p class="grade-detail">${t(C.wrap.accuracy,{percent:Math.round(result.ratio*100)})}</p><p>${t(C.wrap.maxCombo,{count:result.combo})}</p><div class="thank-you">${character(C.wrap.customers[i].cast)}<p>${esc(C.wrap.customerThanks[i])}</p></div>${button(preview?C.hub.review:i<2?C.wrap.next:C.wrap.done,preview?'review-menu':'wrap-next','primary full')}`;}
-function wrapResultsView(){const result=preview?{score:6240,maxCombo:24,grades:['A','S','B'],best:false}:wrapResult;return `${heading(C.wrap.results,C.wrap.done,C.wrap.resultCopy)}<div class="result-total">${result.score}<small>${esc(C.app.score)}</small></div><div class="grade-row" aria-label="${esc(C.wrap.grades)}">${result.grades.map((g,i)=>`<div class="song-medal"><strong>${esc(C.wrap.songs[i].title)}</strong>${medalBadge(g,true)}</div>`).join('')}</div><p>${t(C.wrap.maxCombo,{count:result.maxCombo})}</p><p class="unlock-banner">${esc(wrapMedal(result.grades)>=0?fmt(C.treasure.layerWon,{layer:C.gift.layers[0]}):C.treasure.wrapNear)}</p>${helper(save.profile,save.collection.equipped)}${preview?'':boxLink(save)}${result.best?`<p class="unlock-banner">${esc(C.app.newBest)}</p>`:''}<p class="subtle">${t(C.app.best,{value:save.wrapBest})}</p>${wrapMedal(result.grades)>=0?button(C.wrap.finish,preview?'go:unwrap':'claim:wrap','primary full'):nav(C.hub.collection,'collection','primary full')}${nav(C.app.playAgain,'wrap','secondary full')}`;}
+function wrapResultsView(){const result=preview?{score:6240,maxCombo:24,grades:['A','S','B'],best:false}:wrapResult;return `${heading(C.wrap.results,C.wrap.done,C.wrap.resultCopy)}<div class="result-total">${result.score}<small>${esc(C.app.score)}</small></div><div class="grade-row" aria-label="${esc(C.wrap.grades)}">${result.grades.map((g,i)=>`<div class="song-medal"><strong>${esc(C.wrap.songs[i].title)}</strong>${medalBadge(g,true)}</div>`).join('')}</div><p>${t(C.wrap.maxCombo,{count:result.maxCombo})}</p><p class="unlock-banner">${esc(wrapMedal(result.grades)>=0?fmt(C.treasure.layerWon,{layer:C.gift.layers[0]}):C.treasure.wrapNear)}</p>${helper(save.profile,save.collection.equipped)}${preview?'':boxLink(save)}${medalOutfits('wrap',wrapMedal(result.grades))}${result.best?`<p class="unlock-banner">${esc(C.app.newBest)}</p>`:''}<p class="subtle">${t(C.app.best,{value:save.wrapBest})}</p>${wrapMedal(result.grades)>=0?button(C.wrap.finish,preview?'go:unwrap':'claim:wrap','primary full'):nav(C.hub.collection,'collection','primary full')}${nav(C.app.playAgain,'wrap','secondary full')}`;}
 
 function towerView(){return `${heading(C.tower.eyebrow,C.tower.title,C.tower.intro)}<p class="unlock-banner">${t(C.treasure.towerGoal,{count:C.treasure.towerMedals[0]})}</p><div class="tower-promo">${gift({small:true,paper:'stars'})}${gift({small:true})}${gift({small:true,paper:'stars'})}</div><p class="instruction-card">${esc(C.tower.steps)}</p><p class="personal-best">${t(C.tower.best,{count:save.towerBest})}</p>${button(C.tower.start,'tower-start','primary full')}`;}
 function newTower(){tower={boxes:[],fall:null,held:{x:160,y:26,w:104,color:0},score:0,height:0,phase:0,paused:false,complete:false,streak:0,lastColor:-1};towerResult=null;}
@@ -341,6 +347,24 @@ function resetDialog(){
 root.addEventListener('click',async event=>{
   const el=event.target.closest('[data-action]');if(!el||el.disabled)return;event.preventDefault();
   const [action,value]=el.dataset.action.split(':');
+  if(action==='pick-cards'){pickingCards=!pickingCards;render();return;}
+  if(action==='confirm-restore'){
+    if(!pendingRestore)return;
+    save=pendingRestore;
+    profile={...save.profile};
+    pendingRestore=null;
+    clearRestoreHash();
+    persist();
+    navigate('collection');
+    toast(C.treasure.restored);
+    return;
+  }
+  if(action==='cancel-restore'){
+    pendingRestore=null;
+    clearRestoreHash();
+    navigate(save.profile?'backup':'onboard');
+    return;
+  }
   if(action==='book-tab'){bookTab=value;render();return;}
   if(action==='open-box'){lastPull=openBox(save,trusted.now(),review);persist();render();return;}
   if(action==='skip-reveal'){$('.card-reveal')?.classList.remove('card-reveal');return;}
@@ -349,7 +373,7 @@ root.addEventListener('click',async event=>{
   if(action==='unequip'){delete save.collection.equipped[value];persist();render();return;}
   if(action==='helper-save'){save.profile={...profile};persist();navigate('hub');return;}
   if(action==='dismiss-home'){save.collection.homePromptAt=Math.floor(trusted.now());persist();render();return;}
-  if(action==='copy-code'){try{await navigator.clipboard.writeText($('#save-code').value);feedback(C.treasure.copied);}catch{$('#save-code').select();feedback(C.treasure.copyFailed);}return;}
+  if(action==='copy-code'){try{await navigator.clipboard.writeText($('#save-link').value);feedback(C.treasure.copied);}catch{$('#save-link').select();feedback(C.treasure.copyFailed);}return;}
   if(action==='sleigh-guide'){document.querySelector('#modal-root').innerHTML=`<div class="pause-backdrop"><div class="pause-card road-guide-card" role="dialog" aria-modal="true">${roadGuide({close:C.sleigh.guideSetupClose})}</div></div>`;document.querySelector('#sleigh-guide-close').focus();return;}
   if(action==='sleigh-guide-close'){document.querySelector('#modal-root').innerHTML='';return;}
   if(action==='sleigh-start'||action==='sleigh-practice'){const chosen=review?Number($('#sleigh-stage-select')?.value)||1:1;sleigh=createSleigh({stage:chosen,practice:action==='sleigh-practice'||(!save.sleighPractice&&chosen===1)});unlockAudio();navigate('sleighPlay');return;}
@@ -387,7 +411,7 @@ root.addEventListener('change',event=>{if(event.target.name==='sorting-difficult
 root.addEventListener('submit',event=>{
   event.preventDefault();
   if(event.target.id==='restore-form'){
-    try{const restored=decodeSave($('#restore-code').value);save=restored;profile={...save.profile};persist();navigate('collection');toast(C.treasure.restored);}catch{feedback(C.treasure.badCode);}return;
+    try{pendingRestore=decodeBackup($('#restore-code').value);navigate('restore');}catch{feedback(C.treasure.badCode);}return;
   }
   if(event.target.id==='finale-form'){
     if(!dateOpen(C.finale.date,review)){feedback(C.finale.locked);return;}
@@ -401,7 +425,16 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){trusted.freeze();if(['wrapPlay','towerPlay'].includes(view))pauseGame();hush();}
   else {refreshTime();updates.check();}
 });
-window.addEventListener('popstate',()=>{const next=C.episodes.find(ep=>ep.id===Number(new URLSearchParams(location.search).get('episode')))||C.episodes[0];if(next.id!==episode.id)selectEpisode(next);navigate(location.hash.slice(1)||'hub');});
+function clearRestoreHash(){history.replaceState(null,'',location.pathname+location.search);}
+function routeFromAddress(){
+ if(location.hash.startsWith('#restore=')){
+  try{pendingRestore=decodeBackup(location.href);}catch{pendingRestore=null;}
+  navigate('restore');return;
+ }
+ navigate(location.hash.slice(1)||'hub');
+}
+window.addEventListener('hashchange',routeFromAddress);
+window.addEventListener('popstate',()=>{const next=C.episodes.find(ep=>ep.id===Number(new URLSearchParams(location.search).get('episode')))||C.episodes[0];if(next.id!==episode.id)selectEpisode(next);routeFromAddress();});
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){if($('#modal-root')?.children.length){$('#modal-root').innerHTML='';$('[data-action="reset"]')?.focus();}else if(['wrapPlay','towerPlay'].includes(view))pauseGame();}
   const dialog=root.querySelector('[role="dialog"], [role="alertdialog"]');
@@ -409,7 +442,7 @@ document.addEventListener('keydown',event=>{
 });
 if(save.profile&&!save.collection.welcome)welcomePulls=welcomePack(save,trusted.now());
 if(save.profile)persist();
-navigate(location.hash.slice(1)||'hub');
+routeFromAddress();
 
 refreshTime();
 if('serviceWorker' in navigator)navigator.serviceWorker.register(new URL('sw.js',SITE_ROOT),{scope:SITE_ROOT.pathname,updateViaCache:'none'}).then(()=>navigator.serviceWorker.ready).then(()=>navigator.serviceWorker.controller?.postMessage({type:'prune-builds',id:BUILD_ID})).catch(()=>{});
@@ -423,11 +456,11 @@ function finishSorting(r){if(r.practice){save.sortingPractice=true;persist();nav
 function sortingResultsView(){
  const r=sortingResult,S=C.sorting,L=S.scoring,difficulty=S.difficulties.find(d=>d.id===r.difficulty).label;
  const row=(key,label,value)=>`<div><dt>${esc(label)}</dt><dd data-points="${key}" data-value="${value}">${sortingNumber(value)}</dd></div>`;
- return `<section class="sorting-party" data-celebration="${r.celebration}">${heading(S.title,L.party)}${helper(save.profile,save.collection.equipped)}${boxLink(save)}${r.best?`<p class="sorting-new-best">★ ${esc(L.newBest)}</p>`:''}<div class="sorting-medals">${r.medals.map((id,i)=>`<p class="sorting-medal-stamp" style="--stamp-delay:${i*.18}s">✦ ${t(S.medal,{medal:S.papers.find(p=>p.id===id).medal})}</p>`).join('')}</div><dl class="sorting-breakdown">${row('base',fmt(L.base,{count:r.sorted,points:S.tuning.basePoints}),r.points.base)}${row('quick',L.quickTotal,r.points.quick)}${row('rush',L.rushTotal,r.points.rush)}${row('combo',L.comboTotal,r.points.combo)}</dl><div class="result-total" id="sorting-total" data-value="${r.score}">${sortingNumber(r.score)}<small>${esc(L.total)}</small></div><p class="sorting-personal-best">${t(L.best,{difficulty,score:sortingNumber(r.personalBest)})}</p><p>${t(L.bestRun,{combo:r.bestCombo,stage:r.stage})}</p><p class="unlock-banner">${esc(S.layer)}</p>${r.medals.length?'':`<p>${esc(S.noMedal)}</p>`}${button(S.finish,'claim:sorting','primary full')}${nav(C.app.playAgain,'sorting','secondary full')}</section>${celebration(24+r.celebration*12)}`;
+ return `<section class="sorting-party" data-celebration="${r.celebration}">${heading(S.title,L.party)}${helper(save.profile,save.collection.equipped)}${boxLink(save)}${medalOutfits('sorting',r.medals.length-1)}${r.best?`<p class="sorting-new-best">★ ${esc(L.newBest)}</p>`:''}<div class="sorting-medals">${r.medals.map((id,i)=>`<p class="sorting-medal-stamp" style="--stamp-delay:${i*.18}s">✦ ${t(S.medal,{medal:S.papers.find(p=>p.id===id).medal})}</p>`).join('')}</div><dl class="sorting-breakdown">${row('base',fmt(L.base,{count:r.sorted,points:S.tuning.basePoints}),r.points.base)}${row('quick',L.quickTotal,r.points.quick)}${row('rush',L.rushTotal,r.points.rush)}${row('combo',L.comboTotal,r.points.combo)}</dl><div class="result-total" id="sorting-total" data-value="${r.score}">${sortingNumber(r.score)}<small>${esc(L.total)}</small></div><p class="sorting-personal-best">${t(L.best,{difficulty,score:sortingNumber(r.personalBest)})}</p><p>${t(L.bestRun,{combo:r.bestCombo,stage:r.stage})}</p><p class="unlock-banner">${esc(S.layer)}</p>${r.medals.length?'':`<p>${esc(S.noMedal)}</p>`}${button(S.finish,'claim:sorting','primary full')}${nav(C.app.playAgain,'sorting','secondary full')}</section>${celebration(24+r.celebration*12)}`;
 }
 
 function sleighView(){const S=C.sleigh;return `${heading(S.eyebrow,S.title,S.intro)}<div class="single-art">${character('note')}</div><p class="unlock-banner">${t(S.goal,{count:S.medalsAt[0]})}</p><p class="instruction-card">${esc(S.controls)}</p><p>${esc(S.keyboard)}</p><p class="personal-best">${t(S.best,{count:save.sleighBest})}</p>${save.towerBest?`<p>${t(S.pennant,{count:save.towerBest})}</p>`:''}${review?`<label>${esc(S.reviewStage)} <select id="sleigh-stage-select">${S.stages.map(c=>`<option value="${c.stage}">${c.stage}</option>`).join('')}</select></label>`:''}<p>${esc(C.app.mutedTip)}</p><p id="music-loading" class="subtle" role="status" ${music.state==='ready'?'hidden':''}>${esc(music.state==='failed'?S.music.failed:S.music.loading)}</p><p class="subtle"><a href="${new URL('./audio/credits.html',import.meta.url)}" target="_blank" rel="noopener">${esc(C.wrap.musicCredits)}</a></p>${button(S.start,'sleigh-start','primary full')}${button(S.practice,'sleigh-practice','secondary full')}${button(S.guide,'sleigh-guide','secondary full')}`;}
 function finishSleigh(r){if(r.practice){save.sleighPractice=true;persist();navigate('sleigh');toast(C.sleigh.practiceDone);return;}
  sleighResult=recordSleigh(save,r);if(episodeOpen(C.episodes[3],review))rewardResult('sleigh',sleighResult.medal,sleighResult.best);persist();navigate('sleighResults');
 }
-function sleighResultsView(){const r=sleighResult,S=C.sleigh;return `<section class="sorting-party" data-celebration="${r.celebration}">${heading(S.results,S.over)}${boxLink(save)}<div class="single-art">${helper(save.profile,save.collection.equipped)}</div>${r.best?`<p class="sorting-new-best">${esc(S.newBest)}</p>`:''}<div class="result-total">${r.delivered}<small>${t(S.record,{count:r.delivered})}</small></div>${r.medal>=0?`<p class="sorting-medal-stamp">${t(S.medal,{medal:S.medals[r.medal]})}</p><p class="unlock-banner">${esc(S.layer)}</p>`:`<p>${t(S.near,{count:S.medalsAt[0]-r.delivered})}</p>`}<p>${t(S.bonusTotal,{count:r.perfect,points:r.bonusPoints})}</p>${r.cause?`<p class="sleigh-cause">${t(S.objects[r.cause.kind].result,{count:r.cause.count})}</p>`:''}<p>${t(S.distance,{count:r.distance})}</p><p>${t(S.best,{count:r.personalBest})}</p>${nav(S.again,'sleigh','primary full')}${nav(C.app.home,'hub','secondary full')}</section>${celebration(24+r.celebration*12)}`;}
+function sleighResultsView(){const r=sleighResult,S=C.sleigh;return `<section class="sorting-party" data-celebration="${r.celebration}">${heading(S.results,S.over)}${boxLink(save)}${medalOutfits('sleigh',r.medal)}<div class="single-art">${helper(save.profile,save.collection.equipped)}</div>${r.best?`<p class="sorting-new-best">${esc(S.newBest)}</p>`:''}<div class="result-total">${r.delivered}<small>${t(S.record,{count:r.delivered})}</small></div>${r.medal>=0?`<p class="sorting-medal-stamp">${t(S.medal,{medal:S.medals[r.medal]})}</p><p class="unlock-banner">${esc(S.layer)}</p>`:`<p>${t(S.near,{count:S.medalsAt[0]-r.delivered})}</p>`}<p>${t(S.bonusTotal,{count:r.perfect,points:r.bonusPoints})}</p>${r.cause?`<p class="sleigh-cause">${t(S.objects[r.cause.kind].result,{count:r.cause.count})}</p>`:''}<p>${t(S.distance,{count:r.distance})}</p><p>${t(S.best,{count:r.personalBest})}</p>${nav(S.again,'sleigh','primary full')}${nav(C.app.home,'hub','secondary full')}</section>${celebration(24+r.celebration*12)}`;}

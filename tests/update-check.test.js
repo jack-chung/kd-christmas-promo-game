@@ -66,3 +66,16 @@ test('build keeps only three recent slim releases and gates actual size, content
   await writeFile(root+'docs/game/style.css',Buffer.alloc(3000001));await assert.rejects(build(false,root),/exceeds budget/);
  }finally{await rm(temp,{recursive:true,force:true});}
 });
+
+test('install identity and icons use stable site-root URLs independent of immutable releases',async()=>{
+ const html=await readFile(new URL('../docs/index.html',import.meta.url),'utf8');
+ assert.match(html,/rel="manifest" href="manifest.webmanifest"/);
+ const manifest=JSON.parse(await readFile(new URL('../docs/manifest.webmanifest',import.meta.url)));
+ assert.equal(manifest.id,'/kd-christmas-promo-game/');assert.equal(manifest.scope,manifest.id);assert.equal(manifest.start_url,manifest.id+'#hub');
+ assert.deepEqual(manifest.icons.map(icon=>icon.purpose),['any','any','maskable']);
+ for(const icon of manifest.icons){
+  assert.ok(icon.src.startsWith(manifest.scope));assert.ok(!icon.src.includes('releases'));
+  const bytes=await readFile(new URL('../docs/'+icon.src.split('/').at(-1),import.meta.url));
+  assert.equal(bytes.readUInt32BE(16),Number(icon.sizes.split('x')[0]));
+ }
+});

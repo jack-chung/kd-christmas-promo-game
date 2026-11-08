@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 const projectRoot=fileURLToPath(new URL('../',import.meta.url));
 const digest=data=>createHash('sha256').update(data).digest('hex');
-export const gameFile=path=>['index.html','boot.js','manifest.json','game/install-manifest.json','game/app-icon-192.png','game/app-icon-512.png'].includes(path)||/^game\/(?:[\w-]+\.(?:js|css)|audio\/[\w.-]+\.(?:wav|html|txt|md|json))$/.test(path);
+export const gameFile=path=>['index.html','boot.js','manifest.json','game/install-manifest.json','game/app-icon-192.png','game/app-icon-512.png','game/app-icon-maskable-512.png'].includes(path)||/^game\/(?:[\w-]+\.(?:js|css)|audio\/[\w.-]+\.(?:wav|html|txt|md|json))$/.test(path);
 export function releaseBudget(files,maxBytes){
  for(const path of Object.keys(files))if(!gameFile(path))throw Error('Non-game release file: '+path);
  const bytes=Object.values(files).reduce((sum,data)=>sum+Buffer.byteLength(data),0);
@@ -19,9 +19,9 @@ export async function build(check=false,root=projectRoot){
  const inputs=[...files,'scripts/build.mjs','scripts/build-config.json','scripts/index.html','scripts/sw.js'].sort();
  const hashes={};for(const path of inputs)hashes[path]=digest(await read(path));
  const id=digest(JSON.stringify(hashes)).slice(0,20),prefix=`releases/${id}/`;
- const html=(await read('scripts/index.html')).toString().replace('BUILD_SCRIPT',prefix+'boot.js').replaceAll('BUILD_GAME',prefix+'game/');
- const entry=html.replaceAll(prefix,'');
- const boot=`const base=new URL('.',import.meta.url);\nconst home=new URL('../../',base);\nfor(const link of document.querySelectorAll('link[href^="game/"]'))link.href=new URL(link.getAttribute('href'),base);\nif(location.pathname.includes('/releases/'))history.replaceState(null,'',home.pathname+location.search+location.hash);\nconst link=document.createElement('link');link.rel='stylesheet';link.href=new URL('game/style.css',base);document.head.append(link);\nawait new Promise((resolve,reject)=>{link.onload=resolve;link.onerror=reject;});\nawait import(new URL('game/app.js',base));\n`;
+ const html=(await read('scripts/index.html')).toString().replace('BUILD_SCRIPT',prefix+'boot.js').replaceAll('BUILD_GAME',prefix+'game/').replaceAll('BUILD_ROOT','');
+ const entry=html.replaceAll(prefix,'').replaceAll('href="manifest.webmanifest"','href="../../manifest.webmanifest"').replaceAll('href="app-icon-192.png"','href="../../app-icon-192.png"');
+ const boot=`const base=new URL('.',import.meta.url);\nconst home=new URL('../../',base);\nfor(const link of document.querySelectorAll('link[href]'))link.href=link.href;\nif(location.pathname.includes('/releases/'))history.replaceState(null,'',home.pathname+location.search+location.hash);\nconst link=document.createElement('link');link.rel='stylesheet';link.href=new URL('game/style.css',base);document.head.append(link);\nawait new Promise((resolve,reject)=>{link.onload=resolve;link.onerror=reject;});\nawait import(new URL('game/app.js',base));\n`;
  const info=`export const BUILD_ID=${JSON.stringify(id)};\nexport const SITE_ROOT=new URL('../../../',import.meta.url);\n`;
  const contents={'index.html':entry,'boot.js':boot,'game/build-info.js':info};
  for(const path of files.filter(p=>p!=='docs/game/build-info.js'))contents[path.slice(5)]=await read(path);
@@ -40,6 +40,8 @@ export async function build(check=false,root=projectRoot){
  const keep=retainedReleases(id,eligible,config.keepReleases);
  const sw=(await read('scripts/sw.js')).toString().replace('BUILD_MANIFEST',JSON.stringify(published));
  const outputs={'docs/index.html':html,'docs/build.json':manifest,'docs/releases.json':JSON.stringify(keep)+'\n','docs/404.html':`<!doctype html><meta name="tuneville-build" content="${id}">\n`,'docs/sw.js':sw};
+ outputs['docs/manifest.webmanifest']=await read('docs/game/install-manifest.json');
+ for(const name of ['app-icon-192.png','app-icon-512.png','app-icon-maskable-512.png'])outputs['docs/'+name]=await read('docs/game/'+name);
  for(const [path,bytes] of Object.entries(contents))outputs['docs/'+prefix+path]=bytes;
  if(check){
   for(const [path,value] of Object.entries(outputs))if(!Buffer.from(await read(path).catch(()=> '')).equals(Buffer.from(value)))throw Error(`Stale build: ${path}; run npm run build`);

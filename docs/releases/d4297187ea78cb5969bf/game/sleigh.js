@@ -71,7 +71,7 @@ function step(r,dt){
   r.stage++;r.stageAt=r.elapsed;r.timeline.push({type:'lesson',stage:r.stage,at:r.elapsed});r.progress=0;r.playUntil=null;r.next=.2;r.card=true;releaseHop(r);return;
  }
  const d=sleighDials(r);r.distance+=d.speed*dt;r.landed=false;r.relief=Math.max(0,r.relief-dt);
- if(r.y>0||r.vy>0){r.hold+=dt;r.vy-=T.gravity*dt;if(r.held&&r.hold<T.holdTime)r.vy+=T.holdLift*dt;r.y+=r.vy*dt;if(r.y<=0){r.lastLandingAt=r.elapsed;r.y=0;r.vy=0;r.hops=0;r.landed=true;r.events.push('land');}}
+ if(r.y>0||r.vy>0){r.hold+=dt;r.vy-=T.gravity*dt;if(r.held&&r.hold>T.holdDelay&&r.hold<T.holdTime)r.vy+=T.holdLift*dt;r.y+=r.vy*dt;if(r.y<=0){r.lastLandingAt=r.elapsed;r.y=0;r.vy=0;r.hops=0;r.landed=true;r.events.push('land');}}
  r.groundedFor=r.y===0&&!r.held?r.groundedFor+dt:0;
  r.next-=dt;
  const isolated=!d.ceiling&&(r.practice||r.playUntil===null&&r.stage<8||r.objects.some(o=>o.hint||o.kind==='door'));
@@ -103,7 +103,10 @@ function step(r,dt){
    const groundReady=!o.groundCatch||(r.groundedFor>=T.groundCatchSettle&&Math.abs(o.x-80)<6);
    if(groundReady&&(o.kind==='catch'||o.kind==='gift')&&Math.abs(r.y+14-o.y)<(o.kind==='catch'?T.catchReach:T.pickupReach)){r.gifts=Math.min(T.maxGifts,r.gifts+1);o.done=true;r.events.push(o.kind==='catch'?'catch':'pickup');if(o.kind==='gift')successful(r,o);}
    if(o.kind==='door'&&r.landed&&Math.abs(o.x-80)<=o.width/2&&r.gifts>0){r.gifts--;r.delivered++;r.deliveryX=o.x;o.done=true;r.events.push('deliver');if(Math.abs(o.x-80)<=o.width*T.perfectFraction/2){r.perfect++;r.bonusPoints+=T.perfectPoints;r.events.push('perfect');}if(r.stage>=3)r.giftAfterDoor=true;successful(r,o);}
-   const collision=(['fence','moving'].includes(o.kind)&&r.y<T.fenceClearance)||(o.kind==='snowman'&&r.y<100)||(o.kind==='arch'&&r.y+stackHeight(r.gifts)>T.archUnderside)||(o.kind==='gap'&&r.y<8);
+   // Low obstacles judge the cart centre; trailing wheels get landing forgiveness.
+   // This keeps a quick, low tap usable without shrinking the visible road sprites.
+   const lowContact=Math.abs(o.x-80)<o.width/2;
+   const collision=(o.kind==='fence'&&lowContact&&r.y<T.fenceClearance)||(o.kind==='moving'&&lowContact&&r.y<T.movingClearance)||(o.kind==='snowman'&&r.y<100)||(o.kind==='arch'&&r.y+stackHeight(r.gifts)>T.archUnderside)||(o.kind==='gap'&&r.y<8);
    if(collision&&!r.relief){o.hit=true;o.done=o.kind!=='arch';hitSleigh(r,o.kind,o.kind==='arch'?o:null);}
   }
   if(o.x+o.width/2<50&&!o.passed){o.passed=true;if(!o.done&&!o.hit&&sleighHazards.includes(o.kind))successful(r,o);}
