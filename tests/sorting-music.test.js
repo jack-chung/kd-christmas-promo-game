@@ -5,7 +5,7 @@ import {SortingMusic,sortingScore} from '../docs/game/sorting-music.js';
 
 test('sorting carol retains all 17 measures in each seamless verse, with no bell instruments',()=>{
  const song={...C.sorting.music,...sortingScore};assert.equal(song.phrase.reduce((n,[,length])=>n+length,0),68);assert.equal(song.chords.length,17);
- assert.ok(!C.wrap.songs.some(s=>s.title===song.title));
+ assert.deepEqual(C.wrap.songs.find(s=>s.id==='good-king-wenceslas').verse,song.phrase);
  const track=new SortingMusic({}),calls=[];track.ready=()=>true;
  track.band={sample:(pitch,instrument,delay,volume,duration)=>calls.push({pitch,instrument,volume,duration}),drum:()=>{},play:()=>{},kit:{pad:{}}};
  for(let verse=0;verse<3;verse++){

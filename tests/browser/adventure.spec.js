@@ -47,36 +47,20 @@ test('first run, date guards, review finale code, certificate, invitation, and r
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([]);
 });
 
-for(const difficulty of C.wrap.difficulty)test(`Wrap Station ${difficulty.id}: three songs, matching taps, pause, grades and layer`,async({page})=>{
-  test.setTimeout(120000);
-  await enter(page);await openWrap(page);
-  await page.locator(`input[value="${difficulty.id}"]`).check({force:true});await action(page,'wrap-start').click({force:true});
-  for(let customer=0;customer<3;customer++){
-    await action(page,'wrap-ready').click({force:true});
-    const chart=C.wrap.songs[customer].variants[difficulty.id];
-    await expect(page.locator('.rhythm-cast p')).toHaveText(`♪ ${C.wrap.songs[customer].title}`);
-    await expect(page.locator('.rhythm-lane')).toHaveCount(4);await expect(page.locator('.lane-button')).toHaveCount(4);
-    expect(await page.locator('kbd').first().isVisible()).toBe(false);
-    if(customer===0){
-      await action(page,'pause').click({force:true});await page.clock.runFor(20000);await expect(page.locator('#beat-count')).toHaveText(`MOVE 0 / ${chart.events.length}`);await action(page,'resume').click({force:true});
-      await page.clock.runFor(1800);expect(await page.locator('.falling-object').count()).toBeGreaterThan(1);
-      await page.clock.runFor(difficulty.travel-1800);
-    }else await page.clock.runFor(difficulty.travel);
-    let elapsed=0;
-    for(const time of [...new Set(chart.events.map(e=>e.time))]){
-      if(time>elapsed)await page.clock.runFor(time-elapsed);elapsed=time;
-      const notes=chart.events.filter(e=>e.time===time);
-      if(notes.length>1){
-        // Independent simultaneous touch pointers, including a non-primary second thumb.
-        await page.evaluate(lanes=>lanes.forEach((lane,i)=>{const el=document.querySelector(`[data-lane="${lane}"]`);el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerType:'touch',pointerId:i+11,isPrimary:i===0,button:0}));}),notes.map(e=>e.lane));
-      }else await page.locator(`[data-lane="${notes[0].lane}"]`).click({force:true});
-    }
-    await page.clock.runFor(chart.duration-elapsed+difficulty.window+32);
-    await expect(page.locator('main')).toHaveClass('screen screen-wrapGift');await expect(page.locator('.grade-medal')).toContainText('Gold!');await action(page,'wrap-next').click({force:true});
-  }
-  await expect(page.locator('main')).toHaveClass('screen screen-wrapResults');await expect(page.locator('.mini-grade')).toHaveText(['Gold! S','Gold! S','Gold! S']);
-  await action(page,'claim:wrap').click({force:true});await expect(page.locator('main')).toHaveClass('screen screen-unwrap');
-  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.layers).toEqual([1]);expect(saved.wrapBest).toBeGreaterThan(5000);
+for(const song of C.wrap.songs.slice(0,3))test(`Wrap Station tier ${song.tier}: full song, rising speed, pause, medal and capped rewards`,async({page})=>{
+ test.setTimeout(180000);
+ await page.route('**/game/app.js',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text())+'\nglobalThis.wrapTarget=(time)=>({delay:run.clock.wall(time)-performance.now(),speed:run.clock.speed(performance.now())});'});});
+ await enter(page);await openWrap(page);await action(page,'wrap-song:'+song.id).click({force:true});await expect(page.locator('#music-loading')).toBeHidden();await action(page,'wrap-ready').click({force:true});
+ await expect(page.locator('.rhythm-lane')).toHaveCount(4);await expect(page.locator('.lane-button')).toHaveCount(4);
+ await action(page,'pause').click({force:true});await page.clock.runFor(20000);await expect(page.locator('#beat-count')).toHaveText(`MOVE 0 / ${song.chart.events.length}`);await action(page,'resume').click({force:true});
+ for(const time of [...new Set(song.chart.events.map(e=>e.time))]){
+  const {delay}=await page.evaluate(time=>wrapTarget(time),time);if(delay>0)await page.clock.runFor(delay);
+  await page.evaluate(lanes=>lanes.forEach((lane,i)=>document.querySelector(`[data-lane="${lane}"]`).dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true,pointerType:'touch',pointerId:i+11,isPrimary:i===0,button:0}))),song.chart.events.filter(e=>e.time===time).map(e=>e.lane));
+ }
+ const {delay}=await page.evaluate(time=>wrapTarget(time),song.chart.duration+500);await page.clock.runFor(Math.max(0,delay)+32);
+ await expect(page.locator('main')).toHaveClass('screen screen-wrapResults');await expect(page.locator('.grade-medal')).toContainText('Gold!');await expect(page.locator('main')).toContainText('Top speed ×1.40');
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(saved.layers).toEqual([1]);expect(saved.wrapSongs[song.id].grade).toBe('S');expect(saved.collection.boxes).toEqual([song.tier,song.tier]);expect(saved.collection.outfits.filter(o=>o.startsWith('wrap-'))).toHaveLength(song.tier);
+ await action(page,'go:wrap').click({force:true});await expect(action(page,'wrap-song:'+song.id)).not.toContainText('New!');await expect(action(page,'wrap-song:'+song.id)).toContainText('Gold!');
 });
 
 test('practice: four free sounds, forgiving guided objects and no failure',async({page})=>{
@@ -96,13 +80,13 @@ test('wrong shapes miss, swipes do not score, empty taps break combos and unatte
   // Let the loading message settle before forced clicks on the short phone viewport.
   // Otherwise WebKit can move the Ready button between pointerdown and pointerup.
   await expect(page.locator('#music-loading')).toBeHidden();
-  await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await action(page,'wrap-song:o-christmas-tree').click({force:true});await expect(page.locator('#music-loading')).toBeHidden();await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(2700);await page.locator('[data-lane="3"]').click({force:true});await expect(page.locator('#wrap-score')).toHaveText('0');await expect(page.locator('#feedback')).toHaveText('Match the shape!');
-  await page.clock.runFor(C.wrap.songs[0].variants.tunie.events[1].time);await page.locator('[data-lane="1"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
+  await page.clock.runFor(C.wrap.songs[1].chart.events[1].time);await page.locator('[data-lane="1"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
   // A moving pointer across the playfield is not a tap target.
   const box=await page.locator('.rhythm-field').boundingBox();await page.mouse.move(box.x+10,box.y+100);await page.mouse.down();await page.mouse.move(box.x+box.width-10,box.y+100);await page.mouse.up();await expect(page.locator('#combo')).toHaveText('1× combo');
   await page.clock.runFor(350);await page.locator('[data-lane="0"]').click({force:true});await expect(page.locator('#combo')).toHaveText('0× combo');
-  await page.clock.runFor(48000);await expect(page.locator('.grade-medal')).toHaveText('Keep practising');
+  await page.clock.runFor(150000);await expect(page.locator('.grade-medal')).toHaveText('Keep practising');
 });
 
 test('review can reach every screen and preview rewards do not alter progression',async({page})=>{
@@ -152,9 +136,9 @@ test('storage denial and malformed saves still allow first-run play',async({page
 
 test('desktop keys, touch-only labels, portrait fit and reduced-motion feedback',async({browser})=>{
   const context=await browser.newContext({viewport:{width:1100,height:850},hasTouch:false,isMobile:false,reducedMotion:'reduce'}),page=await context.newPage();
-  await enter(page);await openWrap(page);await action(page,'wrap-start').click();await action(page,'wrap-ready').click();
+  await enter(page);await openWrap(page);await action(page,'wrap-song:o-christmas-tree').click();await action(page,'wrap-ready').click();
   await expect(page.locator('kbd').first()).toBeVisible();await page.clock.runFor(2700);await page.keyboard.press('d');await expect(page.locator('#combo')).toHaveText('1× combo');
-  const firstNotes=C.wrap.songs[0].variants.tunie.events.slice(0,4);
+  const firstNotes=C.wrap.songs[1].chart.events.slice(0,4);
   for(let i=1;i<4;i++){await page.clock.runFor(firstNotes[i].time-firstNotes[i-1].time);await page.keyboard.press(['d','ArrowDown','j','k'][i]);}
   await expect(page.locator('#combo')).toHaveText('4× combo');
   const field=await page.locator('main').boundingBox();expect(field.width).toBeLessThanOrEqual(480);expect(Math.abs(field.x+field.width/2-550)).toBeLessThan(2);
@@ -174,17 +158,17 @@ test('sound: sampled instruments, matching melody, count-in, mute and resume',as
   });
   await enter(page);await action(page,'sound').click({force:true});await openWrap(page);
   await expect(page.locator('#music-loading')).toBeHidden();
-  await action(page,'go:wrapPractice').click({force:true});await page.evaluate(()=>window.played=[]);
+  await action(page,'go:wrapPractice').click({force:true});await expect(page.locator('#music-loading')).toBeHidden();await page.evaluate(()=>window.played=[]);
   for(let lane=0;lane<4;lane++)await page.locator(`[data-lane="${lane}"]`).click({force:true});
   const sounds=await page.evaluate(()=>window.played);expect(sounds).toHaveLength(4);
   expect(new Set(sounds.map(s=>s.length)).size).toBe(4);
-  await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await openWrap(page);await action(page,'wrap-song:o-christmas-tree').click({force:true});await expect(page.locator('#music-loading')).toBeHidden();await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(500);await expect(page.locator('#feedback')).toHaveText('3…');
   await page.clock.runFor(750);await expect(page.locator('#feedback')).toHaveText('2…');
   await page.clock.runFor(750);await expect(page.locator('#feedback')).toHaveText('1…');
   await page.clock.runFor(700);
   await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="3"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(0);
-  const chart=C.wrap.songs[0].variants.tunie;
+  const chart=C.wrap.songs[1].chart;
   await page.clock.runFor(chart.events[1].time);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="1"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(1);
   await action(page,'pause').click({force:true});await action(page,'sound').filter({visible:true}).click({force:true});await action(page,'resume').click({force:true});
   await page.clock.runFor(chart.events[2].time-chart.events[1].time);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="2"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(0);
@@ -192,18 +176,18 @@ test('sound: sampled instruments, matching melody, count-in, mute and resume',as
   await page.clock.runFor(chart.events[3].time-chart.events[2].time);await page.evaluate(()=>window.played=[]);await page.locator('[data-lane="3"]').click({force:true});expect(await page.evaluate(()=>window.played.length)).toBe(1);
 });
 
-test('audio assets load only inside Wrap; a failed bank leaves visual play and practice available',async({page})=>{
+test('audio bank loads only after choosing a song or practice; a failed bank leaves visual play and practice available',async({page})=>{
   const requests=[];page.on('request',request=>{if(request.url().includes('/audio/'))requests.push(request.url());});
   await enter(page);expect(requests).toEqual([]);
   let release;
   const gate=new Promise(resolve=>release=resolve);
   await page.route('**/audio/sources.json',async route=>{await gate;await route.fulfill({status:200,contentType:'application/json',body:'{}'});});
-  await openWrap(page);await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicLoading);
+  await openWrap(page);expect(requests).toEqual([]);await action(page,'wrap-song:o-christmas-tree').click({force:true});await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicLoading);
   release();await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicFailed);
-  await action(page,'go:wrapPractice').click({force:true});
+  await page.goto('/?review=1#wrap');await action(page,'go:wrapPractice').click({force:true});
   for(let lane=0;lane<4;lane++)await page.locator(`[data-lane="${lane}"]`).click({force:true});
   await expect(action(page,'practice-guide')).toBeEnabled();
-  await openWrap(page);await action(page,'wrap-start').click({force:true});await action(page,'wrap-ready').click({force:true});
+  await openWrap(page);await action(page,'wrap-song:o-christmas-tree').click({force:true});await expect(page.locator('#music-loading')).toHaveText(C.wrap.musicFailed);await action(page,'wrap-ready').click({force:true});
   await page.clock.runFor(2700);await page.locator('[data-lane="0"]').click({force:true});await expect(page.locator('#combo')).toHaveText('1× combo');
-  await page.clock.runFor(50000);await expect(page.locator('.grade-medal')).toHaveText('Keep practising');
+  await page.clock.runFor(150000);await expect(page.locator('.grade-medal')).toHaveText('Keep practising');
 });

@@ -1,3 +1,4 @@
+import {weeklyCarols,arrangeSong} from './wrap-songs.js';
 // All player-facing copy, cast names, dates, and game slots.
 export const C = {
   app: { title: 'The Tuneville Gift', subtitle: 'A little town. A very big gift.', brand: 'KIDS DISCOVER PRESENTS', preview: 'UNANNOUNCED REVIEW PREVIEW', episode: 'GAME 01', privacy: 'Just for fun. Your progress stays on this device.', storage: 'This browser cannot save progress. You can still play; keep this tab open.', loading: 'Opening Tuneville…', noscript: 'Please turn on JavaScript to play The Tuneville Gift.', error: 'That page took a wrong turn. Let’s head back to town.', saved: 'Saved on this device', soundOn: '♪ Sound on', soundOff: '♪ Sound off', home: '⌂ Town', back: '← Back', continue: 'Continue →', playAgain: 'Play again', close: 'Close', newBest: 'A new personal best!', best: 'Best: {value}', notPlayed: 'Not played yet', score: 'Score', yes: 'Yes, reset', cancel: 'Keep playing', resetQuestion: 'Reset this device?', resetDetail: 'This clears your nickname, keepsakes, scores, and game progress. You’ll choose a new helper.', pause: 'Ⅱ Pause', resume: '▶ Keep playing', paused: 'Take a breather', pausedCopy: 'Your game is paused. Ready when you are.', mutedTip: 'Turn your sound on for music. You can play by sight, too.', resetDone: 'A fresh start!', },
@@ -90,26 +91,15 @@ C.wrap.songs=[
       [64,1],[64,1],[64,1],[64,.5],[65,.5],[67,3],[65,.5],[64,.5],
       [62,1],[62,1],[62,1],[62,.5],[64,.5],[65,3],[64,.5],[62,.5],
       [60,1],[72,2],[69,1],[67,1.5],[65,.5],[64,1],[65,1],[64,2],[62,2],[60,4]]},
-].map(song=>{
-  // One full melody at each tempo: difficulties never rearrange its pitches.
-  const beats=song.phrase.reduce((n,[,length])=>n+length,0);
-  return {...song,variants:Object.fromEntries(['easy','tunie','rapper'].map(id=>{
-    const beat=id==='rapper'?650:750,events=[],automatic=[];
-    let position=0,last=-Infinity,note=0;
-    for(const [midi,length] of song.phrase){
-      const time=position*beat;position+=length;
-      if(!midi)continue;
-      const lane=id==='easy'?note%2:note%4;
-      if(id==='easy'&&time-last<1500)automatic.push({time,midi,lane});
-      else {events.push({time,midi,lane});last=time;
-        if(id==='rapper'&&note%12===7)events.push({time,midi:midi-12,lane:(lane+2)%4});
-      }
-      note++;
-    }
-    return [id,{duration:beats*beat,beat,events,automatic}];
-  }))};
-});
+];
 
+C.wrap.tiers=[
+ {tier:1,id:'easy',beat:900,travel:3600,window:360,perfect:145,spacing:1500,pairs:false},
+ {tier:2,id:'tunie',beat:750,travel:2700,window:300,perfect:120,spacing:600,pairs:false},
+ {tier:3,id:'rapper',beat:650,travel:2200,window:250,perfect:100,spacing:0,pairs:true},
+];
+C.wrap.speed={step:.05,hits:6,cap:1.4,lookahead:550};
+Object.assign(C.wrap,{intro:'Pick a carol. Wrap a whole song. Win your way up the stars!',choose:'Choose a song',start:'Meet the customer →',customer:'YOUR CUSTOMER',round:'{title}',duration:'One full song per round',resultCopy:'Try another song, chase a medal, or explore the town.',speedLabel:'Speed ×{speed}',speedUp:'Quicker! You’ve got this!',newSong:'New!',tierLock:'Win a {stars} song to unlock',dateLock:'Opens {date}',songBest:'Best {score} · top speed ×{speed}',noBest:'Not played yet',hubWon:'Songs won: {count}',songLength:'{seconds}s at base speed',outfitCap:'This song gives up to a {medal} box and outfit.',bestSpeed:'Top speed ×{speed}'});
 // Sorting calibration: milliseconds, gifts per promotion, and all rule order live here.
 C.sorting={
  title:'The Royal Sorting Office', eyebrow:'TAG. SACK. THUMP!', intro:'Match each tag to its street. Keep the belt clear! Five oops ends your shift.',
@@ -181,9 +171,9 @@ C.app.resetDetail='This clears your nickname, cards, outfits, scores and game pr
 C.sorting.medal='{medal} outfit earned!'; C.sorting.noMedal='Keep sorting to earn a medal outfit.';
 C.treasure={
  title:'Treasure Book',intro:'Win layers, meet Tunies, and dress your helper.',cardsTab:'Tunie cards',outfitsTab:'Outfits',helper:'My helper',helperCopy:'A look of your own. Change it whenever you like!',helperSave:'Save my helper',slots:{head:'Head',neck:'Neck',body:'Body',held:'Held item'},none:'Take off',equip:'Wear it',equipped:'Wearing',locked:'Still to find',unknown:'Mystery Tunie',count:'{count} / {total} Tunie cards',setCount:'{count} / 6 collected',opens:'Opens {date}',found:'Found: {source}',rarities:{common:'Common',rare:'Rare',super:'Super Rare',mythical:'Mythical'},sources:{box:'Gift box',layer:'Won gift layer',set:'Street set collection',friend:'Friend scan',show:'Show code',welcome:'Welcome pack',stars:'Star exchange'},
- welcome:'Your welcome pack!',welcomeCopy:'Three new friends, including a Rare. They’re saved in your Treasure Book.',boxTitle:'A gift for playing!',open:'Open a box',skip:'Show my card now',next:'Keep collecting',boxes:'{count} boxes to open',boxNames:['Basic box','Bronze box','Silver box','Gold box'],duplicate:'A familiar friend! +{count} stars',newCard:'A new Tunie!',stars:'★ {count} stars',exchange:'Choose for 10 stars',oddsTitle:'What’s inside?',oddsCopy:'No purchases, ads or timers. Every fifth box without a Rare guarantees a Rare. Duplicates become stars.',oddsLine:'{box}: Common {common}%, Rare {rare}%, Super Rare {super}%, Champion {mythical}%',pityLabel:'Boxes since a Rare: {count} / 5',setReward:'Complete this street to earn {outfit}.',layerWon:'{layer} won! Your host card is in the book.',wrapGoal:'Win the Paper: get Bronze on any song',wrapNear:'Keep practising! Bronze on one song wins the Paper.',towerGoal:'Win the Box: stack {count} high',towerNear:'So close! {count} / {goal} high. Try again!',medals:['Keep practising','Bronze!','Silver!','Gold!'],
- saveTitle:'Keep your collection safe',saveCopy:'Take a screenshot of this to keep your collection safe.',saveCode:'Save code',restore:'Restore from code',restoreCopy:'Paste your whole save code. Restoring replaces this browser’s collection.',restoreConfirm:'Restore this collection',restored:'Collection restored!',badCode:'That code is incomplete or damaged. Try copying the whole code again.',codeLoading:'Making your save code…',copy:'Copy save code',copied:'Save code copied',copyFailed:'Select the save code to copy it.',qrLabel:'QR code containing your full collection',
- homeTitle:'Keep your Tunies safe',homeCopy:'Add Tuneville to your Home Screen to help keep your collection safe. Keep a save-code screenshot too.',iosSteps:['Tap the Share button (□↑) in Safari.','Choose Add to Home Screen (＋).','Tap Add, then play from your new icon.'],androidSteps:['Open the Chrome menu (⋮).','Tap Add to Home screen (＋).','Tap Install or Add, then use your new icon.'],ios:'iPhone · Safari',android:'Android · Chrome',dismiss:'Got it — remind me next week',inApp:'Open in Safari/Chrome to keep your collection',private:'Private or restricted browsing may erase your collection when you close it. Use a regular browser and keep a save code.',
+ welcome:'Your welcome pack!',welcomeCopy:'Three new friends, including a Rare. They’re saved in your Treasure Book.',boxTitle:'A gift for playing!',open:'Open a box',skip:'Show my card now',next:'Keep collecting',boxes:'{count} boxes to open',boxNames:['Basic box','Bronze box','Silver box','Gold box'],duplicate:'A familiar friend! +{count} stars',newCard:'A new Tunie!',stars:'★ {count} stars',exchange:'Choose for 10 stars',oddsTitle:'What’s inside?',oddsCopy:'No purchases, ads or timers. Every fifth box without a Rare guarantees a Rare. Duplicates become stars.',oddsLine:'{box}: Common {common}%, Rare {rare}%, Super Rare {super}%, Champion {mythical}%',pityLabel:'Boxes since a Rare: {count} / 5',setReward:'Complete this street to earn {outfit}.',layerWon:'{layer} won! Your host card is in the book.',wrapGoal:'Win the Paper: grade B on any song',wrapNear:'Win the Paper: grade B on any song',towerGoal:'Win the Box: stack {count} high',towerNear:'So close! {count} / {goal} high. Try again!',medals:['Keep practising','Bronze!','Silver!','Gold!'],
+ outfitReward:'Outfits unlocked · {names}',spend:'Spend 10 stars',stopPicking:'Stop choosing',backupTitle:'My Tuneville Gift backup',saveLink:'Backup link',restoreContinue:'Check backup',restoreQuestion:'Restore this collection?',restoreDestination:'This puts the collection on this phone.',moreCards:'This phone has more cards than the backup.',restoreReplace:'Restoring replaces this browser’s collection.',cancelRestore:'Cancel',scanFallback:'Picture on another screen? Scan it with the camera of the phone you want to restore.',platformHeadings:{ios:'On iPhone',android:'On Android'},backupSteps:{ios:['Open this picture in Photos.','Press and hold the QR code.','Tap the link, then tap Restore.'],android:['Open this picture in Google Photos.','Tap More (⋮), then Lens and the link.','Tap Restore.']},inAppByPlatform:{ios:'Open in Safari to keep your collection',android:'Open in Chrome to keep your collection',unknown:'Open in Safari/Chrome to keep your collection'},saveTitle:'Keep your collection safe',saveCopy:'Take a screenshot of this card.',saveCode:'Save code',restore:'Restore from code',restoreCopy:'Paste a backup link or your whole save code. You can check it before restoring.',restoreConfirm:'Restore',restored:'Collection restored!',badCode:'That code is incomplete or damaged. Try copying the whole code again.',codeLoading:'Making your save code…',copy:'Copy backup link',copied:'Backup link copied',copyFailed:'Select the backup link to copy it.',qrLabel:'QR code containing your full collection',
+ homeTitle:'Keep your Tunies safe',homeCopy:'Add Tuneville to your Home Screen to help keep your collection safe. Keep a save-code screenshot too.',iosSteps:['Tap the Share button (□↑) in Safari.','Choose Add to Home Screen (＋).','Tap Add, then play from your new icon.'],androidSteps:['Tap ⋮, then Add to Home screen or Install and create shortcut.','Tap Install. No Install? Tap Create shortcut.','Follow the prompts, then use your new icon.'],ios:'iPhone · Safari',android:'Android · Chrome',dismiss:'Got it — remind me next week',inApp:'Open in Safari/Chrome to keep your collection',private:'Private or restricted browsing may erase your collection when you close it. Use a regular browser and keep a save code.',
  rareEvery:5,exchangeCost:10,duplicateStars:{common:1,rare:3,super:5,mythical:10},
  odds:[[.90,.09,.01,0],[.78,.17,.05,0],[.60,.30,.10,0],[.40,.40,.19,.01]],
  hostIds:['host-tansy','host-king','host-filbert','host-pip'],towerMedals:[12,25,40],
@@ -209,3 +199,5 @@ C.treasure.collectorProgress='{count} / 4 streets complete toward Collector';
 
 C.treasure.homeReminderDays=7;
 C.treasure.cards.filter(c=>c.set==='layer').forEach((card,i)=>card.hint=`Win the ${C.gift.layers[i]} in ${C.episodes[i].title}.`);
+
+C.wrap.songs=[...C.wrap.songs,...weeklyCarols].map((song,i)=>arrangeSong(song,i,C.wrap.tiers));

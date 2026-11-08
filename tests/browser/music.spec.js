@@ -12,7 +12,7 @@ for(const songIndex of [0,2])test(`rendered audio song ${songIndex+1}: audible h
       if(music.state!=='ready')throw Error('Samples did not decode');
       const anchor=performance.now()+100;
       if(mode!=='melody')for(let i=0;i<16;i++)music.backing(C.wrap.songs[songIndex],750,i,anchor+i*375);
-      if(mode!=='backing')for(const e of C.wrap.songs[songIndex].variants.tunie.events.filter(e=>e.time<6000))music.tone(e.midi,['fold','tape','ribbon','bow'][e.lane],(e.time+100)/1000);
+      if(mode!=='backing')for(const e of C.wrap.songs[songIndex].chart.events.filter(e=>e.time<6000))music.tone(e.midi,['fold','tape','ribbon','bow'][e.lane],(e.time+100)/1000);
       const buffer=await offline.startRendering(),data=buffer.getChannelData(0);
       let squares=0,peak=0;for(const v of data){squares+=v*v;peak=Math.max(peak,Math.abs(v));}
       return {rms:Math.sqrt(squares/data.length),peak};

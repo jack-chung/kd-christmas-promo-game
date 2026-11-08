@@ -5,8 +5,11 @@ import {C} from '../docs/game/content.js';
 import {normalizeSave} from '../docs/game/engine.js';
 import {Music} from '../docs/game/music.js';
 
-test('all difficulties retain the complete carol; only Easy fills uncharted notes',()=>{
+test('every song charts or automatically fills every complete melody note',()=>{
   for(const song of C.wrap.songs){
+    assert.equal(song.chords.length,Math.ceil(song.verse.reduce((n,[,d])=>n+d,0)/song.meter));
+    const ending=song.verse.findLast(([midi])=>midi!==0)[0]%12;
+    assert.ok(song.chords.at(-1).some(midi=>midi%12===ending),`${song.id} final harmony resolves with the melody`);
     let beat=0;
     const melody=song.phrase.flatMap(([midi,length])=>{
       const event={beat,midi};beat+=length;return midi?[event]:[];
@@ -14,11 +17,11 @@ test('all difficulties retain the complete carol; only Easy fills uncharted note
     for(const [id,chart] of Object.entries(song.variants)){
       const notes=[...chart.events.filter((e,i)=>!i||e.time!==chart.events[i-1].time),...chart.automatic].sort((a,b)=>a.time-b.time);
       assert.deepEqual(notes.map(e=>({beat:e.time/chart.beat,midi:e.midi})),melody);
-      assert.equal(chart.automatic.length>0,id==='easy');
+      if(id==='rapper')assert.equal(chart.automatic.length,0);
       if(id==='easy')assert.ok(chart.events.every((e,i)=>!i||e.time-chart.events[i-1].time>=1500));
       for(const lane of [0,1,2,3]){
         const events=chart.events.filter(e=>e.lane===lane);
-        const window=C.wrap.difficulty.find(d=>d.id===id).window;
+        const window=C.wrap.tiers.find(d=>d.id===id).window;
         assert.ok(events.every((e,i)=>!i||e.time-events[i-1].time>2*window));
       }
     }
@@ -56,8 +59,8 @@ test('third customer uses the complete ANTIOCH melody and legacy song metadata i
   const song=C.wrap.songs[2];
   assert.equal(song.id,'joy-to-the-world');assert.equal(song.title,'Joy to the World');
   assert.deepEqual(song.phrase.slice(0,9),[[72,2],[71,1.5],[69,.5],[67,3],[65,1],[64,2],[62,2],[60,3],[67,1]]);
-  assert.equal(song.phrase.length,57);
-  assert.equal(song.phrase.reduce((sum,[,duration])=>sum+duration,0),76);
+  assert.equal(song.verse.length,57);
+  assert.equal(song.verse.reduce((sum,[,duration])=>sum+duration,0),76);
   assert.equal(song.chords.length*song.meter,76);
   const save=normalizeSave({version:2,layers:[1],wrapBest:1234,song:'up-on-the-housetop'});
   assert.deepEqual(save.layers,[1]);assert.equal(save.wrapBest,1234);assert.equal(save.song,undefined);

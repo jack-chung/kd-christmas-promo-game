@@ -1,3 +1,4 @@
+import {songOpen,songMedal,recordSong,SongClock} from './wrap-progress.js';
 import {finishRewards,wrapMedal,towerMedal,settleCollection,welcomePack,openBox,exchangeStars} from './treasure.js';
 import {helper} from './treasure-art.js';
 import {bookView,helperView,backupView,boxLink,cardView,homePrompt,browserWarning,restoreView} from './treasure-ui.js';
@@ -27,10 +28,10 @@ const loaded=loadSave(storage);
 const trusted=new TrustedClock({storage});
 const dateOpen=(date,review=false)=>rawDateOpen(date,review,trusted.now());
 const episodeOpen=(ep,review=false)=>rawEpisodeOpen(ep,review,trusted.now());
-async function refreshTime(){await trusted.sync();if(['hub','gift','finale','collection'].includes(view))navigate(view);}
+async function refreshTime(){await trusted.sync();if(['hub','gift','finale','collection','wrap'].includes(view))navigate(view);}
 let save=loaded.save, storageOK=loaded.ok, profile=save.profile||newProfile();
 let review=new URLSearchParams(location.search).get('review')==='1';
-let view='', preview=false, dispose=()=>{}, run=null, tower=null, wrapResult=null, towerResult=null, practice=0, difficulty='tunie', toastTimer;
+let view='', preview=false, dispose=()=>{}, run=null, tower=null, wrapResult=null, towerResult=null, practice=0, toastTimer;
 const $=(selector)=>root.querySelector(selector);
 const all=(selector)=>[...root.querySelectorAll(selector)];
 const t=(key,values)=>esc(fmt(key,values));
@@ -80,8 +81,8 @@ function navigate(target,{demo=false}={}) {
   if(gated.has(target)&&!episodeOpen(episode,review))target='hub';
   if(['finalReveal','certificate'].includes(target)&&!save.finale&&!preview)target='finale';
   if(target==='unwrap'&&!save.layers.includes(episode.id)&&!preview)target='gift';
-  if(['wrapOrder','wrapPlay'].includes(target)&&!run){newWrap();}
-  if(target==='wrapGift'&&!run?.results.length&&!preview)target='wrap';
+  if(['wrapOrder','wrapPlay'].includes(target)&&!run){if(!newWrap())target='wrap';}
+  if(target==='wrapGift'&&!preview)target=wrapResult?'wrapResults':'wrap';
   if(target==='wrapResults'&&!wrapResult&&!preview)target='wrap';
   if(target==='towerPlay'&&!tower)newTower();
   if(target==='towerResults'&&!towerResult&&!preview)target='tower';
@@ -93,7 +94,7 @@ function navigate(target,{demo=false}={}) {
 }
 function render(){
   const p=save.profile||profile;
-  music.wrap=view.startsWith('wrap');
+  music.wrap=view.startsWith('wrap')&&view!=='wrap';
   if(music.wrap||view.startsWith('sorting')||view.startsWith('sleigh'))music.load().then(()=>{
     const message=$('#music-loading');
     if(message){message.textContent=music.state==='failed'?(view.startsWith('sleigh')?C.sleigh.music.failed:view.startsWith('sorting')?C.sorting.music.failed:C.wrap.musicFailed):'';message.hidden=music.state==='ready';}
@@ -112,6 +113,7 @@ function render(){
   if(view==='sleighPlay')dispose=activateSleigh(root,sleigh,{music,finish:finishSleigh,home:()=>navigate('hub'),towerBest:save.towerBest});
   if(view==='sortingResults')dispose=activateSortingResults(music,sortingResult);
   if(view==='wrapPlay')activateWrap();
+  if(view==='wrapResults'||view==='wrapGift')dispose=activateResults(music,{celebration:(wrapResult?.medal??-1)>=0?2:wrapResult?.best?1:0});
   if(view==='wrapPractice')activatePractice();
   if(view==='towerPlay')activateTower();
   if(view==='sortingPlay')dispose=activateSorting(root,sorting,{finish:finishSorting,music,home:()=>navigate('hub')});
@@ -121,7 +123,7 @@ function onboardView(){return `<div class="welcome-scene">${landscape()}<div cla
 function hubView(){return `${eyebrow(C.hub.eyebrow)}<div class="hub-heading"><div><p class="greeting">${t(C.hub.greeting,{name:nickname(save.profile)})}</p><h1 tabindex="-1">${esc(C.hub.title)}</h1></div>${helper(save.profile,save.collection.equipped)}</div><section class="village" aria-label="${esc(C.app.title)}">${landscape()}<div class="village-houses">${C.episodes.map((ep,i)=>`<button class="house ${episodeOpen(ep,review)?'':'locked'}" data-action="episode:${ep.id}" ${episodeOpen(ep,review)?'':'disabled'} aria-label="${t(C.hub.house,{number:ep.house})}: ${esc(episodeOpen(ep,review)?fmt(C.hub.playEpisode,{number:ep.id}):ep.ready?fmt(C.hub.locked,{date:ep.label}):C.hub.coming)}">${house(i,!episodeOpen(ep,review))}<span class="house-number">${ep.house}</span><span class="house-date">${esc(ep.label)}</span></button>`).join('')}<button class="house finale-house" data-action="go:finale" aria-label="${esc(C.finale.title)}">${house(2,!dateOpen(C.finale.date,review))}<span class="house-number">${C.finale.house}</span><span class="house-date">${esc(C.gift.finale)}</span></button></div><button class="village-gift" data-action="go:gift">${gift()}<span>${esc(C.hub.viewGift)}</span><small class="gift-progress">${C.gift.layers.map((name,i)=>`<span title="${esc(name)}" class="${save.layers.includes(i+1)?'won':''}">${save.layers.includes(i+1)?'◆':'◇'}</span>`).join('')}<span title="${esc(C.gift.finale)}" class="${save.finale?'won':''}">${save.finale?'★':'☆'}</span></small><small>${t(C.hub.layerCount,{count:save.layers.length})}</small><small>${t(C.treasure.count,{count:Object.keys(save.collection.cards).length,total:C.treasure.cards.length})}</small></button><div class="village-cast">${character('wrapper')}${character('kid')}${character('note')}</div></section><p class="intro">${esc(C.hub.intro)}</p><div class="countdown-card"><span>${esc(C.hub.next)}</span><strong id="countdown"></strong></div>${eyebrow(C.hub.choose)}<p class="subtle">${t(C.hub.selectedEpisode,{number:episode.id,date:episode.label})}</p><div class="adventures">${C.episodes.map(adventure).join('')}</div>${boxLink(save)}<div class="hub-links">${nav(C.treasure.helper,'helper','secondary')}${nav(C.hub.collection,'collection','secondary')}${nav(C.hub.invite,'invitation','secondary')}</div>`;}
 const sortingNumber=value=>value.toLocaleString('en-US');
 function sortingHubBest(){const best=sortingTop(save.sortingBests);return fmt(C.sorting.scoring.hubBest,{score:sortingNumber(best.score),difficulty:C.sorting.difficulties.find(d=>d.id===best.difficulty).label});}
-function adventure(ep){const open=episodeOpen(ep,review);return `<button class="adventure" data-action="episode:${ep.id}" ${open?'':'disabled'}><span class="adventure-number">0${ep.id}</span>${character(ep.cast)}<span class="adventure-copy"><strong>${esc(ep.title)}</strong><small>${esc(ep.label)}</small><span class="availability">${esc(!ep.ready?C.hub.coming:open?(ep.game==='sleigh'?(save.sleighPlayed?fmt(C.sleigh.best,{count:save.sleighBest}):C.app.notPlayed):(save.layers.includes(ep.id)||save.collection.claims.includes(`played:${ep.game}`))?(ep.game==='sorting'?sortingHubBest():fmt(C.app.best,{value:ep.game==='wrap'?save.wrapBest:save.towerBest})):C.app.notPlayed):fmt(C.hub.locked,{date:ep.label}))}</span></span>${open?'<span class="arrow">↗</span>':''}</button>`;}
+function adventure(ep){const open=episodeOpen(ep,review);return `<button class="adventure" data-action="episode:${ep.id}" ${open?'':'disabled'}><span class="adventure-number">0${ep.id}</span>${character(ep.cast)}<span class="adventure-copy"><strong>${esc(ep.title)}</strong><small>${esc(ep.label)}</small><span class="availability">${esc(!ep.ready?C.hub.coming:open?(ep.game==='sleigh'?(save.sleighPlayed?fmt(C.sleigh.best,{count:save.sleighBest}):C.app.notPlayed):(save.layers.includes(ep.id)||save.collection.claims.includes(`played:${ep.game}`))?(ep.game==='sorting'?sortingHubBest():(ep.game==='wrap'?fmt(C.wrap.hubWon,{count:Object.values(save.wrapSongs).filter(r=>r.grade!=='C').length}):fmt(C.app.best,{value:save.towerBest}))):C.app.notPlayed):fmt(C.hub.locked,{date:ep.label}))}</span></span>${open?'<span class="arrow">↗</span>':''}</button>`;}
 let lastGateState='';
 function updateCountdown(){const state=C.episodes.map(ep=>episodeOpen(ep,review)).join()+dateOpen(C.finale.date,review);if(lastGateState&&state!==lastGateState){lastGateState=state;navigate('hub');return;}lastGateState=state;const el=$('#countdown');if(!el)return;const next=nextRelease(trusted.now());el.textContent=!trusted.online?C.hub.offline:next?fmt(C.hub.countdown,countdown(next.date,trusted.now())):C.hub.allOpen;}
 function giftView(){return `${heading(C.app.title,C.gift.title,C.gift.intro)}<div class="gift-stage">${gift()}<p class="gift-tag">${esc(C.hub.giftTag)}<small>${esc(C.hub.giftTime)}</small></p></div><ol class="layer-list">${C.episodes.map((ep,i)=>`<li class="${save.layers.includes(ep.id)?'collected':''}"><span class="layer-icon">${save.layers.includes(ep.id)?'✓':ep.id}</span><span><strong>${esc(C.gift.layers[i])}</strong><small>${esc(save.layers.includes(ep.id)?C.gift.earned:!ep.ready&&dateOpen(ep.date,review)?C.gift.notBuilt:fmt(C.gift.waiting,{date:ep.label}))}</small></span></li>`).join('')}<li><span class="layer-icon">✦</span><span><strong>${esc(C.gift.finale)}</strong><small>${esc(C.finale.locked)}</small></span></li></ol>${save.finale?nav(C.finale.showCertificate,'certificate','primary full'):dateOpen(C.finale.date,review)?nav(C.finale.title,'finale','primary full'):nav(C.gift.play,'hub','primary full')}`;}
@@ -136,18 +138,18 @@ function medalOutfits(game,medal){
 }
 function rewardResult(game,medal,best,wonLayer=medal>=0){finishRewards(save,{game,medal,best,wonLayer});persist();navigator.storage?.persist?.().catch(()=>{});}
 
-function wrapView(){return `${heading(C.wrap.eyebrow,C.wrap.title,C.wrap.intro)}<p class="unlock-banner">${esc(C.treasure.wrapGoal)}</p><div class="cast-line">${character('kid')}${character('wrapper')}${character('king')}${character('singer')}</div><section class="instruction-card"><h2>${esc(C.wrap.tutorial)}</h2><ol>${C.wrap.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(C.wrap.tutorialEnd)}</p>${nav(C.wrap.practice,'wrapPractice','secondary full')}</section><fieldset class="difficulty"><legend>${esc(C.wrap.choose)}</legend>${C.wrap.difficulty.map(d=>`<label><input type="radio" name="difficulty" value="${d.id}" ${difficulty===d.id?'checked':''}><strong>${esc(d.label)}</strong><small>${esc(d.detail)}</small></label>`).join('')}</fieldset><p class="subtle">${esc(C.wrap.duration)}</p>${button(C.wrap.start,'wrap-start','primary full')}<p class="subtle"><a href="${new URL('./audio/credits.html',import.meta.url)}" target="_blank" rel="noopener">${esc(C.wrap.musicCredits)}</a></p>`;}
+function wrapView(){return `${heading(C.wrap.eyebrow,C.wrap.title,C.wrap.intro)}<p class="unlock-banner">${esc(C.treasure.wrapGoal)}</p><section class="instruction-card"><h2>${esc(C.wrap.tutorial)}</h2><ol>${C.wrap.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p>${esc(C.wrap.tutorialEnd)}</p>${nav(C.wrap.practice,'wrapPractice','secondary full')}</section><h2>${esc(C.wrap.choose)}</h2><div class="song-list">${C.wrap.tiers.map(tier=>`<section class="song-tier"><h3>${'★'.repeat(tier.tier)}</h3>${C.wrap.songs.filter(song=>song.tier===tier.tier).map(song=>{const record=save.wrapSongs[song.id],open=songOpen(song,save.wrapSongs,trusted.now(),review);return `<button class="song-card ${open?'':'locked'}" data-action="wrap-song:${song.id}" ${open?'':'disabled'}><strong>${esc(song.title)} ${open&&!record?`<span class="new-song">${esc(C.wrap.newSong)}</span>`:''}</strong><span>${record?`${medalBadge(record.grade,true)} ${t(C.wrap.songBest,{score:record.score,speed:record.topSpeed.toFixed(2)})}`:esc(C.wrap.noBest)}</span><small>${t(C.wrap.songLength,{seconds:Math.round(song.chart.duration/1000)})}</small>${!review&&trusted.now()<Date.parse(song.release)?`<small>${t(C.wrap.dateLock,{date:song.releaseLabel})}</small>`:''}${!songOpen(song,save.wrapSongs,Infinity,review)&&song.tier>1?`<small>${t(C.wrap.tierLock,{stars:'★'.repeat(song.tier-1)})}</small>`:''}</button>`;}).join('')}</section>`).join('')}</div><p class="subtle"><a href="${new URL('./audio/credits.html',import.meta.url)}" target="_blank" rel="noopener">${esc(C.wrap.musicCredits)}</a></p>`;}
 function laneButtons(){return `<div class="lane-buttons ${navigator.maxTouchPoints===0?'keyboard-controls':''}">${C.wrap.actions.map((a,i)=>`<button type="button" class="lane-button lane-${i}" data-lane="${i}" aria-label="${esc(a.label)}">${moveIcon(a.id)}<strong>${esc(a.label)}</strong><kbd>${esc(C.wrap.keys[i])}</kbd></button>`).join('')}</div>`;}
 function laneField(){return `<div class="rhythm-field" aria-hidden="true"><div class="lane-grid">${C.wrap.actions.map((a,i)=>`<div class="rhythm-lane lane-${i}"><span class="lane-top">${moveIcon(a.id)}</span><span class="target-shape">${moveIcon(a.id)}</span><span class="lane-burst">✦</span></div>`).join('')}</div><div class="hit-line"></div><div id="falling-objects"></div></div>`;}
 function practiceView(){
   if(typeof practice!=='object')practice={seen:new Set(),guided:false,complete:false};
   return `${heading(C.wrap.tutorial,C.wrap.practice,practice.guided?'':C.wrap.practiceCopy)}${practice.guided?`${laneField()}${laneButtons()}<p class="practice-prompt" id="practice-prompt"></p>`:`<div class="practice-stage">${character('wrapper')}<div id="practice-object">${moveIcon('fold')}</div></div>${laneButtons()}<p class="practice-prompt" id="practice-prompt"></p>${button(practice.complete?C.wrap.practiceFinish:C.wrap.practiceStart,practice.complete?'go:wrap':'practice-guide','primary full',practice.seen.size<4?'disabled':'')}`}${status()}${nav(C.app.back,'wrap','secondary full')}`;
 }
-function newWrap(){const d=C.wrap.difficulty.find(d=>d.id===difficulty)||C.wrap.difficulty[1];run={difficulty:d,customer:0,results:[],score:0,combo:0,maxCombo:0,complete:false,paused:false,start:0,round:null};wrapResult=null;}
-function orderView(){const customer=C.wrap.customers[run?.customer||0];return `${heading(fmt(C.wrap.customer,{current:(run?.customer||0)+1}),C.cast[customer.cast])}<div class="customer-scene">${character(customer.cast)}${customer.cast==='king'?`<div class="singers">${character('singer')}${character('singer')}</div>`:''}<blockquote>${esc(customer.order)}</blockquote>${customer.cast==='king'?`<p class="echo">${esc(C.wrap.singerEcho)}</p>`:''}</div><div class="move-legend">${C.wrap.actions.map(a=>`<span>${moveIcon(a.id)}${esc(a.label)}</span>`).join('')}</div><p class="subtle">${esc(C.app.mutedTip)}</p>${button(C.wrap.ready,'wrap-ready','primary full')}`;}
-function wrapPlayView(){const song=C.wrap.songs[run.customer];return `<div class="play-heading"><div>${eyebrow(C.wrap.title)}<h1 tabindex="-1">${t(C.wrap.round,{current:run.customer+1})}</h1></div>${button(C.app.pause,'pause','small-button')}</div><div class="scorebar"><span>${esc(C.app.score)} <strong id="wrap-score">${run.score}</strong></span><span id="combo">${t(C.wrap.combo,{count:run.combo})}</span><span id="song-time"></span></div><div class="rhythm-cast">${character('wrapper')}<p>${t(C.wrap.songLabel,{title:song.title})}</p>${character(C.wrap.customers[run.customer].cast)}</div>${laneField()}${laneButtons()}<div class="rhythm-feedback">${status()}<span id="beat-count"></span></div><div id="pause-layer"></div>`;}
-function wrapGiftView(){const result=preview?{grade:'A',ratio:.85,combo:20}:run.results.at(-1);const i=preview?0:run.customer;return `${heading(fmt(C.wrap.customer,{current:i+1}),C.wrap.giftDone)}${medalBadge(result.grade)}<p class="grade-detail">${t(C.wrap.accuracy,{percent:Math.round(result.ratio*100)})}</p><p>${t(C.wrap.maxCombo,{count:result.combo})}</p><div class="thank-you">${character(C.wrap.customers[i].cast)}<p>${esc(C.wrap.customerThanks[i])}</p></div>${button(preview?C.hub.review:i<2?C.wrap.next:C.wrap.done,preview?'review-menu':'wrap-next','primary full')}`;}
-function wrapResultsView(){const result=preview?{score:6240,maxCombo:24,grades:['A','S','B'],best:false}:wrapResult;return `${heading(C.wrap.results,C.wrap.done,C.wrap.resultCopy)}<div class="result-total">${result.score}<small>${esc(C.app.score)}</small></div><div class="grade-row" aria-label="${esc(C.wrap.grades)}">${result.grades.map((g,i)=>`<div class="song-medal"><strong>${esc(C.wrap.songs[i].title)}</strong>${medalBadge(g,true)}</div>`).join('')}</div><p>${t(C.wrap.maxCombo,{count:result.maxCombo})}</p><p class="unlock-banner">${esc(wrapMedal(result.grades)>=0?fmt(C.treasure.layerWon,{layer:C.gift.layers[0]}):C.treasure.wrapNear)}</p>${helper(save.profile,save.collection.equipped)}${preview?'':boxLink(save)}${medalOutfits('wrap',wrapMedal(result.grades))}${result.best?`<p class="unlock-banner">${esc(C.app.newBest)}</p>`:''}<p class="subtle">${t(C.app.best,{value:save.wrapBest})}</p>${wrapMedal(result.grades)>=0?button(C.wrap.finish,preview?'go:unwrap':'claim:wrap','primary full'):nav(C.hub.collection,'collection','primary full')}${nav(C.app.playAgain,'wrap','secondary full')}`;}
+function newWrap(id=C.wrap.songs[0].id){const song=C.wrap.songs.find(s=>s.id===id);if(!song||!songOpen(song,save.wrapSongs,trusted.now(),review))return false;run={song,difficulty:C.wrap.tiers[song.tier-1],customer:song.customer,results:[],score:0,combo:0,maxCombo:0,complete:false,paused:false,start:0,round:null};wrapResult=null;return true;}
+function orderView(){const song=run.song,customer=C.wrap.customers[song.customer];return `${heading(C.wrap.customer,C.cast[customer.cast])}<h2>${esc(song.title)} · ${'★'.repeat(song.tier)}</h2><div class="customer-scene">${character(customer.cast)}<blockquote>${esc(customer.order)}</blockquote></div><div class="move-legend">${C.wrap.actions.map(a=>`<span>${moveIcon(a.id)}${esc(a.label)}</span>`).join('')}</div><p>${t(C.wrap.outfitCap,{medal:C.treasure.boxNames[song.tier].replace(' box','')})}</p><p class="subtle">${esc(C.app.mutedTip)}</p>${button(C.wrap.ready,'wrap-ready','primary full')}${nav(C.wrap.choose,'wrap','secondary full')}`;}
+function wrapPlayView(){const song=run.song;return `<div class="play-heading"><div>${eyebrow(C.wrap.title)}<h1 tabindex="-1">${esc(song.title)}</h1></div>${button(C.app.pause,'pause','small-button')}</div><div class="scorebar"><span>${esc(C.app.score)} <strong id="wrap-score">${run.score}</strong></span><span id="combo">${t(C.wrap.combo,{count:run.combo})}</span><span id="song-time"></span></div><p class="speed-readout" id="wrap-speed">${t(C.wrap.speedLabel,{speed:'1.00'})}</p><div class="rhythm-cast">${character('wrapper')}<p>${'★'.repeat(song.tier)}</p>${character(C.wrap.customers[song.customer].cast)}</div>${laneField()}${laneButtons()}<div class="rhythm-feedback">${status()}<span id="beat-count"></span></div><div id="pause-layer"></div>`;}
+function wrapGiftView(){return wrapResultsView();}
+function wrapResultsView(){const result=preview?{score:6240,maxCombo:24,grades:['A'],topSpeed:1.2,best:false,medal:0,song:C.wrap.songs[0]}:wrapResult;if(!result)return '';const song=result.song;return `${heading(C.wrap.results,C.wrap.done,song.title)}<div class="result-total">${result.score}<small>${esc(C.app.score)}</small></div>${medalBadge(result.grades[0])}<p>${t(C.wrap.accuracy,{percent:Math.round((result.ratio??.85)*100)})}</p><p>${t(C.wrap.maxCombo,{count:result.maxCombo})}</p><p>${t(C.wrap.bestSpeed,{speed:result.topSpeed.toFixed(2)})}</p><div class="thank-you">${character(C.wrap.customers[song.customer].cast)}<p>${esc(C.wrap.customerThanks[song.customer])}</p></div><p class="unlock-banner">${esc(result.medal>=0?fmt(C.treasure.layerWon,{layer:C.gift.layers[0]}):C.treasure.wrapNear)}</p>${helper(save.profile,save.collection.equipped)}${preview?'':boxLink(save)}${medalOutfits('wrap',result.medal)}${result.best?`<p class="unlock-banner">${esc(C.app.newBest)}</p>`:''}${result.medal>=0?button(C.wrap.finish,preview?'go:unwrap':'claim:wrap','primary full'):nav(C.hub.collection,'collection','primary full')}${nav(C.wrap.choose,'wrap','secondary full')}${nav(C.app.home,'hub','secondary full')}`;}
 
 function towerView(){return `${heading(C.tower.eyebrow,C.tower.title,C.tower.intro)}<p class="unlock-banner">${t(C.treasure.towerGoal,{count:C.treasure.towerMedals[0]})}</p><div class="tower-promo">${gift({small:true,paper:'stars'})}${gift({small:true})}${gift({small:true,paper:'stars'})}</div><p class="instruction-card">${esc(C.tower.steps)}</p><p class="personal-best">${t(C.tower.best,{count:save.towerBest})}</p>${button(C.tower.start,'tower-start','primary full')}`;}
 function newTower(){tower={boxes:[],fall:null,held:{x:160,y:26,w:104,color:0},score:0,height:0,phase:0,paused:false,complete:false,streak:0,lastColor:-1};towerResult=null;}
@@ -214,12 +216,14 @@ function activatePractice(){
   dispose=()=>{cancelAnimationFrame(frame);unbind();};
 }
 function activateWrap(){
-  const song=C.wrap.songs[run.customer],chart=song.variants[run.difficulty.id];
+  const song=run.song,chart=song.chart;
   if(!run.round)run.round=createRound(chart,run.difficulty);
   if(!run.start)run.start=performance.now()+run.difficulty.travel;
   const round=run.round,baseScore=run.score,automatic=chart.automatic||[];
+  if(!run.clock)run.clock=new SongClock(run.start,chart.beat*song.meter,{...C.wrap.speed,lookahead:Math.max(C.wrap.speed.lookahead,400+music.latency*1000)});
+  const clock=run.clock;let lastSpeed=1;
   let frame=0;
-  run.audioIndex=Math.max(-6,Math.ceil((performance.now()-run.start)/(chart.beat/2)));
+  run.audioIndex=Math.max(-6,Math.ceil(clock.time(performance.now())/(chart.beat/2)));
   run.autoIndex=0;
   function update(){
     $('#wrap-score').textContent=baseScore+round.score;
@@ -228,9 +232,10 @@ function activateWrap(){
   }
   const unbind=bindLanes(lane=>{
     if(run.paused)return;
-    const elapsed=performance.now()-run.start;
+    const now=performance.now(),elapsed=clock.time(now);
     if(elapsed>chart.duration)return;
-    const result=judgeTap(round,lane,elapsed);
+    const result=judgeTap(round,lane,elapsed,clock.speed(now));
+    if(result.tier)clock.hit(now);else clock.miss(now);
     if(result.tier){music.tone(result.event.midi,C.wrap.actions[lane].id);feedback(result.tier===2?C.wrap.perfect:C.wrap.good);}
     else feedback(result.stray?C.wrap.empty:C.wrap.wrong);
     if(result.index!==undefined)$(`[data-note="${result.index}"]`)?.remove();
@@ -238,18 +243,20 @@ function activateWrap(){
   });
   function tick(now){
     if(!run.paused){
-      const time=now-run.start;
-      if(expireNotes(round,time).length){feedback(C.wrap.miss);update();}
+      const time=clock.time(now),speed=clock.speed(now);clock.topSpeed=Math.max(clock.topSpeed,speed);
+      if(speed>lastSpeed){feedback(C.wrap.speedUp);music.tone(79,'ribbon');}lastSpeed=speed;
+      $('#wrap-speed').textContent=fmt(C.wrap.speedLabel,{speed:speed.toFixed(2)});
+      const missed=expireNotes(round,time);if(missed.length){clock.miss(now,missed.length);feedback(C.wrap.miss);update();}
       if(time>=chart.duration+run.difficulty.window){
-        run.results.push(roundResult(round));run.score=baseScore+round.score;run.maxCombo=Math.max(run.maxCombo,round.maxCombo);run.combo=0;navigate('wrapGift');return;
+        finishWrap(roundResult(round),round.score,clock.topSpeed);return;
       }
       const lookahead=350+music.latency*1000;
-      while(run.audioIndex*chart.beat/2<chart.duration&&run.start+run.audioIndex*chart.beat/2-now<lookahead){
-        if(run.audioIndex>=0||run.audioIndex%2===0)music.backing(song,chart.beat,run.audioIndex,run.start+run.audioIndex*chart.beat/2);
+      while(run.audioIndex*chart.beat/2<chart.duration&&clock.wall(run.audioIndex*chart.beat/2)-now<lookahead){
+        if(run.audioIndex>=0||run.audioIndex%2===0)music.backing(song,chart.beat/clock.segmentAt(run.audioIndex*chart.beat/2).speed,run.audioIndex,clock.wall(run.audioIndex*chart.beat/2));
         run.audioIndex++;
       }
-      while(run.autoIndex<automatic.length&&run.start+automatic[run.autoIndex].time-now<lookahead){
-        const event=automatic[run.autoIndex++];music.automatic(event,run.start+event.time);
+      while(run.autoIndex<automatic.length&&clock.wall(automatic[run.autoIndex].time)-now<lookahead){
+        const event=automatic[run.autoIndex++];music.automatic(event,clock.wall(event.time));
       }
       if(time<0&&time>=-3*chart.beat)feedback(fmt(C.wrap.countIn,{count:Math.ceil(-time/chart.beat)}));
       else if(time>=0&&$('#feedback').textContent.endsWith('…'))feedback('');
@@ -261,6 +268,12 @@ function activateWrap(){
   update();feedback(C.wrap.countdown);frame=requestAnimationFrame(tick);
   dispose=()=>{cancelAnimationFrame(frame);unbind();};
 }
+function finishWrap(result,score,topSpeed){
+ if(run.complete)return;run.complete=true;const song=run.song;
+ const {best,medal}=recordSong(save,song,{...result,score,topSpeed});
+ wrapResult={...result,song,score,topSpeed,maxCombo:result.combo,grades:[result.grade],best,medal};
+ if(episodeOpen(C.episodes[0],review))rewardResult('wrap',medal,best);persist();navigate('wrapResults');
+}
 function pauseGame(){
   const game=view==='wrapPlay'?run:view==='towerPlay'?tower:null;if(!game||game.paused)return;
   game.paused=true;game.pauseAt=performance.now();hush();
@@ -271,7 +284,8 @@ function resumeGame(){
   const game=view==='wrapPlay'?run:tower;if(!game?.paused)return;
   if(view==='wrapPlay'){
     run.start+=performance.now()-run.pauseAt;
-    const elapsed=performance.now()-run.start,chart=run.round.chart,automatic=chart.automatic||[];
+    run.clock.shift(performance.now()-run.pauseAt);
+    const elapsed=run.clock.time(performance.now()),chart=run.round.chart,automatic=chart.automatic||[];
     run.audioIndex=Math.max(-6,Math.ceil(elapsed/(chart.beat/2)));
     run.autoIndex=automatic.findIndex(e=>e.time>=elapsed);
     if(run.autoIndex<0)run.autoIndex=automatic.length;
@@ -389,13 +403,8 @@ root.addEventListener('click',async event=>{
   if(action==='episode'){const next=C.episodes.find(ep=>ep.id===Number(value))||C.episodes[0];if(episodeOpen(next,review)){selectEpisode(next);navigate(next.game);}return;}
   if(action==='first-episode'){selectEpisode(C.episodes[0]);navigate('hub');return;}
   if(action==='practice-guide'){practice.guided=true;unlockAudio();dispose();render();return;}
-  if(action==='wrap-start'){newWrap();unlockAudio();navigate('wrapOrder');return;}
+  if(action==='wrap-song'){if(newWrap(value)){unlockAudio();navigate('wrapOrder');}return;}
   if(action==='wrap-ready'){run.round=null;run.start=0;run.paused=false;unlockAudio();navigate('wrapPlay');unlockAudio();return;}
-  if(action==='wrap-next'){
-    if(!run||run.complete||run.results.length!==run.customer+1)return;
-    if(run.customer<2){run.customer++;navigate('wrapOrder');}
-    else{run.complete=true;const replay=save.layers.includes(1);const best=run.score>save.wrapBest;save.wrapBest=Math.max(save.wrapBest,run.score);persist();wrapResult={replay,score:run.score,maxCombo:run.maxCombo,grades:run.results.map(r=>r.grade),best};if(episodeOpen(C.episodes[0],review))rewardResult('wrap',wrapMedal(wrapResult.grades),best);navigate('wrapResults');}return;
-  }
   if(action==='pause'){pauseGame();return;}if(action==='resume'){resumeGame();return;}
   if(action==='claim'){claim(value);return;}
   if(action==='tower-start'){newTower();navigate('towerPlay');unlockAudio();return;}
@@ -407,7 +416,7 @@ root.addEventListener('click',async event=>{
     try{storage?.removeItem(SAVE_KEY);}catch{}selectEpisode(C.episodes[0]);persist();navigate('onboard');toast(C.app.resetDone);return;
   }
 });
-root.addEventListener('change',event=>{if(event.target.name==='sorting-difficulty')sortingDifficulty=event.target.value;if(event.target.name==='avatar'){profile.avatar=event.target.value;if(view==='helper'){$('.helper-preview').innerHTML=helper(profile,save.collection.equipped);}}if(event.target.name==='difficulty')difficulty=event.target.value;});
+root.addEventListener('change',event=>{if(event.target.name==='sorting-difficulty')sortingDifficulty=event.target.value;if(event.target.name==='avatar'){profile.avatar=event.target.value;if(view==='helper'){$('.helper-preview').innerHTML=helper(profile,save.collection.equipped);}}});
 root.addEventListener('submit',event=>{
   event.preventDefault();
   if(event.target.id==='restore-form'){

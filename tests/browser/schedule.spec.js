@@ -36,17 +36,14 @@ test('C-only Wrap and zero-height Tower earn basic boxes without layers',async({
   await page.clock.pauseAt(new Date('2040-01-01T00:00:01Z'));
   await page.goto('/?review=1');await page.locator('[data-action="profile"]').click({force:true});
   await page.goto('/?review=1#wrap');
-  await page.locator('[data-action="wrap-start"]').click({force:true});
-  for(let i=0;i<3;i++){
-    await page.locator('[data-action="wrap-ready"]').evaluate(el=>el.click());
-    await expect(page.locator('main')).toHaveClass('screen screen-wrapPlay');
-    await page.clock.fastForward(65000);
-    await expect(page.locator('main')).toHaveClass('screen screen-wrapGift');
-    await page.locator('[data-action="wrap-next"]').evaluate(el=>el.click());
-  }
+  await page.locator('[data-action="wrap-song:deck-the-halls"]').click({force:true});
+  await page.locator('[data-action="wrap-ready"]').evaluate(el=>el.click());
+  await expect(page.locator('main')).toHaveClass('screen screen-wrapPlay');
+  await page.clock.fastForward(160000);
+  await expect(page.locator('main')).toHaveClass('screen screen-wrapResults');
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')).layers)).toEqual([]);
   await expect(page.locator('[data-action="go:boxes"]')).toBeVisible();
-  await page.goto('/?review=1#hub');await expect(page.locator('.adventures .adventure').nth(0)).toContainText('Best: 0');
+  await page.goto('/?review=1#hub');await expect(page.locator('.adventures .adventure').nth(0)).toContainText('Songs won: 0');
   for(let i=0;i<2;i++){
     await page.goto('/?review=1#tower');
     await page.locator('[data-action="tower-start"]').click({force:true});
@@ -79,6 +76,6 @@ test('hub cards disable unavailable games, show distinct hosts and distinguish u
   }
   await page.goto('/?review=1#hub');await expect(cards.nth(2)).toBeEnabled();await expect(cards.nth(2)).toContainText('Not played yet');await expect(cards.nth(2).locator('.arrow')).toHaveCount(1);
   await expect(cards.nth(1)).toBeEnabled();await expect(cards.nth(3)).toBeEnabled();await expect(cards.nth(3)).toContainText('Not played yet');
-  await page.evaluate(()=>{const key='tuneville-gift-v1',s=JSON.parse(localStorage.getItem(key));s.layers=[1,3];s.wrapBest=321;s.towerBest=7;localStorage.setItem(key,JSON.stringify(s));});
-  await page.reload();await expect(cards.nth(0)).toContainText('Best: 321');await expect(cards.nth(2)).toContainText('Best: 7');
+  await page.evaluate(()=>{const key='tuneville-gift-v1',s=JSON.parse(localStorage.getItem(key));s.layers=[1,3];s.wrapBest=321;s.wrapSongs={'deck-the-halls':{grade:'B',score:321,topSpeed:1.1}};s.towerBest=7;localStorage.setItem(key,JSON.stringify(s));});
+  await page.reload();await expect(cards.nth(0)).toContainText('Songs won: 1');await expect(cards.nth(2)).toContainText('Best: 7');
 });

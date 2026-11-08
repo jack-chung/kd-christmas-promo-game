@@ -1,15 +1,23 @@
 # Wrap Station audio provenance
 
-No modern song recording, lyrics or third-party arrangement is included. Melodies are transcribed as pitch/duration content in `../content.js`; harmony, voicing, kit patterns and charts are new arrangements for this game.
+No modern song recording, lyrics or third-party arrangement is included. Melodies are transcribed as pitch/duration content in `../content.js` and `../wrap-songs.js`; harmony, voicing, kit patterns and charts are new arrangements for this game.
 
 | Melody | Provenance |
 | --- | --- |
 | Deck the Halls / Nos Galan | Traditional Welsh air, printed in John Thomas's *Welsh Melodies* series (1862–74); the familiar English carol dates to 1862. [Historical publication details](https://www.hymnsandcarolsofchristmas.com/Hymns_and_Carols/deck_the_hall.htm). |
 | O Christmas Tree / O Tannenbaum | Traditional German tune used for Ernst Anschütz's 1824 song; melody only, in our common-time arrangement. [National Records of Scotland](https://blog.nrscotland.gov.uk/2021/12/09/title-o-tannenbaum-the-root-of-a-christmas-tradition/). |
 | Joy to the World / ANTIOCH | Lowell Mason (1792–1872), *The Modern Psalmist* (1839), p. 144: [publication catalogue](https://imslp.org/wiki/Joy_to_the_World_(Mason,_Lowell)). Complete soprano melody checked against [Mutopia's public-domain score source](https://www.mutopiaproject.org/ftp/HandelGF/antioch/antioch.ly), edition Mutopia-2008/01/13-1223 (Steve Dunlop). Transposed D to C, with doubled rhythmic values for our four-beat pulse. Only the melody is used; harmony and charts are our own. |
-| Good King Wenceslas (Sorting Office) | Traditional “Tempus adest floridum” from *Piae Cantiones* (1582), checked against [Mutopia's public-domain edition](https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=905) of Hutchins, *Carols Old and Carols New* (1916), no. 415. Our own G-major arrangement and three verse textures. |
-
+| Good King Wenceslas (Wrap and Sorting Office) | Traditional “Tempus adest floridum” from *Piae Cantiones* (1582), checked against [Mutopia's public-domain edition](https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=905) of Hutchins, *Carols Old and Carols New* (1916), no. 415. Our own G-major arrangement and three verse textures. |
 | Go, Tell It on the Mountain (Sleigh-Cart Run) | Traditional African-American spiritual. Sibley Music Library, University of Rochester, [1907 *Folk songs of the American negro* catalogue and digitized score](https://urresearch.rochester.edu/institutionalPublicationPublicView.action?institutionalItemId=18808) explicitly marks the item public domain. Chorus pitches/durations cross-checked against [Timeless Truths public-domain notation](https://library.timelesstruths.org/music/Go_Tell_It_on_the_Mountain/) and its MusicXML. Melody only, transposed F to G; own eight-bar harmony, bass, pizzicato/harp/marimba textures and kit. Final chorus note extends through the pickup beat to loop cleanly; no lyrics. |
+| Silent Night / STILLE NACHT | Franz Xaver Gruber (1787–1863), 1818. [Public-domain notation](https://library.timelesstruths.org/music/Silent_Night/) and linked MusicXML; melody transposed B-flat to C, rhythmic values doubled for our slow three-beat pulse. |
+| Away in a Manger / MUELLER | James R. Murray (1841–1905), 1887. [Public-domain notation](https://library.timelesstruths.org/music/Away_in_a_Manger/) and MusicXML; melody transposed F to C. |
+| The First Noel | Traditional English, published by William Sandys (1833). [Public-domain notation](https://library.timelesstruths.org/music/The_First_Noel/) and MusicXML; complete verse/refrain melody transposed D to C. |
+| Hark! The Herald Angels Sing / MENDELSSOHN | Felix Mendelssohn (1809–1847), 1840, adapted by William H. Cummings (1831–1915), 1855. [Public-domain notation](https://library.timelesstruths.org/music/Hark_the_Herald_Angels_Sing/) and MusicXML; melody transposed F to C. |
+| O Little Town of Bethlehem / ST. LOUIS | Lewis H. Redner (1831–1908), 1868. [Public-domain notation](https://library.timelesstruths.org/music/O_Little_Town_of_Bethlehem/) and MusicXML; melody transposed F to C. |
+| Angels We Have Heard on High / GLORIA | Traditional French melody, nineteenth century. [Public-domain notation](https://library.timelesstruths.org/music/Angels_We_Have_Heard_on_High/) and MusicXML; complete verse and both Gloria phrases, transposed F to C. |
+| God Rest Ye Merry, Gentlemen | Traditional English melody, nineteenth-century Bramley/Stainer notation; [historical score and MusicXML](https://www.hymnsandcarolsofchristmas.com/Hymns_and_Carols/god_rest_you_merry_gentlemen.htm). Complete E-minor melody including refrain. |
+
+All twelve Wrap songs repeat complete verses (including any refrain) to a final cadence, rather than truncating to a fixed duration. Good King Wenceslas shares the verified traditional melody with Sorting; Go, Tell It on the Mountain uses the complete verse followed by the refrain in Wrap, rather than Sleigh’s chorus loop. The linked editions supply melody pitches/rhythms only: no printed harmony, text, recording or modern arrangement is copied. All accompaniment and charts are new.
 
 ## Carol rules for all games
 
@@ -23,7 +31,7 @@ These traditional melodies are public domain in Canada and the US. No Warrell or
 
 - Fold: recorded marimba, roots B3/F4/C5 (MIDI 59/65/72).
 - Tape: recorded violin-section pizzicato, roots D4/A4/C5 (MIDI 62/69/72).
-- Ribbon and quiet Easy fill: recorded concert harp, roots D4/A4 (MIDI 62/69).
+- Ribbon and quiet uncharted melody fill: recorded concert harp, roots D4/A4 (MIDI 62/69).
 - Bow: recorded glockenspiel, root G5 (MIDI 79), pitched to each chart note.
 - Backing bass: recorded double-bass pizzicato, root C2 (MIDI 36).
 - Backing chord stabs: the same harp and pizzicato samples, separately mixed below the player's line.
@@ -35,7 +43,7 @@ All recordings are from **VSCO 2 Community Edition**, Versilian Studios / Sam Go
 
 ## Processing and budget
 
-10 WAV files, **642,224 bytes total** (0.642 MB decimal / 627.2 KiB), mono PCM16 at 22050 Hz. Fetch occurs only inside Wrap, Sorting Office or Sleigh-Cart Run; no CDN/runtime external requests. Manifest/credits/licence add about 12 KB. Leading silence below -60 dB is removed, recordings are capped at manifest durations, a 2 ms attack and final 80 ms fade are applied, and each file is peak normalized to -1 dB. Playback envelopes cap long transposed tails. Root pitches were checked against the recordings; upstream filenames use inconsistent octave conventions.
+10 WAV files, **642,224 bytes total** (0.642 MB decimal / 627.2 KiB), mono PCM16 at 22050 Hz. Application fetching/decoding starts after a Wrap song is chosen (or practice opened), or inside Sorting Office/Sleigh-Cart Run; browsing the song list does not load the bank. The first chosen song needs this one shared 642,224-byte bank; every later song needs **0 additional audio bytes**. There are no full-song recordings and no new binary audio for the nine added songs. The existing offline service worker separately precaches the complete release, including this shared bank, for offline play. Thus an installed/offline-ready game may already have the bytes cached.  no CDN/runtime external requests. Manifest/credits/licence add about 12 KB. Leading silence below -60 dB is removed, recordings are capped at manifest durations, a 2 ms attack and final 80 ms fade are applied, and each file is peak normalized to -1 dB. Playback envelopes cap long transposed tails. Root pitches were checked against the recordings; upstream filenames use inconsistent octave conventions.
 
 To reproduce, download each pinned source file in `sources.json`, use FFmpeg `silenceremove=start_periods=1:start_threshold=-60dB,atrim=duration=<seconds>,afade=t=in:d=0.002,afade=t=out:st=<seconds-.08>:d=0.08`, downmix/resample with `-ac 1 -ar 22050`, measure `volumedetect`, then apply constant gain to reach -1 dB peak. Preserve WAV PCM16 output. Source files remain upstream; only processed excerpts are bundled.
 
