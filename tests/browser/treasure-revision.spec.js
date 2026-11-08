@@ -11,18 +11,18 @@ async function shot(page,name){if(test.info().project.name==='chrome-phone')awai
 for(const platform of ['ios','android'])for(const viewport of [{width:320,height:568},{width:390,height:844}])test(`backup card ${platform} ${viewport.width} fits a screenshot and shows only its steps`,async({page})=>{
  await page.addInitScript(userAgent=>Object.defineProperty(navigator,'userAgent',{value:userAgent}),ua[platform]);
  await page.setViewportSize(viewport);await enter(page);await page.goto('/?review=1#backup');
- const card=page.locator('.backup-card');await expect(card).toContainText(platform==='ios'?'Photos.':'Google Photos.');await expect(card).not.toContainText(platform==='ios'?'Lens':'Press and hold');
+ const card=page.locator('.backup-card');await expect(card).toContainText(platform==='ios'?'Photos.':'Google Photos.');await expect(card).not.toContainText(platform==='ios'?'Lens':'Press and hold');await expect(card).toContainText('camera of the phone you want to restore');
  await page.locator('.screenshot-tip').evaluate(el=>el.scrollIntoView({block:'start'}));
  const box=await card.boundingBox();expect(box.y).toBeGreaterThan(0);expect(box.y+box.height).toBeLessThanOrEqual(viewport.height);
  if(test.info().project.name==='chrome-phone')await page.screenshot({path:`docs/review/treasure-backup-${platform}-${viewport.width}.png`,scale:'css',animations:'disabled'});
  await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('tuneville-gift-v1'));s.collection.finished=1;localStorage.setItem('tuneville-gift-v1',JSON.stringify(s));});
  await page.reload();await page.goto('/?review=1#hub');await expect(page.locator('.home-save details')).toHaveCount(1);await page.locator('.home-save summary').click();
- await expect(page.locator('.install-steps')).toContainText(platform==='ios'?'Share':'Create shortcut');await expect(page.locator('.install-steps')).not.toContainText(platform==='ios'?'Chrome':'Install');
+ await expect(page.locator('.install-steps')).toContainText(platform==='ios'?'Share':'Create shortcut');if(platform==='android')await expect(page.locator('.install-steps')).toContainText('Tap Install. No Install? Tap Create shortcut.');else await expect(page.locator('.install-steps')).not.toContainText('Chrome');
 });
 test('restore links preview on a fresh browser, cancel safely, warn before replacing and clear their hash',async({page,browser})=>{
  await enter(page);await page.goto('/?review=1#backup');const link=await page.locator('#save-link').inputValue();
  const context=await browser.newContext({serviceWorkers:'block'}),other=await context.newPage();
- await other.goto(link);await expect(other.locator('h1')).toHaveText('Restore this collection?');await expect(other.locator('main')).toContainText('3 / 33 Tunie cards');expect(await other.evaluate(()=>localStorage.getItem('tuneville-gift-v1'))).toBeNull();
+ await other.goto(link);await expect(other.locator('h1')).toHaveText('Restore this collection?');await expect(other.locator('h1 + p')).toHaveText('This puts the collection on this phone.');await expect(other.locator('main')).toContainText('3 / 33 Tunie cards');expect(await other.evaluate(()=>localStorage.getItem('tuneville-gift-v1'))).toBeNull();
  await action(other,'cancel-restore').click();expect(other.url()).not.toContain('restore');await other.reload();await expect(other.locator('.screen-onboard')).toBeVisible();
  await other.goto(link);await action(other,'confirm-restore').click();await expect(other.locator('.screen-collection')).toBeVisible();expect(other.url()).not.toContain('restore');
  await other.evaluate(()=>{const s=JSON.parse(localStorage.getItem('tuneville-gift-v1'));for(let i=0;i<6;i++)s.collection.cards[`candy-${i}`]='box';localStorage.setItem('tuneville-gift-v1',JSON.stringify(s));});

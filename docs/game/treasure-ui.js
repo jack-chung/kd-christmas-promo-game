@@ -33,7 +33,7 @@ export function backupView(save,address=globalThis.location.href,now=Date.now())
 export function restoreView(backup,current){
  if(!backup)return `<h1 tabindex="-1">${e(T.restore)}</h1><p role="alert">${e(T.badCode)}</p>${b(T.cancelRestore,'cancel-restore')}`;
  const count=Object.keys(backup.collection.cards).length;
- return `<h1 tabindex="-1">${e(T.restoreQuestion)}</h1><div class="helper-preview">${helper(backup.profile,backup.collection.equipped)}</div><h2>${e(nickname(backup.profile))}</h2><p>${f(T.count,{count,total:T.cards.length})}</p>${Object.keys(current.collection.cards).length>count?`<p class="storage-notice" role="alert">${e(T.moreCards)}</p>`:''}<p>${e(T.restoreReplace)}</p><button type="button" class="primary full" data-action="confirm-restore">${e(T.restoreConfirm)}</button>${b(T.cancelRestore,'cancel-restore')}`;
+ return `<h1 tabindex="-1">${e(T.restoreQuestion)}</h1><p>${e(T.restoreDestination)}</p><div class="helper-preview">${helper(backup.profile,backup.collection.equipped)}</div><h2>${e(nickname(backup.profile))}</h2><p>${f(T.count,{count,total:T.cards.length})}</p>${Object.keys(current.collection.cards).length>count?`<p class="storage-notice" role="alert">${e(T.moreCards)}</p>`:''}<p>${e(T.restoreReplace)}</p><button type="button" class="primary full" data-action="confirm-restore">${e(T.restoreConfirm)}</button>${b(T.cancelRestore,'cancel-restore')}`;
 }
 export function homePrompt(save,now){
  const c=save.collection;if(!c.finished||!now||c.homePromptAt&&now-c.homePromptAt<T.homeReminderDays*86400000||globalThis.navigator?.standalone||globalThis.matchMedia?.('(display-mode: standalone)').matches)return '';
