@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {fullSave} from '../fixtures/full-save.js';
 import {C} from '../../docs/game/content.js';
 test.use({serviceWorkers:'block'});
 const action=(p,a)=>p.locator(`[data-action="${a}"]`);
@@ -43,4 +44,15 @@ test('result screen review captures use the normal reward and rendering paths',a
  await page.evaluate(()=>reviewResult('wrap',['C','C','C']));await expect(page.locator('main')).toContainText('Win the Paper: grade B on any song');await shot(page,'wrap-c-only');
  for(const game of ['sorting','sleigh']){await page.evaluate(game=>reviewResult(game),game);await expect(page.locator('main')).toContainText('boxes to open');await expect(page.locator('.outfit-reward')).toContainText('Outfits unlocked');await shot(page,`${game}-results`);}
  await page.evaluate(()=>{reviewResult('boxes');Math.random=()=>0;});await action(page,'open-box').click();await expect(page.locator('.box-reveal+ [role="status"]')).toHaveText('A new Tunie!');await shot(page,'box-open');await action(page,'open-box').click();await expect(page.locator('[role="status"]').first()).toContainText('stars');await shot(page,'box-duplicate');
+});
+
+for(const viewport of [{width:320,height:568},{width:390,height:844}])test(`full campaign backup ${viewport.width} fits and restores`,async({page,browser})=>{
+ await page.addInitScript(save=>{localStorage.setItem('tuneville-gift-v1',JSON.stringify(save));Object.defineProperty(navigator,'userAgent',{value:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});},fullSave());
+ // Render the published host length, while serving the build locally.
+ await page.route('**/game/treasure-ui.js',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text()).replace('address=globalThis.location.href',"address='https://jack-chung.github.io/kd-christmas-promo-game/'")});});
+ await page.setViewportSize(viewport);await page.goto('/?review=1#backup');await expect(page.locator('.save-qr svg')).toBeVisible();
+ const link=await page.locator('#save-link').inputValue();expect(link.length).toBeLessThanOrEqual(450);
+ await page.locator('.screenshot-tip').evaluate(el=>el.scrollIntoView({block:'start'}));const box=await page.locator('.backup-card').boundingBox();expect(box.y).toBeGreaterThanOrEqual(0);expect(box.y+box.height).toBeLessThanOrEqual(viewport.height);
+ if(test.info().project.name==='chrome-phone'){await page.screenshot({path:`docs/review/treasure-full-backup-${viewport.width}.png`,scale:'css',animations:'disabled'});await test.info().attach('restore-link',{body:link,contentType:'text/plain'});}
+ const context=await browser.newContext({serviceWorkers:'block'}),other=await context.newPage();await other.goto('/'+new URL(link).hash);await expect(other.locator('h1')).toHaveText('Restore this collection?');await action(other,'confirm-restore').click();await expect(other.locator('.screen-collection')).toBeVisible();const restored=await other.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(Object.keys(restored.wrapSongs)).toHaveLength(12);expect(Object.keys(restored.collection.cards)).toHaveLength(33);await context.close();
 });

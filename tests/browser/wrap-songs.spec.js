@@ -16,10 +16,12 @@ test('launch song ladder, date gates and per-song records stay legible at phone 
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:'docs/review/wrap-song-ladder-390.png',fullPage:true,scale:'css'});
 });
 test('Friday and win unlocks combine; records persist and played songs lose New',async({page})=>{
- await open(page,{now:'2026-11-20T05:00:00Z',records:{'deck-the-halls':{grade:'B',score:12345,topSpeed:1.2}}});
- await expect(action(page,'wrap-song:o-christmas-tree')).toBeEnabled();await expect(action(page,'wrap-song:good-king-wenceslas')).toBeEnabled();await expect(action(page,'wrap-song:silent-night')).toBeEnabled();await expect(action(page,'wrap-song:joy-to-the-world')).toBeDisabled();await expect(action(page,'wrap-song:away-in-a-manger')).toBeDisabled();
+ await open(page,{now:'2026-11-20T05:00:00Z',records:{'deck-the-halls':{grade:'B',score:12345,topSpeed:1.2},'o-christmas-tree':{grade:'A',score:23456,topSpeed:1.3},'joy-to-the-world':{grade:'S',score:34567,topSpeed:1.4}}});
+ await expect(action(page,'wrap-song:o-christmas-tree')).toBeEnabled();await expect(action(page,'wrap-song:good-king-wenceslas')).toBeEnabled();await expect(action(page,'wrap-song:silent-night')).toBeEnabled();await expect(action(page,'wrap-song:joy-to-the-world')).toBeEnabled();await expect(action(page,'wrap-song:away-in-a-manger')).toBeDisabled();
  await expect(action(page,'wrap-song:deck-the-halls')).toContainText('Bronze!');await expect(action(page,'wrap-song:deck-the-halls')).toContainText('12345');await expect(action(page,'wrap-song:deck-the-halls')).not.toContainText('New!');
- await action(page,'wrap-song:good-king-wenceslas').click();await expect(page.locator('blockquote')).toHaveText(C.wrap.customers[1].order);await expect(page.locator('h2').first()).toContainText('Good King Wenceslas');
+ await expect(action(page,'wrap-song:deck-the-halls')).toContainText('About 2 min');await expect(action(page,'wrap-song:deck-the-halls')).toContainText('top speed ×1.20');await expect(action(page,'wrap-song:silent-night')).not.toContainText('top speed');
+ await page.setViewportSize({width:390,height:844});if(test.info().project.name==='chrome-phone')await page.screenshot({path:'docs/review/wrap-song-records-390.png',fullPage:true,scale:'css'});
+ await action(page,'wrap-song:good-king-wenceslas').click();await expect(page.locator('blockquote')).toHaveText(C.wrap.customers[1].order);await expect(page.locator('h2').first()).toContainText('Good King Wenceslas');if(test.info().project.name==='chrome-phone')await page.screenshot({path:'docs/review/wrap-song-order-390.png',fullPage:true,scale:'css'});
 });
 test('review opens all twelve songs without changing dates or saved tier wins',async({page})=>{
  await open(page,{now:'2026-11-13T05:00:00Z',review:true});await expect(page.locator('.song-card:enabled')).toHaveCount(12);

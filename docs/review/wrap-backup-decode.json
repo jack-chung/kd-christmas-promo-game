@@ -1,0 +1,32 @@
+{
+  "fixture": "tests/fixtures/full-save.js",
+  "restoreLink": "https://jack-chung.github.io/kd-christmas-promo-game/#restore=TV2-_x3_38Ie84Pfwh7zg9_CHt_CHt_CHu_hD3o38Ie9G_hD3o38Ie9G_hD3o38Ie9G_hD3o38Ie9G_hD3o38Ie9G_hD3o38Ie9BTl3Kcu5Tl3Kcu5Tl__-i18I9OBIDBm5qdNOcHgMaU4qY0hQ2N3ASNFZ4mrze8BIwAAAAIU4A-0wpuwte",
+  "binaryBytes": 126,
+  "spareBinaryBytesAt450Characters": 156,
+  "results": [
+    {
+      "screenshot": "docs/review/treasure-full-backup-320.png",
+      "pixels": [
+        320,
+        568
+      ],
+      "linkCharacters": 242,
+      "qrModules": 61,
+      "qrCssPixels": 207,
+      "zxing": "decoded exact restore link",
+      "appleVision": "decoded exact restore link"
+    },
+    {
+      "screenshot": "docs/review/treasure-full-backup-390.png",
+      "pixels": [
+        390,
+        844
+      ],
+      "linkCharacters": 242,
+      "qrModules": 61,
+      "qrCssPixels": 207,
+      "zxing": "decoded exact restore link",
+      "appleVision": "decoded exact restore link"
+    }
+  ]
+}

@@ -31,7 +31,7 @@ test('set date locks use server time outside review and legacy layers gain their
 });
 
 test('blocked local storage warns and still permits a recoverable backup',async({page})=>{
- await page.addInitScript(()=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(this===localStorage)throw new DOMException('Blocked','QuotaExceededError');return set.call(this,k,v);};});await enter(page);await expect(page.locator('.storage-notice').filter({hasText:C.treasure.private})).toBeVisible();await page.goto('/?review=1#backup');await expect(page.locator('.save-qr svg')).toBeVisible();expect(await page.locator('#save-code').inputValue()).toMatch(/^TV1-/);
+ await page.addInitScript(()=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(this===localStorage)throw new DOMException('Blocked','QuotaExceededError');return set.call(this,k,v);};});await enter(page);await expect(page.locator('.storage-notice').filter({hasText:C.treasure.private})).toBeVisible();await page.goto('/?review=1#backup');await expect(page.locator('.save-qr svg')).toBeVisible();expect(await page.locator('#save-code').inputValue()).toMatch(/^TV2-/);
 });
 
 test('set completion and a Gold Champion reveal unlock their wearable rewards',async({page})=>{

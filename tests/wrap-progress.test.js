@@ -37,7 +37,7 @@ test('score follows speed, while accuracy and medal thresholds remain identical'
  assert.equal(roundResult(base).grade,'S');assert.deepEqual(roundResult(base),roundResult(fast));assert.ok(Math.abs(fast.score/base.score-1.4)<.01);
 });
 
-test('song records survive normalization and TV1 backup, improve independently; old saves retain Paper',()=>{
+test('song records survive normalization and TV2 backup, improve independently; old saves retain Paper',()=>{
  const save=freshSave();save.profile=newProfile();const song=C.wrap.songs[0];
  assert.equal(recordSong(save,song,{grade:'A',score:100,topSpeed:1.2}).best,true);
  assert.equal(recordSong(save,song,{grade:'B',score:200,topSpeed:1.1}).best,true);

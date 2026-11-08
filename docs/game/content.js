@@ -99,7 +99,7 @@ C.wrap.tiers=[
  {tier:3,id:'rapper',beat:650,travel:2200,window:250,perfect:100,spacing:0,pairs:true},
 ];
 C.wrap.speed={step:.05,hits:6,cap:1.4,lookahead:550};
-Object.assign(C.wrap,{intro:'Pick a carol. Wrap a whole song. Win your way up the stars!',choose:'Choose a song',start:'Meet the customer →',customer:'YOUR CUSTOMER',round:'{title}',duration:'One full song per round',resultCopy:'Try another song, chase a medal, or explore the town.',speedLabel:'Speed ×{speed}',speedUp:'Quicker! You’ve got this!',newSong:'New!',tierLock:'Win a {stars} song to unlock',dateLock:'Opens {date}',songBest:'Best {score} · top speed ×{speed}',noBest:'Not played yet',hubWon:'Songs won: {count}',songLength:'{seconds}s at base speed',outfitCap:'This song gives up to a {medal} box and outfit.',bestSpeed:'Top speed ×{speed}'});
+Object.assign(C.wrap,{intro:'Pick a carol. Wrap a whole song. Win your way up the stars!',choose:'Choose a song',start:'Meet the customer →',customer:'YOUR CUSTOMER',round:'{title}',duration:'One full song per round',resultCopy:'Try another song, chase a medal, or explore the town.',speedLabel:'Speed ×{speed}',speedUp:'Quicker! You’ve got this!',newSong:'New!',tierLock:'Win a {stars} song to unlock',dateLock:'Opens {date}',songBest:'Best {score} · top speed ×{speed}',noBest:'Not played yet',hubWon:'Songs won: {count}',songLength:'About {minutes} min',outfitCap:'This song gives up to a {medal} box and outfit.',bestSpeed:'Top speed ×{speed}'});
 // Sorting calibration: milliseconds, gifts per promotion, and all rule order live here.
 C.sorting={
  title:'The Royal Sorting Office', eyebrow:'TAG. SACK. THUMP!', intro:'Match each tag to its street. Keep the belt clear! Five oops ends your shift.',
