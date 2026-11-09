@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {C} from '../docs/game/content.js';
 import {freshSave,normalizeSave} from '../docs/game/engine.js';
-import {createSorting,acknowledge,sortGift,destination,comboMultiplier,quickRemaining,recordSorting,sortingTop} from '../docs/game/sorting.js';
+import {createSorting,acknowledge,sortGift,destination,comboMultiplier,quickRemaining,recordSorting} from '../docs/game/sorting.js';
 import {SortingFeedback} from '../docs/game/sorting-feedback.js';
 
 test('visible score parts preserve the formula and sum to each award and final total',()=>{
- const r=createSorting('easy',5);acknowledge(r);
+ const r=createSorting(5);acknowledge(r);
  for(let i=0;i<15;i++){
   const g=r.queue[0];g.rush=i%2===0;r.elapsed+=i%3*650;
   const quick=Math.max(0,Math.round(20*(1-(r.elapsed-g.spot)/2000))),rush=g.rush&&r.elapsed-g.spot<=2000?40:0;
@@ -22,19 +22,12 @@ test('quick bar reflects the same two-second scoring window and freezes with gam
  const r=createSorting();acknowledge(r);assert.equal(quickRemaining(r),1);r.elapsed=1000;assert.equal(quickRemaining(r),.5);r.elapsed=2500;assert.equal(quickRemaining(r),0);
  const result=sortGift(r,destination(r,r.queue[0]));assert.equal(result.points.quick,0);assert.equal(quickRemaining(r),1);
 });
-test('records stay separate, ties are not new bests, all finishes celebrate and medals lift the party',()=>{
- const save=freshSave(),r=createSorting('rapper');r.score=500;
- let result=recordSorting(save,r);assert.equal(result.best,true);assert.equal(result.celebration,1);assert.equal(result.personalBest,500);
- assert.deepEqual(save.sortingBests,{easy:0,tunie:0,rapper:500});
- result=recordSorting(save,r);assert.equal(result.best,false);assert.equal(result.celebration,0);
- r.difficulty='easy';r.score=C.sorting.medals.easy[0];result=recordSorting(save,r);assert.equal(result.celebration,2);assert.equal(result.medals.length,1);
- assert.deepEqual(sortingTop(save.sortingBests),{difficulty:'easy',score:r.score});
- r.score=0;r.difficulty='tunie';result=recordSorting(save,r);assert.equal(result.celebration,0);assert.equal(result.best,false);
-});
-test('old unattributed records reset safely and malformed per-difficulty values are filtered',()=>{
- assert.deepEqual(normalizeSave({version:2,sortingBest:99999}).sortingBests,{easy:0,tunie:0,rapper:0});
- assert.deepEqual(normalizeSave({version:2,sortingBests:{easy:240.9,tunie:-1,rapper:'900'}}).sortingBests,{easy:240,tunie:0,rapper:0});
- const save=freshSave();save.sortingBests={easy:123,tunie:456,rapper:789};assert.deepEqual(normalizeSave(save).sortingBests,save.sortingBests);
+test('one record preserves ties and rewards medals',()=>{
+ const save=freshSave(),r=createSorting();r.score=500;
+ let result=recordSorting(save,r);assert.equal(result.best,true);assert.equal(result.personalBest,500);
+ result=recordSorting(save,r);assert.equal(result.best,false);
+ r.score=C.sorting.medals[0];result=recordSorting(save,r);assert.equal(result.celebration,2);assert.equal(result.medals.length,1);assert.equal(save.sortingBest,r.score);
+ r.score=0;result=recordSorting(save,r);assert.equal(result.celebration,0);assert.equal(result.best,false);
 });
 test('every correct sack has a distinct sampled in-key cue above 300 Hz, separate from error/echo voices',()=>{
  const samples=[],effects=[],music={state:'ready',sample:(...args)=>samples.push(args)};

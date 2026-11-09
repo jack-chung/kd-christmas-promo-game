@@ -37,3 +37,8 @@ test('TV2 round trips sparse progress across bit and varint boundaries',()=>{
   const normalized=normalizeSave(s);assert.deepEqual(decodeSave(encodeSave(normalized)),expected(normalized));
  }
 });
+test('pre-one-ramp TV2 difficulty slots migrate into the single best',()=>{
+ const save=decodeSave('TV2-JOAAAAAyAHwUbBt4FwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-1dmodzd');
+ assert.equal(save.sortingBest,7000);assert.equal('sortingBests' in save,false);
+ assert.equal(decodeSave(encodeSave(save)).sortingBest,7000);
+});

@@ -19,7 +19,7 @@ export function decodeSave(code){
  if(match[1]==='2'){const save=normalizeSave(binarySave(null,Uint8Array.from(decoded,ch=>ch.charCodeAt(0))));if(!save.profile)throw Error('Invalid profile');return save;}
  const d=JSON.parse(decoded);
  if(!Array.isArray(d)||![21,22].includes(d.length)||d[0]!==1||!d[1]||!Array.isArray(d[6])||d[6].length!==T.cards.length)throw Error('Invalid save payload');
- const raw={version:3,wrapSongs:d[21],profile:{adjective:d[1][0],noun:d[1][1],number:d[1][2],avatar:`helper-${d[1][3]}`},layers:d[2],sortingBests:Object.fromEntries(C.sorting.difficulties.map((v,i)=>[v.id,d[4][i]]))};
+ const raw={version:3,wrapSongs:d[21],profile:{adjective:d[1][0],noun:d[1][1],number:d[1][2],avatar:`helper-${d[1][3]}`},layers:d[2],sortingBests:Object.fromEntries(['easy','tunie','rapper'].map((id,i)=>[id,d[4][i]]))};
  keys.forEach((k,i)=>raw[k]=d[3][i]);['sound','sortingPractice','sleighPractice','sleighPlayed','finale'].forEach((k,i)=>raw[k]=d[5][i]);
  raw.collection={cards:Object.fromEntries(T.cards.filter((_,i)=>d[6][i]).map(card=>[card.id,sources[d[6][T.cards.indexOf(card)]-1]])),stars:d[7],outfits:d[8].map(i=>T.outfits[i]?.id),equipped:Object.fromEntries(slots.map((slot,i)=>[slot,T.outfits[d[9][i]]?.id])),boxes:unpackBoxes(d[10]),sinceRare:d[11],welcome:d[12],friendCode:d[13],friends:d[14],newFriends:d[15],broughtBy:d[16],started:d[17],claims:d[18],finished:d[19],homePromptAt:d[20],restored:true};
  const save=normalizeSave(raw);if(!save.profile)throw Error('Invalid profile');return save;

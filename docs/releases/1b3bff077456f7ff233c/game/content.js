@@ -1,3 +1,4 @@
+import {weeklyCarols,arrangeSong} from './wrap-songs.js';
 // All player-facing copy, cast names, dates, and game slots.
 export const C = {
   app: { title: 'The Tuneville Gift', subtitle: 'A little town. A very big gift.', brand: 'KIDS DISCOVER PRESENTS', preview: 'UNANNOUNCED REVIEW PREVIEW', episode: 'GAME 01', privacy: 'Just for fun. Your progress stays on this device.', storage: 'This browser cannot save progress. You can still play; keep this tab open.', loading: 'Opening Tuneville…', noscript: 'Please turn on JavaScript to play The Tuneville Gift.', error: 'That page took a wrong turn. Let’s head back to town.', saved: 'Saved on this device', soundOn: '♪ Sound on', soundOff: '♪ Sound off', home: '⌂ Town', back: '← Back', continue: 'Continue →', playAgain: 'Play again', close: 'Close', newBest: 'A new personal best!', best: 'Best: {value}', notPlayed: 'Not played yet', score: 'Score', yes: 'Yes, reset', cancel: 'Keep playing', resetQuestion: 'Reset this device?', resetDetail: 'This clears your nickname, keepsakes, scores, and game progress. You’ll choose a new helper.', pause: 'Ⅱ Pause', resume: '▶ Keep playing', paused: 'Take a breather', pausedCopy: 'Your game is paused. Ready when you are.', mutedTip: 'Turn your sound on for music. You can play by sight, too.', resetDone: 'A fresh start!', },
@@ -90,34 +91,23 @@ C.wrap.songs=[
       [64,1],[64,1],[64,1],[64,.5],[65,.5],[67,3],[65,.5],[64,.5],
       [62,1],[62,1],[62,1],[62,.5],[64,.5],[65,3],[64,.5],[62,.5],
       [60,1],[72,2],[69,1],[67,1.5],[65,.5],[64,1],[65,1],[64,2],[62,2],[60,4]]},
-].map(song=>{
-  // One full melody at each tempo: difficulties never rearrange its pitches.
-  const beats=song.phrase.reduce((n,[,length])=>n+length,0);
-  return {...song,variants:Object.fromEntries(['easy','tunie','rapper'].map(id=>{
-    const beat=id==='rapper'?650:750,events=[],automatic=[];
-    let position=0,last=-Infinity,note=0;
-    for(const [midi,length] of song.phrase){
-      const time=position*beat;position+=length;
-      if(!midi)continue;
-      const lane=id==='easy'?note%2:note%4;
-      if(id==='easy'&&time-last<1500)automatic.push({time,midi,lane});
-      else {events.push({time,midi,lane});last=time;
-        if(id==='rapper'&&note%12===7)events.push({time,midi:midi-12,lane:(lane+2)%4});
-      }
-      note++;
-    }
-    return [id,{duration:beats*beat,beat,events,automatic}];
-  }))};
-});
+];
 
+C.wrap.tiers=[
+ {tier:1,id:'easy',beat:900,travel:3600,window:360,perfect:145,spacing:1500,pairs:false},
+ {tier:2,id:'tunie',beat:750,travel:2700,window:300,perfect:120,spacing:600,pairs:false},
+ {tier:3,id:'rapper',beat:650,travel:2200,window:250,perfect:100,spacing:0,pairs:true},
+];
+C.wrap.speed={step:.05,hits:6,cap:1.4,lookahead:550};
+Object.assign(C.wrap,{intro:'Pick a carol. Wrap a whole song. Win your way up the stars!',choose:'Choose a song',start:'Meet the customer →',customer:'YOUR CUSTOMER',round:'{title}',duration:'One full song per round',resultCopy:'Try another song, chase a medal, or explore the town.',speedLabel:'Speed ×{speed}',speedUp:'Quicker! You’ve got this!',newSong:'New!',tierLock:'Win a {stars} song to unlock',dateLock:'Opens {date}',songBest:'Best {score} · top speed ×{speed}',noBest:'Not played yet',hubWon:'Songs won: {count}',songLength:'About {minutes} min',outfitCap:'This song gives up to a {medal} box and outfit.',bestSpeed:'Top speed ×{speed}'});
 // Sorting calibration: milliseconds, gifts per promotion, and all rule order live here.
 C.sorting={
  title:'The Royal Sorting Office', eyebrow:'TAG. SACK. THUMP!', intro:'Match each tag to its street. Keep the belt clear! Five oops ends your shift.',
- pointer:'☞', choose:'Choose your shift', start:'Start sorting →', practice:'Try the practice', practiceIntro:'☞ Match the tag to the sack. Three gifts. Try again as often as you like!', practiceDone:'Practice complete! Ready for your shift.', continue:'Got it! →', stage:'Stage {stage}', elapsed:'Time {time}', reviewStage:'Start at stage', score:'{score} points', oops:'Oops {count} / 5', queue:'Belt {count} / {capacity}', sorted:'Sorted!', echo:'Sorted! …orted! …orted!', oopsLines:['Oh, Christmas tree!', 'Great gumdrops!', 'By my tinsel!'], results:'Your royal sorting report', stats:'{sorted} gifts sorted · best combo {combo} · stage {stage}', finish:'Collect my Ribbon →', layer:'Ribbon collected!', medal:'{medal} postmark earned!', noMedal:'Keep sorting to earn a postmark.', rush:'★ Rush', rushHint:'★ → {seconds}s', fragile:'Fragile shelf', royal:'Royal sack', tag:'Street tag', crown:'Crown', noCrown:'No crown', royalIcon:'♛', withCrown:'WITH a crown', withoutCrown:'WITHOUT a crown', royalFallback:'All other parcels → their street sack. Glass ALWAYS → Fragile.', priority:'Fragile first. Then the decree. Then the street.',
+ pointer:'☞', goal:'Win the Ribbon: {score} points', nextGoal:'Next medal: {medal} · {score} points', progress:'{medal}: {score} / {goal}', allMedals:'All medals won!', near:'So close! {score} / {goal}, try again!', start:'Start sorting →', practice:'Try the practice', practiceIntro:'☞ Match the tag to the sack. Three gifts. Try again as often as you like!', practiceDone:'Practice complete! Ready for your shift.', continue:'Got it! →', stage:'Stage {stage}', elapsed:'Time {time}', reviewStage:'Start at stage', score:'{score} points', oops:'Oops {count} / 5', queue:'Belt {count} / {capacity}', sorted:'Sorted!', echo:'Sorted! …orted! …orted!', oopsLines:['Oh, Christmas tree!', 'Great gumdrops!', 'By my tinsel!'], results:'Your royal sorting report', stats:'{sorted} gifts sorted · best combo {combo} · stage {stage}', finish:'Collect my rewards →', layer:'Ribbon won!', medal:'{medal} medal earned!', noMedal:'Keep sorting to earn a medal.', rush:'★ Rush', rushHint:'★ → {seconds}s', fragile:'Fragile shelf', royal:'Royal sack', tag:'Street tag', crown:'Crown', noCrown:'No crown', royalIcon:'♛', withCrown:'WITH a crown', withoutCrown:'WITHOUT a crown', royalFallback:'All other parcels → their street sack. Glass ALWAYS → Fragile.', priority:'Fragile first. Then the decree. Then the street.',
  streets:[{id:'candy',name:'Candy Cane Lane',symbol:'◆',color:'#e5a0ad'},{id:'holly',name:'Holly Hill',symbol:'✚',color:'#79c8b0'},{id:'ginger',name:'Gingerbread Row',symbol:'●',color:'#edc06a'},{id:'tinsel',name:'Tinsel Terrace',symbol:'▲',color:'#8dc7e6'}],
  patterns:[{id:'striped',label:'Striped',icon:'▨'},{id:'dotted',label:'Dotted',icon:'⠿'},{id:'plain',label:'Plain',icon:'■'}],
  rules:{streets:'Match the street tag → matching sack',rush:'Golden tag → sort within 2 seconds for bonus points',fragile:'Glass icon → Fragile shelf, whatever the street',royal:'{pattern} paper {crown} → Royal sack.',switch:'A new royal decree! Check the paper and crown.',shuffle:'New decree! The sacks swap places, too.',speed:'You know the rules. The belt gets quicker!'},
- difficulties:[{id:'easy',label:'Easy',detail:'Gentle start · slow climb',start:1,climb:1.8},{id:'tunie',label:'Tunie',detail:'Three streets · steady climb',start:2,climb:1},{id:'rapper',label:'Rapper',detail:'Fragile first · quick climb',start:4,climb:.6}],
+ ramp:{start:1,climb:1.8},
  stages:[
  {stage:1,streets:2,arrival:5200,gifts:14,rule:'streets'},
  {stage:2,streets:3,fourAfter:10,arrival:4200,gifts:24,rule:'streets'},
@@ -127,13 +117,13 @@ C.sorting={
  {stage:6,streets:3,arrival:2000,gifts:26,rule:'switch',rush:true,fragile:true,royal:true,switch:30000},
  {stage:7,streets:3,arrival:1650,gifts:28,rule:'shuffle',rush:true,fragile:true,royal:true,switch:30000,shuffle:true},
  {stage:8,streets:3,arrival:1300,gifts:30,rule:'speed',rush:true,fragile:true,royal:true,switch:30000,shuffle:true}],
- scoring:{teach:'▣ Sort = points · ⚡ Fast = bonus · ★ Streak = ×2, ×3…',quick:'Quick!',quickBar:'Quick bonus left',quickTimer:'Quick {seconds}s',quickPoints:'Quick! +{points}',rushPoints:'Rush! +{points}',comboPoints:'×{multiplier} +{points}',streak:'{combo} in a row',reset:'Streak reset · ×1',base:'Gifts sorted ({count} × {points})',quickTotal:'Quick bonus',rushTotal:'Rush bonus',comboTotal:'Streak bonus',total:'Total',newBest:'New best!',best:'Your {difficulty} best: {score}',hubBest:'Best: {score} · {difficulty}',setupBest:'Best: {score}',party:'Great sorting!',bestRun:'Best streak: {combo} · Stage {stage}'},
+ scoring:{teach:'▣ Sort = points · ⚡ Fast = bonus · ★ Streak = ×2, ×3…',quick:'Quick!',quickBar:'Quick bonus left',quickTimer:'Quick {seconds}s',quickPoints:'Quick! +{points}',rushPoints:'Rush! +{points}',comboPoints:'×{multiplier} +{points}',streak:'{combo} in a row',reset:'Streak reset · ×1',base:'Gifts sorted ({count} × {points})',quickTotal:'Quick bonus',rushTotal:'Rush bonus',comboTotal:'Streak bonus',total:'Total',newBest:'New best!',best:'Your best: {score}',hubBest:'Best: {score}',setupBest:'Best: {score}',party:'Great sorting!',bestRun:'Best streak: {combo} · Stage {stage}'},
  feedback:{pitches:{candy:67,holly:69,ginger:71,tinsel:72,fragile:74,royal:76}},
  music:{title:'Good King Wenceslas',bpm:112,maxBpm:132,stageBpm:2,
  loading:'Getting the sorting band ready…',failed:'The band couldn’t load. You can still sort with sound off.'},
- tuning:{quickWindow:2000,capacity:4,slowGifts:3,slowArrival:5200,minArrival:450,speedStep:120,mistakeEase:.16,maxEase:.5,rushWindow:2000,basePoints:100,speedPoints:20,rushPoints:40,comboEvery:5,maxMultiplier:5,featureChance:.28},
+ tuning:{quickWindow:2000,capacity:4,slowGifts:3,slowArrival:5200,minArrival:350,speedStep:500,rushWindow:2000,basePoints:100,speedPoints:20,rushPoints:40,comboEvery:5,maxMultiplier:5,featureChance:.28},
  decrees:[{pattern:'striped',bow:true},{pattern:'dotted',bow:false},{pattern:'plain',bow:true},{pattern:'striped',bow:false}],
- medals:{easy:[800,3000,7500],tunie:[1200,4500,10000],rapper:[1600,6000,14000]},
+ medals:[2000,15000,200000],
  papers:[{id:'postmark-bronze',name:'Bronze parcel paper',medal:'Bronze',color:'#c58b58'},{id:'postmark-silver',name:'Silver snow paper',medal:'Silver',color:'#a9c8d0'},{id:'postmark-gold',name:'Gold crown paper',medal:'Gold',color:'#edc45d'}]
 };
 C.review.routes.push(['sorting','Sorting Office setup']);
@@ -181,7 +171,7 @@ C.app.resetDetail='This clears your nickname, cards, outfits, scores and game pr
 C.sorting.medal='{medal} outfit earned!'; C.sorting.noMedal='Keep sorting to earn a medal outfit.';
 C.treasure={
  title:'Treasure Book',intro:'Win layers, meet Tunies, and dress your helper.',cardsTab:'Tunie cards',outfitsTab:'Outfits',helper:'My helper',helperCopy:'A look of your own. Change it whenever you like!',helperSave:'Save my helper',slots:{head:'Head',neck:'Neck',body:'Body',held:'Held item'},none:'Take off',equip:'Wear it',equipped:'Wearing',locked:'Still to find',unknown:'Mystery Tunie',count:'{count} / {total} Tunie cards',setCount:'{count} / 6 collected',opens:'Opens {date}',found:'Found: {source}',rarities:{common:'Common',rare:'Rare',super:'Super Rare',mythical:'Mythical'},sources:{box:'Gift box',layer:'Won gift layer',set:'Street set collection',friend:'Friend scan',show:'Show code',welcome:'Welcome pack',stars:'Star exchange'},
- welcome:'Your welcome pack!',welcomeCopy:'Three new friends, including a Rare. They’re saved in your Treasure Book.',boxTitle:'A gift for playing!',open:'Open a box',skip:'Show my card now',next:'Keep collecting',boxes:'{count} boxes to open',boxNames:['Basic box','Bronze box','Silver box','Gold box'],duplicate:'A familiar friend! +{count} stars',newCard:'A new Tunie!',stars:'★ {count} stars',exchange:'Choose for 10 stars',oddsTitle:'What’s inside?',oddsCopy:'No purchases, ads or timers. Every fifth box without a Rare guarantees a Rare. Duplicates become stars.',oddsLine:'{box}: Common {common}%, Rare {rare}%, Super Rare {super}%, Champion {mythical}%',pityLabel:'Boxes since a Rare: {count} / 5',setReward:'Complete this street to earn {outfit}.',layerWon:'{layer} won! Your host card is in the book.',wrapGoal:'Win the Paper: get Bronze on any song',wrapNear:'Win the Paper: get Bronze on any song',towerGoal:'Win the Box: stack {count} high',towerNear:'So close! {count} / {goal} high. Try again!',medals:['Keep practising','Bronze!','Silver!','Gold!'],
+ welcome:'Your welcome pack!',welcomeCopy:'Three new friends, including a Rare. They’re saved in your Treasure Book.',boxTitle:'A gift for playing!',open:'Open a box',skip:'Show my card now',next:'Keep collecting',boxes:'{count} boxes to open',boxNames:['Basic box','Bronze box','Silver box','Gold box'],duplicate:'A familiar friend! +{count} stars',newCard:'A new Tunie!',stars:'★ {count} stars',exchange:'Choose for 10 stars',oddsTitle:'What’s inside?',oddsCopy:'No purchases, ads or timers. Every fifth box without a Rare guarantees a Rare. Duplicates become stars.',oddsLine:'{box}: Common {common}%, Rare {rare}%, Super Rare {super}%, Champion {mythical}%',pityLabel:'Boxes since a Rare: {count} / 5',setReward:'Complete this street to earn {outfit}.',layerWon:'{layer} won! Your host card is in the book.',wrapGoal:'Win the Paper: grade B on any song',wrapNear:'Win the Paper: grade B on any song',towerGoal:'Win the Box: stack {count} high',towerNear:'So close! {count} / {goal} high. Try again!',medals:['Keep practising','Bronze!','Silver!','Gold!'],
  outfitReward:'Outfits unlocked · {names}',spend:'Spend 10 stars',stopPicking:'Stop choosing',backupTitle:'My Tuneville Gift backup',saveLink:'Backup link',restoreContinue:'Check backup',restoreQuestion:'Restore this collection?',restoreDestination:'This puts the collection on this phone.',moreCards:'This phone has more cards than the backup.',restoreReplace:'Restoring replaces this browser’s collection.',cancelRestore:'Cancel',scanFallback:'Picture on another screen? Scan it with the camera of the phone you want to restore.',platformHeadings:{ios:'On iPhone',android:'On Android'},backupSteps:{ios:['Open this picture in Photos.','Press and hold the QR code.','Tap the link, then tap Restore.'],android:['Open this picture in Google Photos.','Tap More (⋮), then Lens and the link.','Tap Restore.']},inAppByPlatform:{ios:'Open in Safari to keep your collection',android:'Open in Chrome to keep your collection',unknown:'Open in Safari/Chrome to keep your collection'},saveTitle:'Keep your collection safe',saveCopy:'Take a screenshot of this card.',saveCode:'Save code',restore:'Restore from code',restoreCopy:'Paste a backup link or your whole save code. You can check it before restoring.',restoreConfirm:'Restore',restored:'Collection restored!',badCode:'That code is incomplete or damaged. Try copying the whole code again.',codeLoading:'Making your save code…',copy:'Copy backup link',copied:'Backup link copied',copyFailed:'Select the backup link to copy it.',qrLabel:'QR code containing your full collection',
  homeTitle:'Keep your Tunies safe',homeCopy:'Add Tuneville to your Home Screen to help keep your collection safe. Keep a save-code screenshot too.',iosSteps:['Tap the Share button (□↑) in Safari.','Choose Add to Home Screen (＋).','Tap Add, then play from your new icon.'],androidSteps:['Tap ⋮, then Add to Home screen or Install and create shortcut.','Tap Install. No Install? Tap Create shortcut.','Follow the prompts, then use your new icon.'],ios:'iPhone · Safari',android:'Android · Chrome',dismiss:'Got it — remind me next week',inApp:'Open in Safari/Chrome to keep your collection',private:'Private or restricted browsing may erase your collection when you close it. Use a regular browser and keep a save code.',
  rareEvery:5,exchangeCost:10,duplicateStars:{common:1,rare:3,super:5,mythical:10},
@@ -209,3 +199,5 @@ C.treasure.collectorProgress='{count} / 4 streets complete toward Collector';
 
 C.treasure.homeReminderDays=7;
 C.treasure.cards.filter(c=>c.set==='layer').forEach((card,i)=>card.hint=`Win the ${C.gift.layers[i]} in ${C.episodes[i].title}.`);
+
+C.wrap.songs=[...C.wrap.songs,...weeklyCarols].map((song,i)=>arrangeSong(song,i,C.wrap.tiers));

@@ -1,7 +1,7 @@
 // Pure chart judgement. DOM, input and audio all use the same target times.
 import {timing,grade} from './engine.js';
 export function createRound(chart,difficulty){return {chart,difficulty,judged:new Set(),score:0,points:0,combo:0,maxCombo:0,strays:0,hits:0};}
-export function judgeTap(round,lane,time){
+export function judgeTap(round,lane,time,speed=1){
   const {chart,difficulty,judged}=round;
   const candidates=chart.events.map((event,index)=>({event,index,offset:time-event.time})).filter(x=>!judged.has(x.index)&&Math.abs(x.offset)<=difficulty.window);
   const match=candidates.filter(x=>x.event.lane===lane).sort((a,b)=>Math.abs(a.offset)-Math.abs(b.offset))[0];
@@ -14,7 +14,7 @@ export function judgeTap(round,lane,time){
   }
   judged.add(match.index);const tier=timing(match.offset,difficulty);
   round.hits++;round.combo++;round.maxCombo=Math.max(round.maxCombo,round.combo);
-  round.points+=tier===2?1:.72;round.score+=(tier===2?100:65)+Math.min(40,round.combo*2);
+  round.points+=tier===2?1:.72;round.score+=Math.round(((tier===2?100:65)+Math.min(40,round.combo*2))*speed);
   return {...match,tier};
 }
 export function expireNotes(round,time){

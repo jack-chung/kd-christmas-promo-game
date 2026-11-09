@@ -2,8 +2,7 @@ import {test,expect} from '@playwright/test';
 import {C} from '../../docs/game/content.js';
 
 async function setup(page){await page.goto('/?review=1');await page.locator('[data-action="profile"]').click();await page.goto('/?review=1#sorting');await page.reload();}
-async function start(page,difficulty='easy'){
- await page.locator(`[name="sorting-difficulty"][value="${difficulty}"]`).locator('..').click();
+async function start(page){
  await page.locator('#sort-stage-select').selectOption('1');await page.locator('[data-action="sorting-start"]').click();await page.locator('#sort-continue').click();
 }
 async function tap(page,right=true){
@@ -27,19 +26,19 @@ for(const viewport of [{width:390,height:844},{width:320,height:568}])test(`quic
  await page.clock.runFor(2100);expect(Number(await page.locator('#sort-quick').getAttribute('aria-valuenow'))).toBe(0);await expect(page.locator('#sort-quick span')).toHaveText('Quick 0.0s');await tap(page);await expect(page.locator('#sort-points')).not.toContainText('Quick!');
 });
 
-test('every finish celebrates, records are per difficulty, and breakdown sums to total with sound off',async({page},testInfo)=>{
+test('every finish celebrates, one record survives reload, and breakdown sums to total with sound off',async({page},testInfo)=>{
  await setup(page);await start(page);await finish(page);
  await expect(page.locator('.sorting-party')).toHaveAttribute('data-celebration','0');await expect(page.locator('.confetti i')).toHaveCount(24);await expect(page.locator('.sorting-new-best')).toHaveCount(0);
  await again(page);await start(page);await tap(page);await finish(page);
- await expect(page.locator('.sorting-party')).toHaveAttribute('data-celebration','1');await expect(page.locator('.sorting-new-best')).toHaveText('★ New best!');await expect(page.locator('.sorting-personal-best')).toContainText('Your Easy best:');
+ await expect(page.locator('.sorting-party')).toHaveAttribute('data-celebration','1');await expect(page.locator('.sorting-new-best')).toHaveText('★ New best!');await expect(page.locator('.sorting-personal-best')).toContainText('Your best:');
  const easy=Number(await page.locator('#sorting-total').getAttribute('data-value'));
- await again(page);await start(page,'rapper');for(let i=0;i<12;i++)await tap(page);await finish(page);
+ await again(page);await start(page);for(let i=0;i<15;i++)await tap(page);await finish(page);
  await expect(page.locator('.sorting-party')).toHaveAttribute('data-celebration','2');await expect(page.locator('.sorting-medal-stamp')).toHaveCount(1);await expect(page.locator('.confetti i')).toHaveCount(48);
  const sum=await page.locator('[data-points]').evaluateAll(els=>els.reduce((sum,el)=>sum+Number(el.dataset.value),0)),total=Number(await page.locator('#sorting-total').getAttribute('data-value'));expect(sum).toBe(total);expect(total).toBeGreaterThan(easy);
  await page.emulateMedia({reducedMotion:'reduce'});expect(await page.locator('.sorting-medal-stamp').evaluate(el=>getComputedStyle(el).animationName)).toBe('none');await expect(page.locator('.sorting-new-best')).toBeVisible();await page.screenshot({path:testInfo.outputPath('medal-results.png')});
- const save=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(save.sound).toBe(false);expect(save.sortingBests).toEqual({easy,tunie:0,rapper:total});expect(save.layers).toEqual([2]);
- await again(page);await page.reload();for(const [id,score] of Object.entries(save.sortingBests))await expect(page.locator(`[name="sorting-difficulty"][value="${id}"]`).locator('..').locator('.sorting-setup-best')).toHaveText(`Best: ${score.toLocaleString('en-US')}`);
- await page.goto('/?review=1#hub');await expect(page.locator('.adventure').nth(1)).toContainText(`Best: ${total.toLocaleString('en-US')} · Rapper`);
+ const save=await page.evaluate(()=>JSON.parse(localStorage.getItem('tuneville-gift-v1')));expect(save.sound).toBe(false);expect(save.sortingBest).toBe(total);expect(save.layers).toEqual([2]);
+ await again(page);await page.reload();await expect(page.locator('[name="sorting-difficulty"]')).toHaveCount(0);await expect(page.locator('.sorting-setup-best')).toHaveText(`Best: ${total.toLocaleString('en-US')}`);
+ await page.goto('/?review=1#hub');await expect(page.locator('.adventure').nth(1)).toContainText(`Best: ${total.toLocaleString('en-US')}`);
 });
 
 test('real tap cues start immediately and results play sampled audio that mutes and stops on navigation',async({page})=>{

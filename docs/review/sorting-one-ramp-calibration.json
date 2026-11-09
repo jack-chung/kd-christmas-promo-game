@@ -1,0 +1,164 @@
+{
+  "ramp": {
+    "start": 1,
+    "climb": 1.8
+  },
+  "tuning": {
+    "quickWindow": 2000,
+    "capacity": 4,
+    "slowGifts": 3,
+    "slowArrival": 5200,
+    "minArrival": 350,
+    "speedStep": 500,
+    "rushWindow": 2000,
+    "basePoints": 100,
+    "speedPoints": 20,
+    "rushPoints": 40,
+    "comboEvery": 5,
+    "maxMultiplier": 5,
+    "featureChance": 0.28
+  },
+  "medals": [
+    2000,
+    15000,
+    200000
+  ],
+  "models": [
+    {
+      "model": {
+        "mash": true
+      },
+      "count": 1000,
+      "reached": {
+        "bronze": 16,
+        "silver": 0,
+        "gold": 0,
+        "fragile": 0
+      },
+      "maxSeconds": 2.52,
+      "medianSeconds": 0.82,
+      "medianScore": 477,
+      "milestones": {
+        "bronze": 1.62,
+        "silver": null,
+        "gold": null,
+        "fragile": null
+      }
+    },
+    {
+      "model": {
+        "reaction": 1400,
+        "jitter": 300,
+        "accuracy": 0.8
+      },
+      "count": 1000,
+      "reached": {
+        "bronze": 647,
+        "silver": 3,
+        "gold": 0,
+        "fragile": 0
+      },
+      "maxSeconds": 107.88,
+      "medianSeconds": 31.48,
+      "medianScore": 2627,
+      "milestones": {
+        "bronze": 22.5,
+        "silver": 75.78,
+        "gold": null,
+        "fragile": null
+      }
+    },
+    {
+      "model": {
+        "reaction": 1400,
+        "jitter": 300,
+        "accuracy": 0.85
+      },
+      "count": 1000,
+      "reached": {
+        "bronze": 817,
+        "silver": 36,
+        "gold": 0,
+        "fragile": 1
+      },
+      "maxSeconds": 154.82,
+      "medianSeconds": 41.84,
+      "medianScore": 4342,
+      "milestones": {
+        "bronze": 20.64,
+        "silver": 74.64,
+        "gold": null,
+        "fragile": 153.68
+      }
+    },
+    {
+      "model": {
+        "reaction": 1400,
+        "jitter": 300,
+        "accuracy": 1
+      },
+      "count": 1000,
+      "reached": {
+        "bronze": 1000,
+        "silver": 1000,
+        "gold": 0,
+        "fragile": 1000
+      },
+      "maxSeconds": 492.18,
+      "medianSeconds": 471.92,
+      "medianScore": 154436,
+      "milestones": {
+        "bronze": 14.14,
+        "silver": 53.64,
+        "gold": null,
+        "fragile": 148.1
+      }
+    },
+    {
+      "model": {
+        "reaction": 650,
+        "jitter": 150,
+        "accuracy": 0.99
+      },
+      "count": 1000,
+      "reached": {
+        "bronze": 1000,
+        "silver": 999,
+        "gold": 20,
+        "fragile": 997
+      },
+      "maxSeconds": 270.5,
+      "medianSeconds": 262.84,
+      "medianScore": 186155,
+      "milestones": {
+        "bronze": 6.68,
+        "silver": 25.42,
+        "gold": 259.1,
+        "fragile": 69.92
+      }
+    },
+    {
+      "model": {
+        "reaction": 650,
+        "jitter": 150,
+        "accuracy": 1
+      },
+      "count": 1000,
+      "reached": {
+        "bronze": 1000,
+        "silver": 1000,
+        "gold": 1000,
+        "fragile": 1000
+      },
+      "maxSeconds": 269.64,
+      "medianSeconds": 263.98,
+      "medianScore": 204079,
+      "milestones": {
+        "bronze": 6.64,
+        "silver": 25.1,
+        "gold": 258.14,
+        "fragile": 69.34
+      }
+    }
+  ]
+}

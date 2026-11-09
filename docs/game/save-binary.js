@@ -18,7 +18,9 @@ export function binarySave(save,bytes){
  const avatar=io.bits(read?0:Number(s.profile.avatar.split('-')[1]),3);if(read)s.profile.avatar=`helper-${avatar}`;
  const layers=[1,2,3,4].filter(l=>io.bits(read?0:Number(s.layers.includes(l)),1));if(read)s.layers=layers;
  for(const key of flags){const v=io.bits(Number(s[key]),1);if(read)s[key]=!!v;}
- for(const key of bests)integer(s,key);for(const key of ['easy','tunie','rapper'])integer(s.sortingBests,key);
+ for(const key of bests)integer(s,key);
+ // Keep the three retired TV2 record slots in place for existing screenshot backups.
+ for(const key of ['easy','tunie','rapper'])if(read)integer(s.sortingBests,key);else io.int(0);
  for(const id of songs)if(io.bits(read?0:Number(!!s.wrapSongs[id]),1)){
   const r=read?{}:s.wrapSongs[id];integer(r,'score');const grade=io.bits(read?0:'CBAS'.indexOf(r.grade),2);if(read)r.grade='CBAS'[grade];
   const speed=io.bits(read?0:Math.round((r.topSpeed-1)*100),6);if(speed>40)throw Error('Invalid speed');if(read)r.topSpeed=(100+speed)/100;if(read)s.wrapSongs[id]=r;

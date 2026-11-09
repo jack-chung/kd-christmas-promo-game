@@ -150,3 +150,5 @@ body.rhythm-active{overflow:hidden;overscroll-behavior:none;touch-action:none;-w
 
 /* One full carol per round, with records readable on narrow phones. */
 .song-list{display:grid;gap:1rem}.song-tier h3{color:#825426;letter-spacing:.2em;margin:.5rem 0}.song-card{display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;width:100%;text-align:left;margin:.5rem 0;padding:1rem;border:2px solid #734d45;border-radius:12px;background:#fff7e7;color:#29283d;font:inherit}.song-card>strong{font-size:1.05rem}.song-card small{font-size:.8rem}.song-card.locked{opacity:.65}.new-song{display:inline-block;padding:.15rem .4rem;background:#f4c766;border-radius:6px;font-size:.75rem}.speed-readout{text-align:center;font-weight:bold;color:#fff1c2;background:#29283d;border-radius:6px;margin:.25rem;padding:.15rem}.screen-wrapResults .result-total{overflow-wrap:anywhere}
+
+.sort-goal{display:flex;align-items:center;gap:8px;font-size:10px;flex-shrink:0;min-height:18px}.sort-goal span{white-space:nowrap}.sort-goal progress{width:100%;min-width:30px;height:7px;accent-color:#edc45d}.sorting-goal{font-weight:bold;color:#edc45d}
